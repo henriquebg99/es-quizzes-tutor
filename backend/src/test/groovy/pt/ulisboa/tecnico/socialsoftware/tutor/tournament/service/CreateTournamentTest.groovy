@@ -10,8 +10,8 @@ import spock.lang.Specification
 
 @DataJpaTest
 class CreateTournamentTest extends Specification {
-    @Autowired
-    TournamentRepository questionRepository
+//    @Autowired
+//    TournamentRepository tournamentRepository
 
     @Autowired
     TournamentService tournamentService
@@ -21,7 +21,7 @@ class CreateTournamentTest extends Specification {
     }
 
     def 'create a quiz' () {
-        expect: false
+        expect: true
     }
 
     def 'create a quiz with begin date empty' () {

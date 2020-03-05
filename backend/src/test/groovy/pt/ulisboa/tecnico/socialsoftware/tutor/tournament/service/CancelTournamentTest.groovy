@@ -4,31 +4,35 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService
 import spock.lang.Specification
 
 @DataJpaTest
 class CancelTournamentTest extends Specification {
-    @Autowired
-    TournamentRepository questionRepository
+    //@Autowired
+    //TournamentRepository tournamentRepository
 
+    @Autowired
+    TournamentService tournamentService
     def setup() {
 
     }
 
     def 'cancel a tournament that does not exit' () {
-        expected: true
+        expect: true
     }
 
     def 'cancel a tournament that has already ended' () {
-        expected: true
+        expect: true
     }
 
     def 'cancel a tournament while it is happening' () {
-        expected: true
+        expect: true
     }
 
     def 'a tournament is canceled by a student that did not create it' () {
-        expected: true
+        expect: true
     }
 
     /*FIXME add more tests about topics*/
