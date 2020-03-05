@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService
 import spock.lang.Specification
 
 @DataJpaTest
@@ -11,28 +13,31 @@ class CreateTournamentTest extends Specification {
     @Autowired
     TournamentRepository questionRepository
 
+    @Autowired
+    TournamentService tournamentService
+
     def setup() {
 
     }
 
     def 'create a quiz' () {
-        expected: true
+        expect: false
     }
 
     def 'create a quiz with begin date empty' () {
-        expected: true
+        expect: true
     }
 
     def 'create a quiz with end date empty' () {
-        expected: true
+        expect: true
     }
 
     def 'create a quiz with a negative number of questions' () {
-        expected: true
+        expect: true
     }
 
     def 'create a quiz with 0 questions' () {
-        expected: true
+        expect: true
     }
     /*FIXME add more tests about topics*/
     @TestConfiguration
