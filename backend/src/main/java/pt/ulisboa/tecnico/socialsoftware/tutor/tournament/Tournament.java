@@ -10,11 +10,11 @@ public class Tournament {
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "creation_date")
-    private LocalDateTime creationDate;
+    @Column(name = "begin_date")
+    private LocalDateTime beginDate;
 
-    @Column(name = "conclusion_date")
-    private LocalDateTime conclusionDate;
+    @Column(name = "end_date")
+    private LocalDateTime endDate;
 
     public Tournament() {
     }
