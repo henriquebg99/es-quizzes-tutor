@@ -4,22 +4,30 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto
 import spock.lang.Specification
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 @DataJpaTest
 class CreateTournamentTest extends Specification {
-    public static final String NAME = "topic1"
+    public static final String TOPIC_NAME = "topic"
+    public static final String USER_NAME = "name"
+    public static final String USER_USERNAME = "username"
+    public static final String USER_USERNAME_NOT_EXISTING = "username2"
+    public static final int USER_KEY = 1
+    public static final int NUMBER_OF_QUESTIONS = 5
+    public static final int NEGATIVE_NUMBER_OF_QUESTIONS = -1
 
     @Autowired
     TournamentRepository tournamentRepository
@@ -30,70 +38,186 @@ class CreateTournamentTest extends Specification {
     @Autowired
     TopicRepository topicRepository
 
+    @Autowired
+    UserRepository userRepository
+
     def formatter
     def beginDate
     def endDate
     def topics
     def emptyTopics
+    def user
+
+    //FIXME other test: not enough questions, see StatementService
 
     def setup() {
         formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
         beginDate = LocalDateTime.now().plusDays(1)
         endDate = LocalDateTime.now().plusDays(2)
 
-        //topic respoitory; id vs name? save? relations between topic and topicDto
-
         def topic = new Topic()
+        topic.setName(TOPIC_NAME)
         topicRepository.save(topic)
 
         def topicDto = new TopicDto()
-        topicDto.setName(NAME)
+        topicDto.setName(TOPIC_NAME)
 
-        topics = new ArrayList()
+        topics = new ArrayList<TopicDto>()
         topics.add(topicDto)
 
-        emptyTopics = new ArrayList()
+        emptyTopics = new ArrayList<TopicDto>()
+
+        user = new User(USER_NAME, USER_USERNAME, USER_KEY, User.Role.STUDENT)
+        userRepository.save(user)
     }
 
     def 'create a tournament' () {
         given: 'a valid tournament'
         def tournament = new TournamentDto ()
         tournament.setBeginDate(beginDate.format(formatter))
-        expect: false
+        tournament.setEndDateDate(endDate.format(formatter))
+        tournament.setNumberOfQuestions(NUMBER_OF_QUESTIONS)
+        tournament.setTopics(topics)
+
+        when:
+        tournamentService.createTournament(USER_NAME, tournament)
+
+        then: "the correct tournament is inside the repository"
+        tournamentRepository.count() == 1L
+        def result = tournamentRepository.findAll().get(0)
+        result.getId() != null
+        result.getBeginDate().format(formatter) == beginDate.format(formatter)
+        result.getEndDate().format(formatter) == endDate.format(formatter)
+        result.getCreator().getUsername() == user.getUsername()
+        result.getNumberOfQuestions() == NUMBER_OF_QUESTIONS
     }
 
     def 'create a tournament with begin date empty' () {
-        //exception expected
-        expect: true
+        given: 'a tournament without begin date'
+        def tournament = new TournamentDto ()
+        tournament.setBeginDate(null)
+        tournament.setEndDateDate(endDate.format(formatter))
+        tournament.setNumberOfQuestions(NUMBER_OF_QUESTIONS)
+        tournament.setTopics(topics)
+
+        when:
+        tournamentService.createTournament(USER_NAME, tournament)
+
+        then: 'an exception is thrown'
+        def exception = thrown(TutorException)
+        exception.errorMessage == ErrorMessage.BEGIN_DATE_IS_EMPTY
     }
 
     def 'create a tournament with end date empty' () {
-        //exception expected
-        expect: true
+        given: 'a tournament without end date'
+        def tournament = new TournamentDto ()
+        tournament.setBeginDate(beginDate.format(formatter))
+        tournament.setEndDateDate(null)
+        tournament.setNumberOfQuestions(NUMBER_OF_QUESTIONS)
+        tournament.setTopics(topics)
+
+        when:
+        tournamentService.createTournament(USER_NAME, tournament)
+
+        then: 'an exception is thrown'
+        def exception = thrown(TutorException)
+        exception.errorMessage == ErrorMessage.END_DATE_IS_EMPTY
     }
 
     def 'create a tournament with a negative number of questions' () {
-        //exception expected
-        expect: true
+        given: 'a tournament with a negative number of questions'
+        def tournament = new TournamentDto ()
+        tournament.setBeginDate(beginDate.format(formatter))
+        tournament.setEndDateDate(endDate.format(formatter))
+        tournament.setNumberOfQuestions(NEGATIVE_NUMBER_OF_QUESTIONS)
+        tournament.setTopics(topics)
+
+        when:
+        tournamentService.createTournament(USER_NAME, tournament)
+
+        then: 'an exception is thrown'
+        def exception = thrown(TutorException)
+        exception.errorMessage == ErrorMessage.NEGATIVE_NUMBER_OF_QUESTIONS
     }
 
     def 'create a tournament with 0 questions' () {
-        //exception expected
-        expect: true
+        given: 'a tournament with a negative number of questions'
+        def tournament = new TournamentDto ()
+        tournament.setBeginDate(beginDate.format(formatter))
+        tournament.setEndDateDate(endDate.format(formatter))
+        tournament.setNumberOfQuestions(0)
+        tournament.setTopics(topics)
+
+        when:
+        tournamentService.createTournament(USER_NAME, tournament)
+
+        then: 'an exception is thrown'
+        def exception = thrown(TutorException)
+        exception.errorMessage == ErrorMessage.NUMBER_OF_QUESTIONS_IS_ZERO
     }
 
     def 'create a tournament without topics' () {
-        //exception expected
-        expect: true
+        given: 'a tournament with a negative number of questions'
+        def tournament = new TournamentDto ()
+        tournament.setBeginDate(beginDate.format(formatter))
+        tournament.setEndDateDate(endDate.format(formatter))
+        tournament.setNumberOfQuestions(NUMBER_OF_QUESTIONS)
+        tournament.setTopics(emptyTopics)
+
+        when:
+        tournamentService.createTournament(USER_NAME, tournament)
+
+        then: 'an exception is thrown'
+        def exception = thrown(TutorException)
+        exception.errorMessage == ErrorMessage.NO_TOPICS
     }
 
     def 'create a tournament with not existing topics' () {
-        //exception expected
-        expect: true
+        given: 'a tournament with a negative number of questions'
+        def tournament = new TournamentDto ()
+        tournament.setBeginDate(beginDate.format(formatter))
+        tournament.setEndDateDate(endDate.format(formatter))
+        tournament.setNumberOfQuestions(NUMBER_OF_QUESTIONS)
+        tournament.setTopics(emptyTopics)
+
+        when:
+        tournamentService.createTournament(USER_NAME, tournament)
+
+        then: 'an exception is thrown'
+        def exception = thrown(TutorException)
+        exception.errorMessage == ErrorMessage.NO_TOPICS
     }
 
     def 'create a tournament with beginDate after endDate' () {
-        expect:true
+        given: 'a tournament with beginDate after endDate'
+        def tournament = new TournamentDto ()
+        tournament.setBeginDate(endDate.format(formatter))
+        tournament.setEndDateDate(beginDate.format(formatter))
+        tournament.setNumberOfQuestions(NUMBER_OF_QUESTIONS)
+        tournament.setTopics(topics)
+
+        when:
+        tournamentService.createTournament(USER_NAME, tournament)
+
+        then: 'an exception is thrown'
+        def exception = thrown(TutorException)
+        exception.errorMessage == ErrorMessage.END_DATE_IS_BEFORE_BEGIN
+    }
+
+    def 'create a tournament with user not existing' () {
+        given: 'a tournament with user not existing'
+        def tournament = new TournamentDto ()
+        tournament.setBeginDate(endDate.format(formatter))
+        tournament.setEndDateDate(beginDate.format(formatter))
+        tournament.setNumberOfQuestions(NUMBER_OF_QUESTIONS)
+        tournament.setTopics(topics)
+
+        when:
+        tournamentService.createTournament(USER_NAME_NOT_EXISTING, tournament)
+
+        then: 'an exception is thrown'
+        def exception = thrown(TutorException)
+        exception.errorMessage == ErrorMessage.USER_NOT_FOUND
     }
 
     @TestConfiguration

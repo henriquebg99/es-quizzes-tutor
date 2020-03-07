@@ -37,16 +37,6 @@ public class TournamentDto implements Serializable {
         this.numberOfQuestions = numberOfQuestions;
     }
 
-    public UserDto getCreator() {
-        return creator;
-    }
-
-    public void setCreator(UserDto creator) {
-        this.creator = creator;
-    }
-
-    private UserDto creator = null;
-
     public String getBeginDate() {
         return beginDate;
     }

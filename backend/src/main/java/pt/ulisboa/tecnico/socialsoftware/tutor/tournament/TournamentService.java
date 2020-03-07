@@ -6,11 +6,12 @@ import java.util.List;
 
 @Service
 public class TournamentService {
-    public TournamentDto createTournament (TournamentDto tournamentDto) {
+    //see AnswerService
+    public TournamentDto createTournament (String username, TournamentDto tournamentDto) {
         return null;
     }
 
-    public void enrollTournament (Integer userId, Integer tournamentId) {
+    public void enrollTournament (String username, Integer tournamentId) {
 
     }
 
@@ -19,7 +20,7 @@ public class TournamentService {
     }
 
 
-    public void cancelTournament (Integer userId, Integer tournamentId) {
+    public void cancelTournament (String username, Integer tournamentId) {
 
     }
 }
