@@ -1,21 +1,20 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.service
 
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.PpaService
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.ProposedQuestionService
 import spock.lang.Specification
 
 class QuestionApprovalTest extends Specification{
-    def ppaService
+    def proposedQuestionService
 
     def setup(){
-        ppaService = new PpaService()
+        proposedQuestionService = new ProposedQuestionService()
     }
 
     def "approve question and add to the question bank"() {
         //add question
         expect: false
     }
-
 
     def "reject question"() {
         //reject question
@@ -36,8 +35,6 @@ class QuestionApprovalTest extends Specification{
         //an exception is thrown
         expect: false
     }
-
-
 
 }
 

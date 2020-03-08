@@ -1,7 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question;
 
-
-public class PpaService {
+public class ProposedQuestionService extends QuestionService{
     public boolean QuestionApproval(){
         return  false;
     }
