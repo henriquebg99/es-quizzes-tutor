@@ -11,43 +11,34 @@ class QuestionApprovalTest extends Specification{
         ppaService = new PpaService()
     }
 
-    def "question exists and approve question"() {
-        //approve question
+    def "approve question and add to the question bank"() {
+        //add question
         expect: false
     }
 
-    def "question is repeated"(){
-        //an exception is thrown
+
+    def "reject question"() {
+        //reject question
         expect: false
     }
-    def "question doesnt exist"(){
-        //an exception is thrown
-        expect : false
-    }
 
-    def "question submitted isn't related to  a topic"(){
+    def "question already exists"(){
         //an exception is thrown
         expect: false
     }
 
-    def "question course is not in execution"() {
-        //an exception is thrown
-        expect: false
-    }
-    def "question course doesnt exist"(){
-        //an exception is thrown
-        expect: false
-
-    }
-    def "number of options is different than 4"(){
+    def "submission is blank"(){
         //an exception is thrown
         expect: false
     }
 
-    def "user is not a student"(){
+    def "submission is empty"(){
         //an exception is thrown
         expect: false
     }
+
+
+
 }
 
 
