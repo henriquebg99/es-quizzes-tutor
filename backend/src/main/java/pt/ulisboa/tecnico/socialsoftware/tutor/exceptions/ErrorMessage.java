@@ -58,7 +58,13 @@ public enum ErrorMessage {
     NEGATIVE_NUMBER_OF_QUESTIONS ("The number of questions is negative."),
     NUMBER_OF_QUESTIONS_IS_ZERO("The number of questions is zero."),
     NO_TOPICS ("No topics."),
-    END_DATE_IS_BEFORE_BEGIN ("The end date is before the begin date.");
+    END_DATE_IS_BEFORE_BEGIN ("The end date is before the begin date."),
+
+    USER_DID_NOT_CREATE_TOURNAMENT ("A tournament must be canceled by the user that created it."),
+    TOURNAMENT_ID_NOT_FOUND("Tournament id not found"),
+    TOURNAMENT_ENDED("Tournament already ended"),
+    TOURNAMENT_HAPPENING("Tournament is still occurring"),
+    TOURNAMENT_ID_EMPTY("Tournament id is empty");
 
     public final String label;
 

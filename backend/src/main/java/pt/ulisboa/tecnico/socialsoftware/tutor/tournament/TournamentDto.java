@@ -19,12 +19,11 @@ import java.util.stream.Collectors;
 
 
 public class TournamentDto implements Serializable {
-    private int id;
+    private Integer id;
     private String beginDate = null;
     private String endDateDate = null;
     private List<TopicDto> topics = null;
     private int numberOfQuestions;
-
     public TournamentDto () {
 
     }
@@ -65,7 +64,7 @@ public class TournamentDto implements Serializable {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
