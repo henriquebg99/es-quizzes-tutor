@@ -49,14 +49,24 @@ class SubmitQuestionTest extends Specification {
         expect: false
     }
 
+    def "submit a question with blank question"() {
+        //it needs to return an exception and does not create question
+        expect: false
+    }
+
+    def "submit a question with blank option"() {
+        //it needs to return an exception and does not create question
+        expect: false
+    }
+
     //FIXME may need more tests
 
     @TestConfiguration
-    static class QuestionServiceImplTestContextConfiguration {
+    static class ProposedQuestionServiceImplTestContextConfiguration {
 
         @Bean
-        QuestionService questionService() {
-            return new QuestionService()
+        ProposedQuestionService proposedQuestionService1() {
+            return new ProposedQuestionService()
         }
     }
 
