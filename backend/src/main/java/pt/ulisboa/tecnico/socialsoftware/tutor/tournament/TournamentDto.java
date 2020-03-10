@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.tournament;
 
 import org.springframework.data.annotation.Transient;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
@@ -12,20 +13,41 @@ import javax.persistence.Column;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
 public class TournamentDto implements Serializable {
     private Integer id;
     private String beginDate = null;
-    private String endDateDate = null;
-    private List<TopicDto> topics = null;
+    private String endDate = null;
+    private Set<TopicDto> topics = null;
     private int numberOfQuestions;
+
     public TournamentDto () {
 
+    }
+
+    public TournamentDto (Tournament tournament) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        this.topics = new HashSet<TopicDto>();
+        this.id = tournament.getId();
+        this.beginDate = tournament.getBeginDate().format(formatter);
+        this.endDate = tournament.getEndDate().format(formatter);
+        this.numberOfQuestions = tournament.getNumberOfQuestions();
+
+        for (Topic topic : tournament.getTopics()) {
+            TopicDto topicDto = new TopicDto(topic);
+            this.addTopic(topicDto);
+        }
+    }
+
+    public Set<TopicDto> getTopics() {
+        return topics;
+    }
+
+    public void setTopics(Set<TopicDto> topics) {
+        this.topics = topics;
     }
 
     public int getNumberOfQuestions() {
@@ -44,20 +66,12 @@ public class TournamentDto implements Serializable {
         this.beginDate = beginDate;
     }
 
-    public String getEndDateDate() {
-        return endDateDate;
+    public String getEndDate() {
+        return endDate;
     }
 
-    public void setEndDateDate(String endDateDate) {
-        this.endDateDate = endDateDate;
-    }
-
-    public List<TopicDto> getTopics() {
-        return topics;
-    }
-
-    public void setTopics(List<TopicDto> topics) {
-        this.topics = topics;
+    public void setEndDate(String endDate) {
+        this.endDate = endDate;
     }
 
     public int getId() {
@@ -67,6 +81,8 @@ public class TournamentDto implements Serializable {
     public void setId(Integer id) {
         this.id = id;
     }
+
+    public void addTopic (TopicDto topicDto) {this.topics.add(topicDto);}
 
     @Override
     public String toString() {
