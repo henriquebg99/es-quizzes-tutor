@@ -39,7 +39,6 @@ public class TournamentService {
     @Autowired
     private TournamentRepository tournamentRepository;
 
-    //FIXME see AnswerService
     @Retryable(
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
@@ -76,6 +75,8 @@ public class TournamentService {
         tournament.setBeginDate(beginDate);
         tournament.setEndDate(endDate);
 
+        courseExecution.addTournament(tournament);
+
         int courseId = courseExecution.getCourse().getId();
 
         if (tournamentDto.getTopics() == null || tournamentDto.getTopics().isEmpty())
@@ -86,6 +87,7 @@ public class TournamentService {
             if (topic == null)
                 throw new TutorException(ErrorMessage.TOPIC_NOT_FOUND_NAME, topicDto.getName());
             tournament.addTopic(topic);
+            topic.addTournament(tournament);
         }
 
         tournamentRepository.save(tournament);

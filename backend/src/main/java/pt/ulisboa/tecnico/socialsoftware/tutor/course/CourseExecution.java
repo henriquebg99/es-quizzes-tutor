@@ -135,6 +135,10 @@ public class CourseExecution {
         users.add(user);
     }
 
+    public void addTournament(Tournament tournament) {this.tournaments.add(tournament);}
+
+    public Set<Tournament> getTournaments () {return this.tournaments;}
+
     public Course.Type getType() {
         return type;
     }

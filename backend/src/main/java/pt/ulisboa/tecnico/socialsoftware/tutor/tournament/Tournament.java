@@ -109,4 +109,19 @@ public class Tournament {
     public void addTopic (Topic topic) {
         this.topics.add(topic);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o instanceof Tournament) {
+            Tournament t = (Tournament) o;
+            return this.courseExecution.equals(t.courseExecution) &&
+                    this.numberOfQuestions.equals(t.numberOfQuestions) &&
+                    this.creator.equals(t.creator) &&
+                    this.beginDate.equals(t.beginDate) &&
+                    this.endDate.equals(t.endDate) &&
+                    this.topics.equals(t.topics);
+        }
+        return false;
+    }
 }
