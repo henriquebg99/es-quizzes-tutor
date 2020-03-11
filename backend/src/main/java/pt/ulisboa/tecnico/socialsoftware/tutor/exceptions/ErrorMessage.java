@@ -56,8 +56,7 @@ public enum ErrorMessage {
     USER_NOT_FOUND("User not found with id %d"),
     END_DATE_IS_EMPTY("End date is empty."),
     BEGIN_DATE_IS_EMPTY("Begin date is empty."),
-    NEGATIVE_NUMBER_OF_QUESTIONS ("The number of questions is negative."),
-    NUMBER_OF_QUESTIONS_IS_ZERO("The number of questions is zero."),
+    INVALID_NUMBER_OF_QUESTIONS ("The number of questions is less than one."),
     NO_TOPICS ("No topics."),
     END_DATE_IS_BEFORE_BEGIN ("The end date is before the begin date."),
 
@@ -65,7 +64,8 @@ public enum ErrorMessage {
     TOURNAMENT_ID_NOT_FOUND("Tournament id not found"),
     TOURNAMENT_ENDED("Tournament already ended"),
     TOURNAMENT_HAPPENING("Tournament is still occurring"),
-    TOURNAMENT_ID_EMPTY("Tournament id is empty");
+    TOURNAMENT_ID_EMPTY("Tournament id is empty"),
+    USERNAME_EMPTY ("Username is empty");
 
     public final String label;
 

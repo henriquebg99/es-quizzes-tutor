@@ -18,7 +18,10 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
+import spock.lang.Shared
 import spock.lang.Specification
+import spock.lang.Unroll
+
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -31,10 +34,14 @@ class CreateTournamentTest extends Specification {
     public static final String USER_USERNAME_NOT_EXISTING = "username2"
     public static final int USER_KEY = 1
     public static final int NUMBER_OF_QUESTIONS = 5
-    public static final int NEGATIVE_NUMBER_OF_QUESTIONS = -1
     public static final String COURSE_NAME = "Software Architecture"
     public static final String ACRONYM = "AS1"
     public static final String ACADEMIC_TERM = "1 SEM"
+    public static final LocalDateTime beginDate = LocalDateTime.now().plusDays(1)
+    public static final LocalDateTime endDate = LocalDateTime.now().plusDays(2)
+    public static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+    public static final String beginDateString = beginDate.format(formatter)
+    public static final String endDateString  = endDate.format(formatter);
 
     @Autowired
     TournamentRepository tournamentRepository
@@ -54,24 +61,14 @@ class CreateTournamentTest extends Specification {
     @Autowired
     CourseExecutionRepository courseExecutionRepository
 
-    def formatter
-    def beginDate
-    def endDate
-    def topics
-    def emptyTopics
+    def topic
     def user
     def course
     def courseExecution
-    def topic
-    def notExistingTopics
-
+    def topics, notExistingTopics, emptyTopics
     //FIXME other test: not enough questions, see StatementService
 
     def setup() {
-        formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
-        beginDate = LocalDateTime.now().plusDays(1)
-        endDate = LocalDateTime.now().plusDays(2)
-
         def topicDto = new TopicDto()
         topicDto.setName(TOPIC_NAME)
 
@@ -97,6 +94,32 @@ class CreateTournamentTest extends Specification {
         topic = new Topic (course, topicDto)
         topic.setName(TOPIC_NAME)
         topicRepository.save(topic)
+    }
+
+    @Unroll
+    def 'create a tournament with empty #unrollBeginDate, #unrollEndDate, #unrollUsername'() {
+        given: 'null arguments'
+        def tournament = new TournamentDto ()
+        tournament.setBeginDate(unrollBeginDate)
+        tournament.setEndDate(unrollEndDate)
+        tournament.setNumberOfQuestions(unrollNumberOfQuestions)
+        tournament.setTopics(topics)
+
+        when:
+        tournamentService.createTournament(unrollUsername, courseExecution.getId(), tournament)
+
+        then:
+        def error = thrown(TutorException)
+        error.errorMessage == unrollErrorMessage
+
+        where:
+
+        unrollUsername | unrollBeginDate | unrollEndDate | unrollNumberOfQuestions || unrollErrorMessage
+        null           | beginDateString | endDateString | NUMBER_OF_QUESTIONS     || ErrorMessage.USERNAME_EMPTY
+        USER_USERNAME  | null            | endDateString | NUMBER_OF_QUESTIONS     || ErrorMessage.BEGIN_DATE_IS_EMPTY
+        USER_USERNAME  | beginDateString | null          | NUMBER_OF_QUESTIONS     || ErrorMessage.END_DATE_IS_EMPTY
+        USER_USERNAME  | beginDateString | endDateString | -5                      || ErrorMessage.INVALID_NUMBER_OF_QUESTIONS
+        USER_USERNAME  | beginDateString | endDateString |  0                      || ErrorMessage.INVALID_NUMBER_OF_QUESTIONS
     }
 
     def 'create a tournament' () {
@@ -127,72 +150,24 @@ class CreateTournamentTest extends Specification {
 
     }
 
-    def 'create a tournament with begin date empty' () {
-        given: 'a tournament without begin date'
+    def 'create a tournament with topics null' () {
+        given: 'a tournament with not existing topics'
         def tournament = new TournamentDto ()
-        tournament.setBeginDate(null)
+        tournament.setBeginDate(beginDate.format(formatter))
         tournament.setEndDate(endDate.format(formatter))
         tournament.setNumberOfQuestions(NUMBER_OF_QUESTIONS)
-        tournament.setTopics(topics)
-
-        when:
-        tournamentService.createTournament(USER_USERNAME, courseExecution.getId(),  tournament)
-
-        then: 'an exception is thrown'
-        def exception = thrown(TutorException)
-        exception.errorMessage == ErrorMessage.BEGIN_DATE_IS_EMPTY
-    }
-
-    def 'create a tournament with end date empty' () {
-        given: 'a tournament without end date'
-        def tournament = new TournamentDto ()
-        tournament.setBeginDate(beginDate.format(formatter))
-        tournament.setEndDate(null)
-        tournament.setNumberOfQuestions(NUMBER_OF_QUESTIONS)
-        tournament.setTopics(topics)
+        tournament.setTopics(null)
 
         when:
         tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournament)
 
         then: 'an exception is thrown'
         def exception = thrown(TutorException)
-        exception.errorMessage == ErrorMessage.END_DATE_IS_EMPTY
+        exception.errorMessage == ErrorMessage.NO_TOPICS
     }
 
-    def 'create a tournament with a negative number of questions' () {
-        given: 'a tournament with a negative number of questions'
-        def tournament = new TournamentDto ()
-        tournament.setBeginDate(beginDate.format(formatter))
-        tournament.setEndDate(endDate.format(formatter))
-        tournament.setNumberOfQuestions(NEGATIVE_NUMBER_OF_QUESTIONS)
-        tournament.setTopics(topics)
-
-        when:
-        tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournament)
-
-        then: 'an exception is thrown'
-        def exception = thrown(TutorException)
-        exception.errorMessage == ErrorMessage.NEGATIVE_NUMBER_OF_QUESTIONS
-    }
-
-    def 'create a tournament with 0 questions' () {
-        given: 'a tournament with 0 questions'
-        def tournament = new TournamentDto ()
-        tournament.setBeginDate(beginDate.format(formatter))
-        tournament.setEndDate(endDate.format(formatter))
-        tournament.setNumberOfQuestions(0)
-        tournament.setTopics(topics)
-
-        when:
-        tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournament)
-
-        then: 'an exception is thrown'
-        def exception = thrown(TutorException)
-        exception.errorMessage == ErrorMessage.NUMBER_OF_QUESTIONS_IS_ZERO
-    }
-
-    def 'create a tournament without topics' () {
-        given: 'a tournament without topics'
+    def 'create a tournament with topics empty set' () {
+        given: 'a tournament with not existing topics'
         def tournament = new TournamentDto ()
         tournament.setBeginDate(beginDate.format(formatter))
         tournament.setEndDate(endDate.format(formatter))
@@ -206,6 +181,8 @@ class CreateTournamentTest extends Specification {
         def exception = thrown(TutorException)
         exception.errorMessage == ErrorMessage.NO_TOPICS
     }
+
+
 
     def 'create a tournament with not existing topics' () {
         given: 'a tournament with not existing topics'
@@ -266,9 +243,9 @@ class CreateTournamentTest extends Specification {
         when:
         tournamentService.createTournament(USER_USERNAME, 1000, tournament)
 
-        then: "the correct tournament is inside the repository"
+        then: "an exception is thrown"
         def exception = thrown(TutorException)
-        exception.errorMessage == ErrorMessage.COURSE_EXECUTION_NOT_FOUND;
+        exception.errorMessage == ErrorMessage.COURSE_EXECUTION_NOT_FOUND
     }
 
     @TestConfiguration

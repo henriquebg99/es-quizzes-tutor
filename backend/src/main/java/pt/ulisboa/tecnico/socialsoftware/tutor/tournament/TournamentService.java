@@ -44,6 +44,9 @@ public class TournamentService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public TournamentDto createTournament (String username, int courseExecutionId, TournamentDto tournamentDto) {
+        if (username == null)
+            throw new TutorException(ErrorMessage.USERNAME_EMPTY);
+
         User user = userRepository.findByUsername(username);
         CourseExecution courseExecution = courseExecutionRepository.findById(courseExecutionId)
                 .orElseThrow(() -> new TutorException(ErrorMessage.COURSE_EXECUTION_NOT_FOUND, courseExecutionId));
@@ -53,17 +56,31 @@ public class TournamentService {
         if (user == null)
             throw new TutorException(ErrorMessage.USERNAME_NOT_FOUND, username);
 
+        checkQuestionNumber(tournamentDto);
+
+        Tournament tournament = new Tournament (user, tournamentDto, courseExecution);
+
+        checkAndSetDates(tournamentDto, formatter, tournament);
+        courseExecution.addTournament(tournament);
+        int courseId = courseExecution.getCourse().getId();
+        checkAndAndTopics(tournamentDto, tournament, courseId);
+
+        tournamentRepository.save(tournament);
+
+        return new TournamentDto(tournament);
+    }
+
+    private void checkQuestionNumber(TournamentDto tournamentDto) {
+        if (tournamentDto.getNumberOfQuestions() <= 0)
+            throw new TutorException(ErrorMessage.INVALID_NUMBER_OF_QUESTIONS);
+    }
+
+    private void checkAndSetDates(TournamentDto tournamentDto, DateTimeFormatter formatter, Tournament tournament) {
         if (tournamentDto.getBeginDate() == null)
             throw new TutorException(ErrorMessage.BEGIN_DATE_IS_EMPTY);
 
         if (tournamentDto.getEndDate() == null)
             throw new TutorException(ErrorMessage.END_DATE_IS_EMPTY);
-
-        if (tournamentDto.getNumberOfQuestions() < 0)
-            throw new TutorException(ErrorMessage.NEGATIVE_NUMBER_OF_QUESTIONS);
-
-        if (tournamentDto.getNumberOfQuestions() == 0)
-            throw new TutorException(ErrorMessage.NUMBER_OF_QUESTIONS_IS_ZERO);
 
         LocalDateTime beginDate = LocalDateTime.parse(tournamentDto.getBeginDate(), formatter);
         LocalDateTime endDate = LocalDateTime.parse(tournamentDto.getEndDate(), formatter);
@@ -71,14 +88,11 @@ public class TournamentService {
         if (endDate.isBefore(beginDate))
             throw new TutorException(ErrorMessage.END_DATE_IS_BEFORE_BEGIN);
 
-        Tournament tournament = new Tournament (user, tournamentDto, courseExecution);
         tournament.setBeginDate(beginDate);
         tournament.setEndDate(endDate);
+    }
 
-        courseExecution.addTournament(tournament);
-
-        int courseId = courseExecution.getCourse().getId();
-
+    private void checkAndAndTopics(TournamentDto tournamentDto, Tournament tournament, int courseId) {
         if (tournamentDto.getTopics() == null || tournamentDto.getTopics().isEmpty())
             throw new TutorException(ErrorMessage.NO_TOPICS);
 
@@ -89,10 +103,6 @@ public class TournamentService {
             tournament.addTopic(topic);
             topic.addTournament(tournament);
         }
-
-        tournamentRepository.save(tournament);
-
-        return new TournamentDto(tournament);
     }
 
     @Retryable(
