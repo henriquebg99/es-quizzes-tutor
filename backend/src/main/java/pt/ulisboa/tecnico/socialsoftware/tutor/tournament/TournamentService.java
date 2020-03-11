@@ -120,10 +120,12 @@ public class TournamentService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<TournamentDto> listOpenTournaments() {
-        /*return tournamentRepository.findAll().stream()
+        LocalDateTime date = LocalDateTime.now().plusDays(0);
+
+        return tournamentRepository.findAll().stream()
+                .filter(tournament -> date.isBefore(tournament.getEndDate()))
                 .map(tournament -> new TournamentDto(tournament))
-                .collect(Collectors.toList());*/
-        return null;
+                .collect(Collectors.toList());
     }
 
     @Retryable(
