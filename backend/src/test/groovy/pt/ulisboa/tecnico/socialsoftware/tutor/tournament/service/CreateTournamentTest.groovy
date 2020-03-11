@@ -119,8 +119,12 @@ class CreateTournamentTest extends Specification {
         result.getCreator().getUsername() == user.getUsername()
         result.getNumberOfQuestions() == NUMBER_OF_QUESTIONS
         result.getCourseExecution().getId() == courseExecution.getId()
+        result.getCourseExecution().getAcronym() == courseExecution.getAcronym()
         result.getTopics().size() == 1
         result.getTopics()[0].getId() == topic.getId()
+        result.getTopics()[0].getTournaments().contains(result);
+        result.getCourseExecution().getTournaments().contains(result);
+
     }
 
     def 'create a tournament with begin date empty' () {
