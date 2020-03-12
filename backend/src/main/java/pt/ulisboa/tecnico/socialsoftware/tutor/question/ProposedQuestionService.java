@@ -14,9 +14,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.QuestionsXmlImport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Image;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.ProposedQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ProposedQuestionDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.ProposedQuestionRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 
@@ -55,7 +53,7 @@ public class ProposedQuestionService {
                 .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
     }
 
-    /* FIXME map nao e reconhecido?
+    /* FIXME map method not find in proposed question? cannot resolve constructor on ProposedQuestionDto?
 
     @Retryable(
             value = { SQLException.class },
@@ -95,5 +93,24 @@ public class ProposedQuestionService {
         return new ProposedQuestionDto(proposedQuestion);
     }
 
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public void uploadImage(Integer questionId, String type) {
+        ProposedQuestion proposedQuestion = proposedQuestionRepository.findById(questionId).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
+
+        Image image = proposedQuestion.getImage();
+
+        if (image == null) {
+            image = new Image();
+
+            proposedQuestion.setImage(image);
+
+            entityManager.persist(image);
+        }
+
+        proposedQuestion.getImage().setUrl(proposedQuestion.getKey() + "." + type);
+    }
 
 }
