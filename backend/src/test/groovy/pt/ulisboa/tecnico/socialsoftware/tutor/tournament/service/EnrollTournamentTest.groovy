@@ -137,12 +137,12 @@ class EnrollTournamentTest extends Specification{
 
     def 'enroll on an ended tournament'() {
         given:
-            beginDate = LocalDateTime.now()
-            endDate = LocalDateTime.now().plusMinutes(1)
+            beginDate = LocalDateTime.now().plusMinutes(1)
+            endDate = LocalDateTime.now().plusMinutes(2)
             tournament.setBeginDate(beginDate.format(formatter))
             tournament.setEndDate(endDate.format(formatter))
             tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournament)
-            sleep(60000)
+            sleep(130000)
 
             def tournaments = tournamentRepository.findAll()
             def tournament = tournaments[0]

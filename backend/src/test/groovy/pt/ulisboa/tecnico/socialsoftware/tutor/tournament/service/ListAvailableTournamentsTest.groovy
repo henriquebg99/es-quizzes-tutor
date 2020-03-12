@@ -120,12 +120,12 @@ class ListAvailableTournamentsTest extends Specification{
     //Testar se dá para listar um torneio acabado
     def 'the tournament is over'() {
         given:
-            beginDate = LocalDateTime.now()
-            endDate = LocalDateTime.now().plusMinutes(1)
+            beginDate = LocalDateTime.now().plusMinutes(1)
+            endDate = LocalDateTime.now().plusMinutes(2)
             tournament.setBeginDate(beginDate.format(formatter))
             tournament.setEndDate(endDate.format(formatter))
             tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournament)
-            sleep(60000)
+            sleep(130000)
 
         when:
             def tournaments = tournamentService.listOpenTournaments()
