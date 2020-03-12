@@ -19,6 +19,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import spock.lang.Specification
+
+import javax.persistence.EntityNotFoundException
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -28,7 +30,6 @@ class CancelTournamentTest extends Specification {
     public static final String USER_USERNAME = "username"
     public static final String USER_NAME = "name"
     public static final String USER_USERNAME_NOT_CREATOR = "username2"
-    public static final String USER_USERNAME_NOT_EXISTING = "username3"
     public static final int    USER_KEY = 1
     public static final int    BEGIN_DAYS = 1
     public static final int    END_DAYS = 2
@@ -101,23 +102,31 @@ class CancelTournamentTest extends Specification {
         given: 'a valid tournament canceled'
         tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournament)
 
+        def tournaments = tournamentRepository.findAll()
+        def tournament = tournaments[0]
+        def tournamentId = tournament.getId()
+
         when:
-        tournamentService.cancelTournament(USER_USERNAME, tournament.getId())
+        tournamentService.cancelTournament(USER_USERNAME, tournamentId)
 
         then: "the tournament is set as canceled"
-        !tournament.getCanceled()
+        tournament.getCanceled()
     }
 
-    def 'cancel a tournament that does not exit' () {
-        given: 'a tournament with an id'
+    def 'a tournament is canceled by a student with a empty username' () {
+        given: 'a tournament'
         tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournament)
 
+        def tournaments = tournamentRepository.findAll()
+        def tournament = tournaments[0]
+        def tournamentId = tournament.getId()
+
         when:
-        tournamentService.cancelTournament(USER_USERNAME, ID_NOT_EXISTING)
+        tournamentService.cancelTournament(null, tournamentId)
 
         then: 'an exception is thrown'
         def exception = thrown(TutorException)
-        exception.errorMessage == ErrorMessage.TOURNAMENT_ID_NOT_FOUND
+        exception.errorMessage == ErrorMessage.USERNAME_EMPTY
     }
 
     def 'cancel a tournament with empty id' () {
@@ -132,42 +141,68 @@ class CancelTournamentTest extends Specification {
         exception.errorMessage == ErrorMessage.TOURNAMENT_ID_EMPTY
     }
 
-    def 'cancel a tournament that is happening or has already ended' () {
+    def 'a tournament is canceled by a user that did not create it' () {
         given: 'a tournament'
         tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournament)
-        def currentDate = LocalDateTime.now().plusDays(END_DAYS)
-        currentDate.isAfter(beginDate)
+
+        def tournaments = tournamentRepository.findAll()
+        def tournament = tournaments[0]
+        def tournamentId = tournament.getId()
 
         when:
-        tournamentService.cancelTournament(USER_USERNAME, tournament.getId())
+        tournamentService.cancelTournament(USER_USERNAME_NOT_CREATOR, tournamentId)
+
+        then: 'an exception is thrown'
+        def exception = thrown(TutorException)
+        exception.errorMessage == ErrorMessage.USER_USERNAME_NOT_CREATOR
+    }
+
+    def 'cancel a tournament that does not exit' () {
+        given: 'a tournament with an id'
+        tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournament)
+
+        when:
+        tournamentService.cancelTournament(USER_USERNAME, ID_NOT_EXISTING)
+
+        then: 'an exception is thrown'
+        thrown EntityNotFoundException
+    }
+
+
+    def 'cancel a tournament that is happening or has already ended' () {
+        given: 'a tournament'
+        beginDate = LocalDateTime.now().plusDays(-2)
+        endDate = LocalDateTime.now().plusDays(-1)
+        tournament.setBeginDate(beginDate.format(formatter))
+        tournament.setEndDate(endDate.format(formatter))
+        tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournament)
+
+        def tournaments = tournamentRepository.findAll()
+        def tournament = tournaments[0]
+        def tournamentId = tournament.getId()
+
+        when:
+        tournamentService.cancelTournament(USER_USERNAME, tournamentId)
 
         then: 'an exception is thrown'
         def exception = thrown(TutorException)
         exception.errorMessage == ErrorMessage.TOURNAMENT_HAPPENING_OR_ENDED
     }
 
-    def 'a tournament is canceled by a student that does not exist' () {
-        given: 'a tournament'
+    def 'cancel a tournament that is already canceled' () {
+        given: 'a tournament with an id'
         tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournament)
+        def tournaments = tournamentRepository.findAll()
+        def tournament = tournaments[0]
+        def tournamentId = tournament.getId()
+        tournamentService.cancelTournament(USER_USERNAME, tournamentId)
 
         when:
-        tournamentService.cancelTournament(USER_USERNAME_NOT_EXISTING, tournament.getId())
+        tournamentService.cancelTournament(USER_USERNAME, tournamentId)
 
         then: 'an exception is thrown'
         def exception = thrown(TutorException)
-        exception.errorMessage == ErrorMessage.USER_NOT_FOUND
-    }
-
-    def 'a tournament is canceled by a user that did not create it' () {
-        given: 'a tournament'
-        tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournament)
-
-        when:
-        tournamentService.cancelTournament(USER_USERNAME_NOT_CREATOR, tournament.getId())
-
-        then: 'an exception is thrown'
-        def exception = thrown(TutorException)
-        exception.errorMessage == ErrorMessage.USER_USERNAME_NOT_CREATOR
+        exception.errorMessage == ErrorMessage.TOURNAMENT_ALREADY_CANCELED
     }
 
     /*FIXME add more tests about topics*/

@@ -63,6 +63,7 @@ public class Tournament {
         this.creator = user;
         this.courseExecution = courseExecution;
         this.numberOfQuestions = tournamentDto.getNumberOfQuestions();
+        setCanceled(false);
     }
 
     public Integer getNumberOfQuestions() {

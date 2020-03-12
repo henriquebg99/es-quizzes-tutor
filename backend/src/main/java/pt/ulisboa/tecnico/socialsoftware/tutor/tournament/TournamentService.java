@@ -154,9 +154,6 @@ public class TournamentService {
 
         User user = userRepository.findByUsername(username);
 
-        if (user == null)
-            throw new TutorException(ErrorMessage.USERNAME_NOT_FOUND, username);
-
         if (tournamentId == null)
             throw new TutorException(ErrorMessage.TOURNAMENT_ID_EMPTY);
 
