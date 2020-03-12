@@ -25,7 +25,7 @@ public class Option {
     private String content;
 
     @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name = "proposed_question_id")
+    @JoinColumn(name = "proposedQuestion_id")
     private ProposedQuestion proposedQuestion;
 
     @ManyToOne(fetch=FetchType.LAZY)

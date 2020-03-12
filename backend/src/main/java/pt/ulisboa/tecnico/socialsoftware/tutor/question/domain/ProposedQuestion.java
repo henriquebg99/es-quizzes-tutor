@@ -1,11 +1,9 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.Importable;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ImageDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ProposedQuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
 
@@ -21,9 +19,9 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Entity
 @Table(
-        name = "proposed_questions",
+        name = "proposedQuestions",
         indexes = {
-                @Index(name = "proposed_question_indx_0", columnList = "key")
+                @Index(name = "proposedQuestion_indx_0", columnList = "key")
         })
 public class ProposedQuestion {
     @SuppressWarnings("unused")
@@ -40,14 +38,14 @@ public class ProposedQuestion {
 
     private String title;
 
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "proposed_question")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "proposedQuestion")
     private Image image;
 
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "proposed_question", fetch = FetchType.EAGER, orphanRemoval=true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "proposedQuestion", fetch = FetchType.LAZY, orphanRemoval=true)
     private List<Option> options = new ArrayList<>();
 
     @ManyToOne
@@ -102,7 +100,7 @@ public class ProposedQuestion {
 
     public void setImage(Image image) {
         this.image = image;
-        image.setQuestion(this);
+        image.setProposedQuestion(this);
     }
 
     public User getUser() { return user; }

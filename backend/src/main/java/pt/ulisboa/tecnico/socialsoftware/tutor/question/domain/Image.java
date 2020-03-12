@@ -15,7 +15,7 @@ public class Image {
     private Integer width;
 
     @OneToOne
-    @JoinColumn(name="proposed_question_id")
+    @JoinColumn(name="proposedQuestion_id")
     private ProposedQuestion proposedQuestion;
 
     @OneToOne
@@ -46,8 +46,12 @@ public class Image {
         this.question = question;
     }
 
-    public void setQuestion(ProposedQuestion question) {
+    public void setProposedQuestion(ProposedQuestion question) {
         this.proposedQuestion = question;
+    }
+
+    public ProposedQuestion getProposedQuestion() {
+        return proposedQuestion;
     }
 
     public String getUrl() {
