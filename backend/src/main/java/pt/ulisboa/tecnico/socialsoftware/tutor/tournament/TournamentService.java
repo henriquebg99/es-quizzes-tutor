@@ -149,6 +149,33 @@ public class TournamentService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void cancelTournament (String username, Integer tournamentId) {
+        if (username == null)
+            throw new TutorException(ErrorMessage.USERNAME_EMPTY);
 
+        User user = userRepository.findByUsername(username);
+
+        if (user == null)
+            throw new TutorException(ErrorMessage.USERNAME_NOT_FOUND, username);
+
+        if (tournamentId == null)
+            throw new TutorException(ErrorMessage.TOURNAMENT_ID_EMPTY);
+
+        Tournament tournament = tournamentRepository.getOne(tournamentId);
+
+        User creator = tournament.getCreator();
+
+        if (user != creator)
+            throw new TutorException(ErrorMessage.USER_USERNAME_NOT_CREATOR);
+
+        LocalDateTime currentDate = LocalDateTime.now().plusDays(0);
+        LocalDateTime beginDate = tournament.getBeginDate();
+
+        if (currentDate.isAfter(beginDate))
+            throw new TutorException(ErrorMessage.TOURNAMENT_HAPPENING_OR_ENDED);
+
+        if (tournament.getCanceled())
+            throw new TutorException(ErrorMessage.TOURNAMENT_ALREADY_CANCELED);
+
+        tournament.setCanceled(true);
     }
 }

@@ -30,6 +30,9 @@ public class Tournament {
     @Column(name = "number_of_questions")
     private Integer numberOfQuestions;
 
+    @Column(name = "tournament cancel status")
+    private Boolean isCanceled;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User creator;
@@ -122,6 +125,14 @@ public class Tournament {
 
     public Set<User> getEnrollments() {
         return this.enrollments;
+    }
+
+    public Boolean getCanceled() {
+        return isCanceled;
+    }
+
+    public void setCanceled(Boolean canceled) {
+        isCanceled = canceled;
     }
 
     @Override
