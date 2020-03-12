@@ -2,6 +2,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.tournament;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
@@ -36,6 +37,9 @@ public class Tournament {
     @ManyToOne
     @JoinColumn(name = "course_execution_id")
     private CourseExecution courseExecution;
+
+    @ManyToMany(mappedBy = "enrolled_tournaments")
+    private Set<User> enrollments = new HashSet<>();
 
     public CourseExecution getCourseExecution() {
         return courseExecution;
@@ -108,6 +112,16 @@ public class Tournament {
 
     public void addTopic (Topic topic) {
         this.topics.add(topic);
+    }
+
+    public void addEnrollment(User user) {
+        if (!this.enrollments.contains(user)){
+            this.enrollments.add(user);
+        }
+    }
+
+    public Set<User> getEnrollments() {
+        return this.enrollments;
     }
 
     @Override

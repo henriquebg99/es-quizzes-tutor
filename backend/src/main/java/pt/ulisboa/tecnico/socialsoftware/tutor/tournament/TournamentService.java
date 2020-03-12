@@ -112,7 +112,23 @@ public class TournamentService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void enrollTournament (String username, Integer tournamentId) {
+        //TODO falta testar varios argumentos
+        LocalDateTime date = LocalDateTime.now().plusDays(0);
 
+        if (username == null)
+            throw new TutorException(ErrorMessage.USERNAME_EMPTY);
+
+        User user = userRepository.findByUsername(username);
+
+        if (user == null)
+            throw new TutorException(ErrorMessage.USERNAME_NOT_FOUND, username);
+
+        Tournament tournament = tournamentRepository.getOne(tournamentId);
+
+        if (tournament.getEndDate().isAfter(date)) {
+            user.addEnrolledTournament(tournament);
+            tournament.addEnrollment(user);
+        }
     }
 
     @Retryable(

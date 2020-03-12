@@ -104,16 +104,20 @@ class EnrollTournamentTest extends Specification{
             tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournament)
             def tournaments = tournamentService.listOpenTournaments()
             def availableTournamentId = tournaments[0].getId()
+            def user = userRepository.findByUsername(USER_USERNAME)
+            def tournament = tournamentRepository.getOne(availableTournamentId)
 
         when:
             tournamentService.enrollTournament(USER_USERNAME, availableTournamentId)
 
         then: 'tournament has one enrollment'
-            //tournaments[0].getEnrollments().size() == 1
-        and: 'the correct user is enrolled'
-            //tournaments[0].isEnrolled(USER_USERNAME)
-    }
+            tournament.getEnrollments().size() == 1
+            tournament.getEnrollments().contains(user)
 
+        and: 'the correct user is enrolled'
+            user.getEnrolledTournaments().size() == 1
+            user.getEnrolledTournaments().contains(tournament)
+    }
 
     def 'enroll on an ended tournament'() {
         given:
@@ -122,13 +126,19 @@ class EnrollTournamentTest extends Specification{
             tournament.setBeginDate(beginDate.format(formatter))
             tournament.setEndDate(endDate.format(formatter))
             tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournament)
+
+            def tournaments = tournamentRepository.findAll()
+            def tournament = tournaments[0]
             def tournamentId = tournament.getId()
+            def user = userRepository.findByUsername(USER_USERNAME)
 
         when:
             tournamentService.enrollTournament(USER_USERNAME, tournamentId)
 
         then: 'tournament does not have enrollments'
-            //tournament.getEnrollments().size() == 0
+            tournament.getEnrollments().size() == 0
+        and: 'the user is not enrolled in the tournament'
+            user.getEnrolledTournaments().size() == 0
     }
 
     def 'enroll on a canceled tournament'() {
@@ -149,7 +159,7 @@ class EnrollTournamentTest extends Specification{
             tournamentService.enrollTournament(USER_USERNAME, NON_EXISTING_ID)
 
         then: 'tournament does not have enrollments'
-            //tournament.getEnrollments().size() == 0
+            thrown javax.persistence.EntityNotFoundException
     }
 
     def 'enroll on a tournament more than once'() {
@@ -163,7 +173,8 @@ class EnrollTournamentTest extends Specification{
             tournamentService.enrollTournament(USER_USERNAME, availableTournamentId)
 
         then: 'tournament has one enrollment'
-            //tournament.getEnrollments().size() == 1
+            def tour = tournamentRepository.getOne(availableTournamentId)
+            tour.getEnrollments().size() == 1
     }
 
     @TestConfiguration
