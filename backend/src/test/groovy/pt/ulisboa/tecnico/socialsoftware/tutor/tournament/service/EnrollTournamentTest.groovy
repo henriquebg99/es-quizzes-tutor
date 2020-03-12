@@ -22,6 +22,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import spock.lang.Specification
 
+import java.awt.geom.NoninvertibleTransformException
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
@@ -38,6 +39,7 @@ class EnrollTournamentTest extends Specification{
     public static final String ACRONYM            = "AS1"
     public static final String ACADEMIC_TERM      = "1 SEM"
     public static final int    NUMBER_QUESTIONS   = 5
+    public static final int    NON_EXISTING_ID    = 10
 
     @Autowired
     TournamentRepository tournamentRepository
@@ -98,57 +100,70 @@ class EnrollTournamentTest extends Specification{
     }
 
     def 'enroll on an available tournament'(){
-        /*given:
-        //get the available tournaments and enroll in one of them
+        given:
+            tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournament)
+            def tournaments = tournamentService.listOpenTournaments()
+            def availableTournamentId = tournaments[0].getId()
 
         when:
+            tournamentService.enrollTournament(USER_USERNAME, availableTournamentId)
 
-        then: 'tournament has one enrollment'*/
-        expect: true
+        then: 'tournament has one enrollment'
+            //tournaments[0].getEnrollments().size() == 1
+        and: 'the correct user is enrolled'
+            //tournaments[0].isEnrolled(USER_USERNAME)
     }
 
 
     def 'enroll on an ended tournament'() {
-        /*given:
-        beginDate = LocalDateTime.now().plusDays(-2)
-        endDate = LocalDateTime.now().plusDays(-1)
-        tournament.setBeginDate(beginDate.format(formatter))
-        tournament.setEndDate(endDate.format(formatter))
-        tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournament)
-        //obtem no final o id do torneio para fazer a inscriçao
+        given:
+            beginDate = LocalDateTime.now().plusDays(-2)
+            endDate = LocalDateTime.now().plusDays(-1)
+            tournament.setBeginDate(beginDate.format(formatter))
+            tournament.setEndDate(endDate.format(formatter))
+            tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournament)
+            def tournamentId = tournament.getId()
 
         when:
+            tournamentService.enrollTournament(USER_USERNAME, tournamentId)
 
-        then: 'tournament does not have enrollments'*/
-
-        expect:true
+        then: 'tournament does not have enrollments'
+            //tournament.getEnrollments().size() == 0
     }
 
     def 'enroll on a canceled tournament'() {
-        /*given:
-        tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournament)
-        //tournament.setCanceled(true)
+        given:
+            tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournament)
+            //tournament.setCanceled(true)
+            def tournamentId = tournament.getId()
 
         when:
+            tournamentService.enrollTournament(USER_USERNAME, tournamentId)
 
-        then: "tournament does not have enrollments"*/
-
-        expect:true
+        then: "tournament does not have enrollments"
+            //tournament.getEnrollments().size() == 0
     }
 
     def 'enroll on a non-existing tournament'() {
-        /*when:
+        when:
+            tournamentService.enrollTournament(USER_USERNAME, NON_EXISTING_ID)
 
-        then: 'tournament does not have enrollments'*/
-
-        expect:true
+        then: 'tournament does not have enrollments'
+            //tournament.getEnrollments().size() == 0
     }
 
     def 'enroll on a tournament more than once'() {
-        /*when:
+        given:
+            tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournament)
+            def tournaments = tournamentService.listOpenTournaments()
+            def availableTournamentId = tournaments[0].getId()
+            tournamentService.enrollTournament(USER_USERNAME, availableTournamentId)
 
-        then: 'tournament has one enrollment'*/
-        expect:true
+        when:
+            tournamentService.enrollTournament(USER_USERNAME, availableTournamentId)
+
+        then: 'tournament has one enrollment'
+            //tournament.getEnrollments().size() == 1
     }
 
     @TestConfiguration
