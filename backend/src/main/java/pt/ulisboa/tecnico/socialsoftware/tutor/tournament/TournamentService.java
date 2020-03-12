@@ -88,8 +88,11 @@ public class TournamentService {
         LocalDateTime beginDate = LocalDateTime.parse(tournamentDto.getBeginDate(), formatter);
         LocalDateTime endDate = LocalDateTime.parse(tournamentDto.getEndDate(), formatter);
 
-        if (endDate.isBefore(beginDate))
-            throw new TutorException(ErrorMessage.END_DATE_IS_BEFORE_BEGIN);
+        if (!endDate.isAfter(beginDate))
+            throw new TutorException(ErrorMessage.END_DATE_IS_NOT_AFTER_BEGIN_DATE);
+
+        if (beginDate.isBefore(LocalDateTime.now()))
+            throw  new TutorException(ErrorMessage.BEGIN_DATE_HAS_PASSED);
 
         tournament.setBeginDate(beginDate);
         tournament.setEndDate(endDate);
