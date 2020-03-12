@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.tournament;
 
+import net.bytebuddy.implementation.bytecode.Throw;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
@@ -112,8 +113,8 @@ public class TournamentService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void enrollTournament (String username, Integer tournamentId) {
-        //TODO falta testar varios argumentos
-        LocalDateTime date = LocalDateTime.now().plusDays(0);
+
+        LocalDateTime date = LocalDateTime.now();
 
         if (username == null)
             throw new TutorException(ErrorMessage.USERNAME_EMPTY);
@@ -123,11 +124,15 @@ public class TournamentService {
         if (user == null)
             throw new TutorException(ErrorMessage.USERNAME_NOT_FOUND, username);
 
-        Tournament tournament = tournamentRepository.getOne(tournamentId);
-
-        if (tournament.getEndDate().isAfter(date)) {
-            user.addEnrolledTournament(tournament);
-            tournament.addEnrollment(user);
+        try {
+            Tournament tournament = tournamentRepository.getOne(tournamentId);
+            if (tournament.getEndDate().isAfter(date)) {
+                user.addEnrolledTournament(tournament);
+                tournament.addEnrollment(user);
+            }
+        }
+        catch (Exception e) {
+            throw new TutorException(ErrorMessage.TOURNAMENT_ID_NOT_FOUND);
         }
     }
 

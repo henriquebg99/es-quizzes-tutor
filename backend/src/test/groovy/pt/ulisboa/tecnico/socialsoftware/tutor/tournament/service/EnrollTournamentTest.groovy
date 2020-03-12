@@ -9,6 +9,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
@@ -40,6 +41,7 @@ class EnrollTournamentTest extends Specification{
     public static final String ACADEMIC_TERM      = "1 SEM"
     public static final int    NUMBER_QUESTIONS   = 5
     public static final int    NON_EXISTING_ID    = 10
+    public static final String USERNAME_INVALID   = "username_invalid"
 
     @Autowired
     TournamentRepository tournamentRepository
@@ -99,6 +101,20 @@ class EnrollTournamentTest extends Specification{
         tournament.setTopics(topics)
     }
 
+    def 'enroll with invalid username'() {
+        given:
+            tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournament)
+            def tournaments = tournamentService.listOpenTournaments()
+            def availableTournamentId = tournaments[0].getId()
+
+        when:
+            tournamentService.enrollTournament(USERNAME_INVALID, availableTournamentId)
+
+        then:
+            def error = thrown(TutorException)
+            error.errorMessage == ErrorMessage.USERNAME_NOT_FOUND
+    }
+
     def 'enroll on an available tournament'(){
         given:
             tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournament)
@@ -121,11 +137,12 @@ class EnrollTournamentTest extends Specification{
 
     def 'enroll on an ended tournament'() {
         given:
-            beginDate = LocalDateTime.now().plusDays(-2)
-            endDate = LocalDateTime.now().plusDays(-1)
+            beginDate = LocalDateTime.now()
+            endDate = LocalDateTime.now().plusMinutes(1)
             tournament.setBeginDate(beginDate.format(formatter))
             tournament.setEndDate(endDate.format(formatter))
             tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournament)
+            sleep(60000)
 
             def tournaments = tournamentRepository.findAll()
             def tournament = tournaments[0]
@@ -159,7 +176,8 @@ class EnrollTournamentTest extends Specification{
             tournamentService.enrollTournament(USER_USERNAME, NON_EXISTING_ID)
 
         then: 'tournament does not have enrollments'
-            thrown javax.persistence.EntityNotFoundException
+            def exception = thrown(TutorException)
+            exception.errorMessage == ErrorMessage.TOURNAMENT_ID_NOT_FOUND
     }
 
     def 'enroll on a tournament more than once'() {
