@@ -18,10 +18,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
-import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
-
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -66,7 +64,6 @@ class CreateTournamentTest extends Specification {
     def course
     def courseExecution
     def topics, notExistingTopics, emptyTopics
-    //FIXME other test: not enough questions, see StatementService
 
     def setup() {
         def topicDto = new TopicDto()
@@ -182,8 +179,6 @@ class CreateTournamentTest extends Specification {
         exception.errorMessage == ErrorMessage.NO_TOPICS
     }
 
-
-
     def 'create a tournament with not existing topics' () {
         given: 'a tournament with not existing topics'
         def tournament = new TournamentDto ()
@@ -213,7 +208,39 @@ class CreateTournamentTest extends Specification {
 
         then: 'an exception is thrown'
         def exception = thrown(TutorException)
-        exception.errorMessage == ErrorMessage.END_DATE_IS_BEFORE_BEGIN
+        exception.errorMessage == ErrorMessage.END_DATE_IS_NOT_AFTER_BEGIN_DATE
+    }
+
+    def 'create a tournament with beginDate equals endDate' () {
+        given: 'a tournament with beginDate equals endDate'
+        def tournament = new TournamentDto ()
+        tournament.setBeginDate(beginDate.format(formatter))
+        tournament.setEndDate(beginDate.format(formatter))
+        tournament.setNumberOfQuestions(NUMBER_OF_QUESTIONS)
+        tournament.setTopics(topics)
+
+        when:
+        tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournament)
+
+        then: 'an exception is thrown'
+        def exception = thrown(TutorException)
+        exception.errorMessage == ErrorMessage.END_DATE_IS_NOT_AFTER_BEGIN_DATE
+    }
+
+    def 'create a tournament with beginDate is before now' () {
+        given: 'a tournament with beginDate is before now'
+        def tournament = new TournamentDto ()
+        tournament.setBeginDate(LocalDateTime.now().format(formatter))
+        tournament.setEndDate(endDate.format(formatter))
+        tournament.setNumberOfQuestions(NUMBER_OF_QUESTIONS)
+        tournament.setTopics(topics)
+
+        when:
+        tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournament)
+
+        then: 'an exception is thrown'
+        def exception = thrown(TutorException)
+        exception.errorMessage == ErrorMessage.BEGIN_DATE_HAS_PASSED
     }
 
     def 'create a tournament with user not existing' () {
