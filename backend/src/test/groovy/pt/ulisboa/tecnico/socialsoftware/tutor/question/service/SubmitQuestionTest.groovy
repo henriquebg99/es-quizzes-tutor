@@ -93,7 +93,7 @@ class SubmitQuestionTest extends Specification {
         result.getImage() == null
         result.getOptions().size() == 2
         result.getCourse().getName() == COURSE_NAME
-        result.getUsername() == user.getUsername()result.getId() != null
+        result.getUsername() == user.getUsername()
         result.getKey() == 1
         result.getTitle() == QUESTION_TITLE
         result.getContent() == QUESTION_CONTENT
@@ -190,8 +190,39 @@ class SubmitQuestionTest extends Specification {
     }
 
     def "2 user submit 1 question each"() {
-        //it returns no errors or exceptions and creates 2 questions
-        expect: false
+        given: "a proposedQuestionDto"
+        def proposedQuestionDto = new ProposedQuestionDto()
+        proposedQuestionDto.setKey(1)
+        proposedQuestionDto.setTitle(QUESTION_TITLE)
+        proposedQuestionDto.setContent(QUESTION_CONTENT)
+        proposedQuestionDto.setUsername(user.getUsername())
+
+        and: 'two options'
+        def optionDto = new OptionDto()
+        optionDto.setContent(OPTION_CONTENT)
+        optionDto.setCorrect(true)
+        def options = new ArrayList<OptionDto>()
+        options.add(optionDto)
+        optionDto = new OptionDto()
+        optionDto.setContent(OPTION_CONTENT)
+        optionDto.setCorrect(false)
+        options.add(optionDto)
+        proposedQuestionDto.setOptions(options)
+
+        when: 'are submited one question by each user'
+        proposedQuestionService.createProposedQuestion(course.getId(), proposedQuestionDto, user.getId())
+        proposedQuestionDto.setKey(null)
+        user.setUsername('username2')
+        user.set.key(2)
+        proposedQuestionService.createProposedQuestion(course.getId(), proposedQuestionDto, user.getId())
+
+        then: "the 2 question are created in the repository"
+        proposedQuestionRepository.count() == 2L
+        def result = proposedQuestionRepository.findAll().get(0)
+        def result2 = proposedQuestionRepository.findAll().get(1)
+        result.getKey() + result2.getKey() == 3
+        result.getUsername() == 'username'
+        result2.getUsername() == 'username2'
     }
 
     def "submit a question with 0 or 1 options"() {
