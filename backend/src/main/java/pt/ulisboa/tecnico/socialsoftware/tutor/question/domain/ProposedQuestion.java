@@ -26,6 +26,11 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 public class ProposedQuestion {
     @SuppressWarnings("unused")
 
+    public enum Status{
+        REJECTED,APPROVED,DEPENDENT
+    }
+
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -48,6 +53,11 @@ public class ProposedQuestion {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "proposedQuestion", fetch = FetchType.LAZY, orphanRemoval=true)
     private List<Option> options = new ArrayList<>();
 
+    @Enumerated(EnumType.STRING)
+    private ProposedQuestion.Status status = ProposedQuestion.Status.DEPENDENT;
+
+
+
     @ManyToOne
     @JoinColumn(name = "course_id")
     private Course course;
@@ -60,6 +70,8 @@ public class ProposedQuestion {
         this.content = proposedQuestionDto.getContent();
         this.course = course;
         this.user = user;
+        this.status = Status.valueOf(proposedQuestionDto.getStatus());
+
     }
 
     public Integer getId() {
@@ -131,6 +143,13 @@ public class ProposedQuestion {
         options.add(option);
     }
 
+    public ProposedQuestion.Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) { this.status = status; }
+
+
     @Override
     public String toString() {
         return "ProposedQuestionDto{" +
@@ -138,6 +157,7 @@ public class ProposedQuestion {
                 ", id=" + id +
                 ", title='" + title + '\'' +
                 ", content='" + content + '\'' +
+                ", status=" + status +
                 ", image=" + image +
                 ", options=" + options +
                 '}';
