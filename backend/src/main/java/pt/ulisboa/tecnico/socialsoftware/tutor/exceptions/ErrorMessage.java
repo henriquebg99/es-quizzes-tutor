@@ -58,7 +58,7 @@ public enum ErrorMessage {
     BEGIN_DATE_IS_EMPTY("Begin date is empty."),
     INVALID_NUMBER_OF_QUESTIONS ("The number of questions is less than one."),
     NO_TOPICS ("No topics."),
-    END_DATE_IS_NOT_AFTER_BEGIN_DATE ("The end date is not before the begin date."),
+    END_DATE_IS_NOT_AFTER_BEGIN_DATE ("The end date is not after the begin date."),
 
     USER_USERNAME_NOT_CREATOR("A tournament must be canceled by the user that created it."),
     TOURNAMENT_ID_NOT_FOUND("Tournament id not found"),
