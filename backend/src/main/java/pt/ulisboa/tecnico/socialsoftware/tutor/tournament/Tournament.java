@@ -30,7 +30,7 @@ public class Tournament {
     @Column(name = "number_of_questions")
     private Integer numberOfQuestions;
 
-    @Column(name = "tournament cancel status")
+    @Column(name = "tournament_cancel_status")
     private Boolean isCanceled;
 
     @ManyToOne
