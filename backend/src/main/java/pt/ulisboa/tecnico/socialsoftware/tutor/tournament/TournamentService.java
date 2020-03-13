@@ -19,6 +19,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 
+import javax.persistence.EntityNotFoundException;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -121,21 +122,30 @@ public class TournamentService {
 
         if (username == null)
             throw new TutorException(ErrorMessage.USERNAME_EMPTY);
+        if(tournamentId == null)
+            throw  new TutorException(ErrorMessage.TOURNAMENT_ID_EMPTY);
 
         User user = userRepository.findByUsername(username);
 
         if (user == null)
             throw new TutorException(ErrorMessage.USERNAME_NOT_FOUND, username);
 
+        Tournament tournament;
         try {
-            Tournament tournament = tournamentRepository.getOne(tournamentId);
-            if (tournament.getEndDate().isAfter(date)) {
-                user.addEnrolledTournament(tournament);
-                tournament.addEnrollment(user);
-            }
-        }
-        catch (Exception e) {
+            tournament = tournamentRepository.getOne(tournamentId);
+        } catch (EntityNotFoundException e) {
             throw new TutorException(ErrorMessage.TOURNAMENT_ID_NOT_FOUND);
+        }
+
+        if (tournament.getEndDate().isAfter(date) && !tournament.getCanceled()) {
+            user.addEnrolledTournament(tournament);
+            tournament.addEnrollment(user);
+        }
+        if (tournament.getEndDate().isBefore(date)){
+            throw new TutorException(ErrorMessage.TOURNAMENT_ENDED);
+        }
+        if (tournament.getCanceled()) {
+            throw new TutorException(ErrorMessage.TOURNAMENT_ALREADY_CANCELED);
         }
     }
 
@@ -148,6 +158,7 @@ public class TournamentService {
 
         return tournamentRepository.findAll().stream()
                 .filter(tournament -> date.isBefore(tournament.getEndDate()))
+                .filter(tournament -> !tournament.getCanceled())
                 .map(tournament -> new TournamentDto(tournament))
                 .collect(Collectors.toList());
     }
@@ -157,30 +168,44 @@ public class TournamentService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void cancelTournament (String username, Integer tournamentId) {
+
         if (username == null)
             throw new TutorException(ErrorMessage.USERNAME_EMPTY);
-
-        User user = userRepository.findByUsername(username);
-
         if (tournamentId == null)
             throw new TutorException(ErrorMessage.TOURNAMENT_ID_EMPTY);
 
-        Tournament tournament = tournamentRepository.getOne(tournamentId);
+        //TODO falta apanhar esta exceçao
+        User user = userRepository.findByUsername(username);
+        if (user == null)
+            throw new TutorException(ErrorMessage.USERNAME_NOT_FOUND, username);
+
+        Tournament tournament;
+        try {
+            tournament = tournamentRepository.getOne(tournamentId);
+        } catch (EntityNotFoundException e) {
+            throw new TutorException(ErrorMessage.TOURNAMENT_ID_NOT_FOUND);
+        }
 
         User creator = tournament.getCreator();
-
         if (user != creator)
             throw new TutorException(ErrorMessage.USER_USERNAME_NOT_CREATOR);
 
         LocalDateTime currentDate = LocalDateTime.now().plusDays(0);
         LocalDateTime beginDate = tournament.getBeginDate();
+        LocalDateTime endDate = tournament.getEndDate();
 
-        if (currentDate.isAfter(beginDate))
-            throw new TutorException(ErrorMessage.TOURNAMENT_HAPPENING_OR_ENDED);
+        if (currentDate.isAfter(beginDate)) {
+            if (currentDate.isBefore(endDate)) {
+                throw new TutorException(ErrorMessage.TOURNAMENT_HAPPENING);
+            } else {
+                throw new TutorException(ErrorMessage.TOURNAMENT_ENDED);
+            }
+        }
 
         if (tournament.getCanceled())
             throw new TutorException(ErrorMessage.TOURNAMENT_ALREADY_CANCELED);
 
         tournament.setCanceled(true);
+
     }
 }

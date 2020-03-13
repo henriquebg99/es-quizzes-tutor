@@ -27,18 +27,25 @@ import java.time.format.DateTimeFormatter
 @DataJpaTest
 class CancelTournamentTest extends Specification {
 
-    public static final String USER_USERNAME = "username"
-    public static final String USER_NAME = "name"
+    public static final String USER_USERNAME             = "username"
+    public static final String USER_NAME                 = "name"
     public static final String USER_USERNAME_NOT_CREATOR = "username2"
-    public static final int    USER_KEY = 1
-    public static final int    BEGIN_DAYS = 1
-    public static final int    END_DAYS = 2
-    public static final String COURSE_NAME  = "course"
-    public static final String ACRONYM  = "AS1"
-    public static final String ACADEMIC_TERM = "1 SEM"
-    public static final int ID_NOT_EXISTING = 2
-    public static final int    NUMBER_QUESTIONS = 5
-    public static final String TOPIC_NAME = "topic"
+    public static final int    USER_KEY                  = 1
+    public static final int    BEGIN_DAYS                = 1
+    public static final int    END_DAYS                  = 2
+    public static final String COURSE_NAME               = "course"
+    public static final String ACRONYM                   = "AS1"
+    public static final String ACADEMIC_TERM             = "1 SEM"
+    public static final int    NON_EXISTING_ID           = 20
+    public static final int    NUMBER_QUESTIONS          = 5
+    public static final String TOPIC_NAME                = "topic"
+    public static final int    BEGIN_MINUTES_END         = 1
+    public static final int    END_MINUTES_END           = 2
+    public static final int    SLEEP_END                 = 130000
+    public static final int    BEGIN_MINUTES_HAPPENING   = 1
+    public static final int    END_MINUTES_HAPPENING     = 10
+    public static final int    SLEEP_HAPPENING           = 80000
+
 
     @Autowired
     TournamentRepository tournamentRepository
@@ -100,112 +107,131 @@ class CancelTournamentTest extends Specification {
 
     def 'cancel a tournament' () {
         given: 'a valid tournament canceled'
-        tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournament)
+            tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournament)
 
-        def tournaments = tournamentRepository.findAll()
-        def tournament = tournaments[0]
-        def tournamentId = tournament.getId()
+            def tournaments = tournamentRepository.findAll()
+            def tournament = tournaments[0]
+            def tournamentId = tournament.getId()
 
         when:
-        tournamentService.cancelTournament(USER_USERNAME, tournamentId)
+            tournamentService.cancelTournament(USER_USERNAME, tournamentId)
 
-        then: "the tournament is set as canceled"
-        tournament.getCanceled()
+        then: 'the tournament is set as canceled'
+            tournament.getCanceled()
     }
 
     def 'a tournament is canceled by a student with a empty username' () {
         given: 'a tournament'
-        tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournament)
+            tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournament)
 
-        def tournaments = tournamentRepository.findAll()
-        def tournament = tournaments[0]
-        def tournamentId = tournament.getId()
+            def tournaments = tournamentRepository.findAll()
+            def tournament = tournaments[0]
+            def tournamentId = tournament.getId()
 
         when:
-        tournamentService.cancelTournament(null, tournamentId)
+            tournamentService.cancelTournament(null, tournamentId)
 
         then: 'an exception is thrown'
-        def exception = thrown(TutorException)
-        exception.errorMessage == ErrorMessage.USERNAME_EMPTY
+            def exception = thrown(TutorException)
+            exception.errorMessage == ErrorMessage.USERNAME_EMPTY
     }
 
     def 'cancel a tournament with empty id' () {
         given: 'a tournament with an empty id'
-        tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournament)
+            tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournament)
 
         when:
-        tournamentService.cancelTournament(USER_USERNAME, null)
+            tournamentService.cancelTournament(USER_USERNAME, null)
 
         then: 'an exception is thrown'
-        def exception = thrown(TutorException)
-        exception.errorMessage == ErrorMessage.TOURNAMENT_ID_EMPTY
+            def exception = thrown(TutorException)
+            exception.errorMessage == ErrorMessage.TOURNAMENT_ID_EMPTY
     }
 
     def 'a tournament is canceled by a user that did not create it' () {
         given: 'a tournament'
-        tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournament)
+            tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournament)
 
-        def tournaments = tournamentRepository.findAll()
-        def tournament = tournaments[0]
-        def tournamentId = tournament.getId()
+            def tournaments = tournamentRepository.findAll()
+            def tournament = tournaments[0]
+            def tournamentId = tournament.getId()
 
         when:
-        tournamentService.cancelTournament(USER_USERNAME_NOT_CREATOR, tournamentId)
+            tournamentService.cancelTournament(USER_USERNAME_NOT_CREATOR, tournamentId)
 
         then: 'an exception is thrown'
-        def exception = thrown(TutorException)
-        exception.errorMessage == ErrorMessage.USER_USERNAME_NOT_CREATOR
+            def exception = thrown(TutorException)
+            exception.errorMessage == ErrorMessage.USER_USERNAME_NOT_CREATOR
     }
 
     def 'cancel a tournament that does not exit' () {
-        given: 'a tournament with an id'
-        tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournament)
-
         when:
-        tournamentService.cancelTournament(USER_USERNAME, ID_NOT_EXISTING)
+            tournamentService.cancelTournament(USER_USERNAME, NON_EXISTING_ID)
 
-        then: 'an exception is thrown'
-        thrown EntityNotFoundException
+        then: 'exception is thrown'
+            def exception = thrown(TutorException)
+            exception.errorMessage == ErrorMessage.TOURNAMENT_ID_NOT_FOUND
     }
 
 
-    def 'cancel a tournament that is happening or has already ended' () {
+    def 'cancel a tournament that has already ended' () {
         given: 'a tournament'
-        beginDate = LocalDateTime.now().plusDays(-2)
-        endDate = LocalDateTime.now().plusDays(-1)
-        tournament.setBeginDate(beginDate.format(formatter))
-        tournament.setEndDate(endDate.format(formatter))
-        tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournament)
+            beginDate = LocalDateTime.now().plusMinutes(BEGIN_MINUTES_END)
+            endDate = LocalDateTime.now().plusMinutes(END_MINUTES_END)
+            tournament.setBeginDate(beginDate.format(formatter))
+            tournament.setEndDate(endDate.format(formatter))
+            tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournament)
+            sleep(SLEEP_END)
 
-        def tournaments = tournamentRepository.findAll()
-        def tournament = tournaments[0]
-        def tournamentId = tournament.getId()
+            def tournaments = tournamentRepository.findAll()
+            def tournament = tournaments[0]
+            def tournamentId = tournament.getId()
 
         when:
-        tournamentService.cancelTournament(USER_USERNAME, tournamentId)
+            tournamentService.cancelTournament(USER_USERNAME, tournamentId)
 
         then: 'an exception is thrown'
-        def exception = thrown(TutorException)
-        exception.errorMessage == ErrorMessage.TOURNAMENT_HAPPENING_OR_ENDED
+            def exception = thrown(TutorException)
+            exception.errorMessage == ErrorMessage.TOURNAMENT_ENDED
+    }
+
+    def 'cancel a tournament that is happening'(){
+        given: 'a tournament'
+            beginDate = LocalDateTime.now().plusMinutes(BEGIN_MINUTES_HAPPENING)
+            endDate = LocalDateTime.now().plusMinutes(END_MINUTES_HAPPENING)
+            tournament.setBeginDate(beginDate.format(formatter))
+            tournament.setEndDate(endDate.format(formatter))
+            tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournament)
+            sleep(SLEEP_HAPPENING)
+
+            def tournaments = tournamentRepository.findAll()
+            def tournament = tournaments[0]
+            def tournamentId = tournament.getId()
+
+        when:
+            tournamentService.cancelTournament(USER_USERNAME, tournamentId)
+
+        then: 'an exception is thrown'
+            def exception = thrown(TutorException)
+            exception.errorMessage == ErrorMessage.TOURNAMENT_HAPPENING
     }
 
     def 'cancel a tournament that is already canceled' () {
         given: 'a tournament with an id'
-        tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournament)
-        def tournaments = tournamentRepository.findAll()
-        def tournament = tournaments[0]
-        def tournamentId = tournament.getId()
-        tournamentService.cancelTournament(USER_USERNAME, tournamentId)
+            tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournament)
+            def tournaments = tournamentRepository.findAll()
+            def tournament = tournaments[0]
+            def tournamentId = tournament.getId()
+            tournamentService.cancelTournament(USER_USERNAME, tournamentId)
 
         when:
-        tournamentService.cancelTournament(USER_USERNAME, tournamentId)
+            tournamentService.cancelTournament(USER_USERNAME, tournamentId)
 
         then: 'an exception is thrown'
-        def exception = thrown(TutorException)
-        exception.errorMessage == ErrorMessage.TOURNAMENT_ALREADY_CANCELED
+            def exception = thrown(TutorException)
+            exception.errorMessage == ErrorMessage.TOURNAMENT_ALREADY_CANCELED
     }
 
-    /*FIXME add more tests about topics*/
     @TestConfiguration
     static class TournamentServiceImplTestContextConfiguration {
 

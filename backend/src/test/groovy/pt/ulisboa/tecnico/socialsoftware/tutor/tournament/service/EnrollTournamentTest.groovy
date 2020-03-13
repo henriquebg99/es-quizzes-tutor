@@ -4,18 +4,14 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
-import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
-import pt.ulisboa.tecnico.socialsoftware.tutor.statement.StatementService
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService
@@ -23,7 +19,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import spock.lang.Specification
 
-import java.awt.geom.NoninvertibleTransformException
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
@@ -42,6 +37,9 @@ class EnrollTournamentTest extends Specification{
     public static final int    NUMBER_QUESTIONS   = 5
     public static final int    NON_EXISTING_ID    = 10
     public static final String USERNAME_INVALID   = "username_invalid"
+    public static final int    BEGIN_MINUTES      = 1
+    public static final int    END_MINUTES        = 2
+    public static final int    SLEEP              = 130000
 
     @Autowired
     TournamentRepository tournamentRepository
@@ -101,6 +99,29 @@ class EnrollTournamentTest extends Specification{
         tournament.setTopics(topics)
     }
 
+    def 'enroll with empty username'() {
+        given:
+        tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournament)
+        def tournaments = tournamentService.listOpenTournaments()
+        def availableTournamentId = tournaments[0].getId()
+
+        when:
+        tournamentService.enrollTournament(null, availableTournamentId)
+
+        then: 'exception is thrown'
+        def error = thrown(TutorException)
+        error.errorMessage == ErrorMessage.USERNAME_EMPTY
+    }
+
+    def 'enroll with empty tournament id'() {
+        when:
+            tournamentService.enrollTournament(USER_USERNAME, null)
+
+        then: 'an exception is thrown'
+            def exception = thrown(TutorException)
+            exception.errorMessage == ErrorMessage.TOURNAMENT_ID_EMPTY
+    }
+
     def 'enroll with invalid username'() {
         given:
             tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournament)
@@ -110,9 +131,18 @@ class EnrollTournamentTest extends Specification{
         when:
             tournamentService.enrollTournament(USERNAME_INVALID, availableTournamentId)
 
-        then:
+        then: 'exception is thrown'
             def error = thrown(TutorException)
             error.errorMessage == ErrorMessage.USERNAME_NOT_FOUND
+    }
+
+    def 'enroll on a non-existing tournament'() {
+        when:
+            tournamentService.enrollTournament(USER_USERNAME, NON_EXISTING_ID)
+
+        then: 'exception is thrown'
+            def exception = thrown(TutorException)
+            exception.errorMessage == ErrorMessage.TOURNAMENT_ID_NOT_FOUND
     }
 
     def 'enroll on an available tournament'(){
@@ -137,12 +167,12 @@ class EnrollTournamentTest extends Specification{
 
     def 'enroll on an ended tournament'() {
         given:
-            beginDate = LocalDateTime.now().plusMinutes(1)
-            endDate = LocalDateTime.now().plusMinutes(2)
+            beginDate = LocalDateTime.now().plusMinutes(BEGIN_MINUTES)
+            endDate = LocalDateTime.now().plusMinutes(END_MINUTES)
             tournament.setBeginDate(beginDate.format(formatter))
             tournament.setEndDate(endDate.format(formatter))
             tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournament)
-            sleep(130000)
+            sleep(SLEEP)
 
             def tournaments = tournamentRepository.findAll()
             def tournament = tournaments[0]
@@ -156,28 +186,28 @@ class EnrollTournamentTest extends Specification{
             tournament.getEnrollments().size() == 0
         and: 'the user is not enrolled in the tournament'
             user.getEnrolledTournaments().size() == 0
+        and: 'exception is thrown'
+            def error = thrown(TutorException)
+            error.errorMessage == ErrorMessage.TOURNAMENT_ENDED
     }
 
     def 'enroll on a canceled tournament'() {
         given:
             tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournament)
-            //tournament.setCanceled(true)
+            def tournaments = tournamentRepository.findAll()
+            def tournament = tournaments[0]
             def tournamentId = tournament.getId()
+
+            tournamentService.cancelTournament(USER_USERNAME, tournamentId)
 
         when:
             tournamentService.enrollTournament(USER_USERNAME, tournamentId)
 
-        then: "tournament does not have enrollments"
-            //tournament.getEnrollments().size() == 0
-    }
-
-    def 'enroll on a non-existing tournament'() {
-        when:
-            tournamentService.enrollTournament(USER_USERNAME, NON_EXISTING_ID)
-
         then: 'tournament does not have enrollments'
-            def exception = thrown(TutorException)
-            exception.errorMessage == ErrorMessage.TOURNAMENT_ID_NOT_FOUND
+            tournament.getEnrollments().size() == 0
+        and: 'exception is thrown'
+            def error = thrown(TutorException)
+            error.errorMessage == ErrorMessage.TOURNAMENT_ALREADY_CANCELED
     }
 
     def 'enroll on a tournament more than once'() {
@@ -193,6 +223,9 @@ class EnrollTournamentTest extends Specification{
         then: 'tournament has one enrollment'
             def tour = tournamentRepository.getOne(availableTournamentId)
             tour.getEnrollments().size() == 1
+        and: 'exception is thrown'
+            def error = thrown(TutorException)
+            error.errorMessage == ErrorMessage.ALREADY_ENROLLED_IN_TOURNAMENT
     }
 
     @TestConfiguration

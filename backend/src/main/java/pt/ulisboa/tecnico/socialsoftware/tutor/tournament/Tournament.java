@@ -2,6 +2,8 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.tournament;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
@@ -121,6 +123,9 @@ public class Tournament {
     public void addEnrollment(User user) {
         if (!this.enrollments.contains(user)){
             this.enrollments.add(user);
+        }
+        else {
+            throw new TutorException(ErrorMessage.ALREADY_ENROLLED_IN_TOURNAMENT);
         }
     }
 

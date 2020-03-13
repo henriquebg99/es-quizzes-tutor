@@ -34,6 +34,7 @@ public class TournamentDto implements Serializable {
         this.id = tournament.getId();
         this.beginDate = tournament.getBeginDate().format(formatter);
         this.endDate = tournament.getEndDate().format(formatter);
+        this.numberOfQuestions = tournament.getNumberOfQuestions();
 
         for (Topic topic : tournament.getTopics()) {
             TopicDto topicDto = new TopicDto(topic);
