@@ -9,8 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.QuestionsXmlExport;
-import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.QuestionsXmlImport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Image;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.ProposedQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ProposedQuestionDto;
@@ -21,8 +19,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -76,6 +72,7 @@ public class ProposedQuestionService {
         }
 
         ProposedQuestion proposedQuestion = new ProposedQuestion(proposedQuestionDto, course, user);
+        course.addProposedQuestion(proposedQuestion);
         this.entityManager.persist(proposedQuestion);
         return new ProposedQuestionDto(proposedQuestion);
     }

@@ -3,17 +3,12 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.Importable;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ProposedQuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
@@ -26,10 +21,11 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 public class ProposedQuestion {
     @SuppressWarnings("unused")
 
+    /*
     public enum Status{
         REJECTED,APPROVED,DEPENDENT
     }
-
+    */
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -53,8 +49,10 @@ public class ProposedQuestion {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "proposedQuestion", fetch = FetchType.LAZY, orphanRemoval=true)
     private List<Option> options = new ArrayList<>();
 
+    /*
     @Enumerated(EnumType.STRING)
     private ProposedQuestion.Status status = ProposedQuestion.Status.DEPENDENT;
+     */
 
     @ManyToOne
     @JoinColumn(name = "course_id")
@@ -149,12 +147,13 @@ public class ProposedQuestion {
         options.add(option);
     }
 
+    /*
     public ProposedQuestion.Status getStatus() {
         return status;
     }
 
     public void setStatus(Status status) { this.status = status; }
-
+    */
 
     @Override
     public String toString() {
@@ -163,7 +162,7 @@ public class ProposedQuestion {
                 ", id=" + id +
                 ", title='" + title + '\'' +
                 ", content='" + content + '\'' +
-                ", status=" + status +
+        //        ", status=" + status +
                 ", image=" + image +
                 ", options=" + options +
                 ", user="+ user +

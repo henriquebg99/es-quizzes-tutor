@@ -1,7 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.ProposedQuestion;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -16,7 +15,7 @@ public class ProposedQuestionDto implements Serializable {
     private String username;
     private List<OptionDto> options = new ArrayList<>();
     private ImageDto image;
-    private String status;
+    //private String status;
 
     public ProposedQuestionDto() {
     }
@@ -27,7 +26,7 @@ public class ProposedQuestionDto implements Serializable {
         this.title = proposedQuestion.getTitle();
         this.content = proposedQuestion.getContent();
         this.username = proposedQuestion.getUsername();
-        this.status = proposedQuestion.getStatus().name();
+        //this.status = proposedQuestion.getStatus().name();
 
         this.options = proposedQuestion.getOptions().stream().map(OptionDto::new).collect(Collectors.toList());
         if (proposedQuestion.getImage() != null)
@@ -88,6 +87,7 @@ public class ProposedQuestionDto implements Serializable {
         this.image = image;
     }
 
+    /*
     public String getStatus() {
         return status;
     }
@@ -95,6 +95,7 @@ public class ProposedQuestionDto implements Serializable {
     public void setStatus(String status) {
         this.status = status;
     }
+    */
 
     @Override
     public String toString() {
@@ -104,7 +105,7 @@ public class ProposedQuestionDto implements Serializable {
                 ", title='" + title + '\'' +
                 ", content='" + content + '\'' +
                 ", image=" + image +
-                ", status=" + status +
+    //            ", status=" + status +
                 ", options=" + options +
                 '}';
     }

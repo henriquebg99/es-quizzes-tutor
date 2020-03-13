@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.ProposedQuestion;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 @Transactional
@@ -21,8 +20,5 @@ public interface ProposedQuestionRepository extends JpaRepository<ProposedQuesti
 
     @Query(value = "SELECT MAX(key) FROM proposed_questions", nativeQuery = true)
     Integer getMaxProposedQuestionNumber();
-
-    //@Query(value = "SELECT * FROM proposed_questions pq WHERE pq.course_id = :courseId AND pq.user_id = :userId", nativeQuery = true)
-    //List<ProposedQuestion> findProposedQuestionsByUserID(int courseId, Integer userId);
 
 }
