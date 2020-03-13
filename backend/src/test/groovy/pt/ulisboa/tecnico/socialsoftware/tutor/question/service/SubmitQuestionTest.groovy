@@ -50,6 +50,7 @@ class SubmitQuestionTest extends Specification {
     def courseExecution
 
     def user
+    def userTwo
 
     def setup() {
         course = new Course(COURSE_NAME, Course.Type.TECNICO)
@@ -61,6 +62,12 @@ class SubmitQuestionTest extends Specification {
         user = new User('name', "username", 1, User.Role.STUDENT)
         user.getCourseExecutions().add(courseExecution)
         courseExecution.getUsers().add(user)
+        userRepository.save(user)
+
+        userTwo = new User('name2', "username2", 2, User.Role.STUDENT)
+        userTwo.getCourseExecutions().add(courseExecution)
+        courseExecution.getUsers().add(userTwo)
+        userRepository.save(userTwo)
     }
 
     def "submit a question with 2 options and no image"() {
@@ -94,17 +101,10 @@ class SubmitQuestionTest extends Specification {
         result.getTitle() == QUESTION_TITLE
         result.getContent() == QUESTION_CONTENT
         result.getImage() == null
-        result.getOptions().size() == 2
         result.getCourse().getName() == COURSE_NAME
         result.getUsername() == user.getUsername()
-        result.getKey() == 1
-        result.getTitle() == QUESTION_TITLE
-        result.getContent() == QUESTION_CONTENT
-        result.getImage() == null
         result.getOptions().size() == 2
-        result.getCourse().getName() == COURSE_NAME
-        result.getUsername() == user.getUsername()
-        course.getQuestions().contains(result)
+        course.getProposedQuestions().contains(result)
         def resOption = result.getOptions().get(0)
         def resOption2 = result.getOptions().get(1)
         resOption.getContent() == OPTION_CONTENT
@@ -149,10 +149,10 @@ class SubmitQuestionTest extends Specification {
         result.getTitle() == QUESTION_TITLE
         result.getContent() == QUESTION_CONTENT
         result.getImage() == null
-        result.getOptions().size() == 2
         result.getCourse().getName() == COURSE_NAME
         result.getUsername() == user.getUsername()
-        course.getQuestions().contains(result)
+        result.getOptions().size() == 2
+        course.getProposedQuestions().contains(result)
         def resOption = result.getOptions().get(0)
         def resOption2 = result.getOptions().get(1)
         resOption.getContent() == OPTION_CONTENT
@@ -215,9 +215,7 @@ class SubmitQuestionTest extends Specification {
         when: 'are submited one question by each user'
         proposedQuestionService.createProposedQuestion(course.getId(), proposedQuestionDto, user.getId())
         proposedQuestionDto.setKey(null)
-        user.setUsername('username2')
-        user.set.key(2)
-        proposedQuestionService.createProposedQuestion(course.getId(), proposedQuestionDto, user.getId())
+        proposedQuestionService.createProposedQuestion(course.getId(), proposedQuestionDto, userTwo.getId())
 
         then: "the 2 question are created in the repository"
         proposedQuestionRepository.count() == 2L
@@ -228,13 +226,26 @@ class SubmitQuestionTest extends Specification {
         result2.getUsername() == 'username2'
     }
 
-    def "submit a question with no options"() {
+    def "submit a question with blank option"() {
         given: "a proposedQuestionDto"
         def proposedQuestionDto = new ProposedQuestionDto()
         proposedQuestionDto.setKey(1)
         proposedQuestionDto.setTitle(QUESTION_TITLE)
         proposedQuestionDto.setContent(QUESTION_CONTENT)
         proposedQuestionDto.setUsername(user.getUsername())
+
+        and:
+        and: 'two options'
+        def optionDto = new OptionDto()
+        optionDto.setContent(" ")
+        optionDto.setCorrect(true)
+        def options = new ArrayList<OptionDto>()
+        options.add(optionDto)
+        optionDto = new OptionDto()
+        optionDto.setContent(" ")
+        optionDto.setCorrect(false)
+        options.add(optionDto)
+        proposedQuestionDto.setOptions(options)
 
         when:
         proposedQuestionService.createProposedQuestion(course.getId(), proposedQuestionDto, user.getId())
@@ -249,6 +260,8 @@ class SubmitQuestionTest extends Specification {
         given: "a proposedQuestionDto"
         def proposedQuestionDto = new ProposedQuestionDto()
         proposedQuestionDto.setKey(1)
+        proposedQuestionDto.setTitle(" ")
+        proposedQuestionDto.setContent(" ")
         proposedQuestionDto.setUsername(user.getUsername())
 
         and: 'an option'
@@ -266,12 +279,12 @@ class SubmitQuestionTest extends Specification {
         exception.getErrorMessage() == QUESTION_MISSING_DATA
     }
 
-
-
     def "submit a question with 2 correct option"() {
         given: "a proposedQuestionDto"
         def proposedQuestionDto = new ProposedQuestionDto()
         proposedQuestionDto.setKey(1)
+        proposedQuestionDto.setTitle(QUESTION_TITLE)
+        proposedQuestionDto.setContent(QUESTION_CONTENT)
         proposedQuestionDto.setUsername(user.getUsername())
 
         and: '2 correct option'

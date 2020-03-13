@@ -56,8 +56,6 @@ public class ProposedQuestion {
     @Enumerated(EnumType.STRING)
     private ProposedQuestion.Status status = ProposedQuestion.Status.DEPENDENT;
 
-
-
     @ManyToOne
     @JoinColumn(name = "course_id")
     private Course course;
@@ -71,8 +69,15 @@ public class ProposedQuestion {
         this.content = proposedQuestionDto.getContent();
         this.course = course;
         this.user = user;
-        this.status = Status.valueOf(proposedQuestionDto.getStatus());
+        //this.status = Status.valueOf(proposedQuestionDto.getStatus());
 
+        int index = 0;
+        for (OptionDto optionDto : proposedQuestionDto.getOptions()) {
+            optionDto.setSequence(index++);
+            Option option = new Option(optionDto);
+            this.options.add(option);
+            option.setProposedQuestion(this);
+        }
     }
 
     public Integer getId() {
@@ -161,6 +166,7 @@ public class ProposedQuestion {
                 ", status=" + status +
                 ", image=" + image +
                 ", options=" + options +
+                ", user="+ user +
                 '}';
     }
 

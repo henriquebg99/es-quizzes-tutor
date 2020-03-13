@@ -53,19 +53,6 @@ public class ProposedQuestionService {
                 .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
     }
 
-    /* map method not find in proposed question? cannot resolve constructor on ProposedQuestionDto?
-
-    @Retryable(
-            value = { SQLException.class },
-            backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public ProposedQuestionDto findQuestionByKey(Integer key) {
-        return proposedQuestionRepository.findProposedQuestionByKey(key).map(ProposedQuestionDto::new)
-                .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, key));
-    }
-
-    */
-
     @Retryable(
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
