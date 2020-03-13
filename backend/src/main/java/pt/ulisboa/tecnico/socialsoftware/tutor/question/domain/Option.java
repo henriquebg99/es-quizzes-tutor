@@ -24,6 +24,10 @@ public class Option {
     private String content;
 
     @ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name = "proposedQuestion_id")
+    private ProposedQuestion proposedQuestion;
+
+    @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name = "question_id")
     private Question question;
 
@@ -79,6 +83,14 @@ public class Option {
 
     public void setQuestion(Question question) {
         this.question = question;
+    }
+
+    public ProposedQuestion getProposedQuestion() {
+        return proposedQuestion;
+    }
+
+    public void setProposedQuestion(ProposedQuestion proposedQuestion) {
+        this.proposedQuestion = proposedQuestion;
     }
 
     public Set<QuestionAnswer> getQuestionAnswers() {

@@ -10,7 +10,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.Importable;
-
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.ProposedQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
@@ -66,6 +66,9 @@ public class User implements UserDetails {
 
     @ManyToMany
     private Set<CourseExecution> courseExecutions = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval=true)
+    private Set<ProposedQuestion> proposedQuestions = new HashSet<>();
 
     @ManyToMany
     private Set<Tournament> enrolled_tournaments = new HashSet<>();
@@ -165,6 +168,10 @@ public class User implements UserDetails {
 
     public void setCourseExecutions(Set<CourseExecution> courseExecutions) {
         this.courseExecutions = courseExecutions;
+    }
+
+    public Set<ProposedQuestion> getProposedQuestions() {
+        return proposedQuestions;
     }
 
     public void addEnrolledTournament(Tournament tournament) {
@@ -373,6 +380,8 @@ public class User implements UserDetails {
     public void addCourse(CourseExecution course) {
         this.courseExecutions.add(course);
     }
+
+    public void addProposedQuestion(ProposedQuestion proposedQuestion) { this.proposedQuestions.add(proposedQuestion); }
 
     @Override
     public String toString() {
