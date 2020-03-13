@@ -45,6 +45,7 @@ class CancelTournamentTest extends Specification {
     public static final int    BEGIN_MINUTES_HAPPENING   = 1
     public static final int    END_MINUTES_HAPPENING     = 10
     public static final int    SLEEP_HAPPENING           = 80000
+    public static final int    USER_KEY_NOT_CREATED      = 2
 
 
     @Autowired
@@ -155,6 +156,9 @@ class CancelTournamentTest extends Specification {
             def tournaments = tournamentRepository.findAll()
             def tournament = tournaments[0]
             def tournamentId = tournament.getId()
+        and: 'user that exists but is not the creater'
+            def user_other = new User(USER_NAME, USER_USERNAME_NOT_CREATOR, USER_KEY_NOT_CREATED, User.Role.STUDENT)
+            userRepository.save(user_other)
 
         when:
             tournamentService.cancelTournament(USER_USERNAME_NOT_CREATOR, tournamentId)

@@ -25,6 +25,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUESTION_NOT_FOUND;
@@ -125,15 +126,14 @@ public class TournamentService {
         if(tournamentId == null)
             throw  new TutorException(ErrorMessage.TOURNAMENT_ID_EMPTY);
 
+
         User user = userRepository.findByUsername(username);
 
         if (user == null)
             throw new TutorException(ErrorMessage.USERNAME_NOT_FOUND, username);
 
-        Tournament tournament;
-        try {
-            tournament = tournamentRepository.getOne(tournamentId);
-        } catch (EntityNotFoundException e) {
+        Tournament tournament = tournamentRepository.findById(tournamentId).orElse(null);
+        if (tournament == null) {
             throw new TutorException(ErrorMessage.TOURNAMENT_ID_NOT_FOUND);
         }
 
@@ -179,12 +179,9 @@ public class TournamentService {
         if (user == null)
             throw new TutorException(ErrorMessage.USERNAME_NOT_FOUND, username);
 
-        Tournament tournament;
-        try {
-            tournament = tournamentRepository.getOne(tournamentId);
-        } catch (EntityNotFoundException e) {
+        Tournament tournament = tournamentRepository.findById(tournamentId).orElse(null);
+        if (tournament == null)
             throw new TutorException(ErrorMessage.TOURNAMENT_ID_NOT_FOUND);
-        }
 
         User creator = tournament.getCreator();
         if (user != creator)
