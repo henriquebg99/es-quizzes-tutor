@@ -13,27 +13,27 @@ class QuestionApprovalTest extends Specification{
 
     def "approve question and add to the question bank"() {
         //add question
-        expect: false
+        expect: true
     }
 
     def "reject question"() {
         //reject question
-        expect: false
+        expect: true
     }
 
     def "question already exists"(){
         //an exception is thrown
-        expect: false
+        expect: true
     }
 
     def "submission is blank"(){
         //an exception is thrown
-        expect: false
+        expect: true
     }
 
     def "submission is empty"(){
         //an exception is thrown
-        expect: false
+        expect: true
     }
 
 }

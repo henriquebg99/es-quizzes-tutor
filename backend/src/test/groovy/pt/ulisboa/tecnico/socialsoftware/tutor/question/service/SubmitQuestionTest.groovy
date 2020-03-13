@@ -8,6 +8,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.ProposedQuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.ProposedQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ImageDto
@@ -17,6 +18,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.ProposedQuest
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import spock.lang.Specification
+
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*
 
 @DataJpaTest
 class SubmitQuestionTest extends Specification {
@@ -225,19 +228,70 @@ class SubmitQuestionTest extends Specification {
         result2.getUsername() == 'username2'
     }
 
-    def "submit a question with 0 or 1 options"() {
-        //it needs to return an exception and does not create question
-        expect: false
+    def "submit a question with no options"() {
+        given: "a proposedQuestionDto"
+        def proposedQuestionDto = new ProposedQuestionDto()
+        proposedQuestionDto.setKey(1)
+        proposedQuestionDto.setTitle(QUESTION_TITLE)
+        proposedQuestionDto.setContent(QUESTION_CONTENT)
+        proposedQuestionDto.setUsername(user.getUsername())
+
+        when:
+        proposedQuestionService.createProposedQuestion(course.getId(), proposedQuestionDto, user.getId())
+
+        then: "should throw exception"
+        TutorException exception = thrown()
+        exception.getErrorMessage() == QUESTION_MISSING_DATA
     }
+
 
     def "submit a question with blank question"() {
-        //it needs to return an exception and does not create question
-        expect: false
+        given: "a proposedQuestionDto"
+        def proposedQuestionDto = new ProposedQuestionDto()
+        proposedQuestionDto.setKey(1)
+        proposedQuestionDto.setUsername(user.getUsername())
+
+        and: 'an option'
+        def optionDto = new OptionDto()
+        optionDto.setContent(OPTION_CONTENT)
+        optionDto.setCorrect(true)
+        def options = new ArrayList<OptionDto>()
+        options.add(optionDto)
+
+        when:
+        proposedQuestionService.createProposedQuestion(course.getId(), proposedQuestionDto, user.getId())
+
+        then: "should throw exception"
+        TutorException exception = thrown()
+        exception.getErrorMessage() == QUESTION_MISSING_DATA
     }
 
-    def "submit a question with blank option"() {
-        //it needs to return an exception and does not create question
-        expect: false
+
+
+    def "submit a question with 2 correct option"() {
+        given: "a proposedQuestionDto"
+        def proposedQuestionDto = new ProposedQuestionDto()
+        proposedQuestionDto.setKey(1)
+        proposedQuestionDto.setUsername(user.getUsername())
+
+        and: '2 correct option'
+        def optionDto = new OptionDto()
+        optionDto.setContent(OPTION_CONTENT)
+        optionDto.setCorrect(true)
+        def options = new ArrayList<OptionDto>()
+        options.add(optionDto)
+        optionDto = new OptionDto()
+        optionDto.setContent(OPTION_CONTENT)
+        optionDto.setCorrect(true)
+        options.add(optionDto)
+        proposedQuestionDto.setOptions(options)
+
+        when:
+        proposedQuestionService.createProposedQuestion(course.getId(), proposedQuestionDto, user.getId())
+
+        then: "should throw exception"
+        TutorException exception = thrown()
+        exception.getErrorMessage() == QUESTION_MULTIPLE_CORRECT_OPTIONS
     }
 
     @TestConfiguration
