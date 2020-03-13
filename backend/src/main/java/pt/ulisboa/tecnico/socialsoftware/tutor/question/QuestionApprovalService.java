@@ -6,13 +6,10 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.ProposedQuestion;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ProposedQuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.ProposedQuestionRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 
@@ -45,12 +42,18 @@ public class QuestionApprovalService {
                 .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, proposedQuestionId));
     }
 
-    /*@Transactional(isolation = Isolation.REPEATABLE_READ)
-    public User findUserById(Integer userID) {
-        User user = userRepository.findById(userID).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userID));
 
-
-    }*/
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public boolean findUserByUsername(String username) {
+        User user = userRepository.findByUsername(username);
+        if(user.getRole() == User.Role.TEACHER){
+            return true;
+        }
+        throw new TutorException(USER_NOT_FOUND, username);
+    }
 
 
 
