@@ -234,7 +234,6 @@ class SubmitQuestionTest extends Specification {
         proposedQuestionDto.setContent(QUESTION_CONTENT)
         proposedQuestionDto.setUsername(user.getUsername())
 
-        and:
         and: 'two options'
         def optionDto = new OptionDto()
         optionDto.setContent(" ")
