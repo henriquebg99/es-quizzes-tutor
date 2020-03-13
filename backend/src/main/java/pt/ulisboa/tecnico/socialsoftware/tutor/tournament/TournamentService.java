@@ -119,7 +119,6 @@ public class TournamentService {
         if(tournamentId == null)
             throw  new TutorException(ErrorMessage.TOURNAMENT_ID_EMPTY);
 
-
         User user = userRepository.findByUsername(username);
 
         if (user == null)
@@ -167,7 +166,6 @@ public class TournamentService {
         if (tournamentId == null)
             throw new TutorException(ErrorMessage.TOURNAMENT_ID_EMPTY);
 
-        //TODO falta apanhar esta exceçao
         User user = userRepository.findByUsername(username);
         if (user == null)
             throw new TutorException(ErrorMessage.USERNAME_NOT_FOUND, username);
@@ -196,6 +194,5 @@ public class TournamentService {
             throw new TutorException(ErrorMessage.TOURNAMENT_ALREADY_CANCELED);
 
         tournament.setCanceled(true);
-
     }
 }

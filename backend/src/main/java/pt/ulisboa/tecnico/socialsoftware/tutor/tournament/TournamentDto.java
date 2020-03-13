@@ -1,21 +1,11 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.tournament;
 
-import org.springframework.data.annotation.Transient;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 
-import javax.persistence.Column;
 import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.stream.Collectors;
-
 
 public class TournamentDto implements Serializable {
     private Integer id;
@@ -24,9 +14,7 @@ public class TournamentDto implements Serializable {
     private Set<TopicDto> topics = null;
     private int numberOfQuestions;
 
-    public TournamentDto () {
-
-    }
+    public TournamentDto () {}
 
     public TournamentDto (Tournament tournament) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
