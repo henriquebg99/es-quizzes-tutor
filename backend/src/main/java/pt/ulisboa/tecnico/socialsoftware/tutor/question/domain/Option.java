@@ -1,7 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
-import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.Importable;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
 
 import javax.persistence.*;
@@ -23,6 +22,10 @@ public class Option {
 
     @Column(columnDefinition = "TEXT")
     private String content;
+
+    @ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name = "proposedQuestion_id")
+    private ProposedQuestion proposedQuestion;
 
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name = "question_id")
@@ -80,6 +83,14 @@ public class Option {
 
     public void setQuestion(Question question) {
         this.question = question;
+    }
+
+    public ProposedQuestion getProposedQuestion() {
+        return proposedQuestion;
+    }
+
+    public void setProposedQuestion(ProposedQuestion proposedQuestion) {
+        this.proposedQuestion = proposedQuestion;
     }
 
     public Set<QuestionAnswer> getQuestionAnswers() {

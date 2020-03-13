@@ -1,6 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.Importable;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ImageDto;
 
 import javax.persistence.*;
@@ -13,6 +12,10 @@ public class Image {
     private Integer id;
     private String url;
     private Integer width;
+
+    @OneToOne
+    @JoinColumn(name="proposedQuestion_id")
+    private ProposedQuestion proposedQuestion;
 
     @OneToOne
     @JoinColumn(name="question_id")
@@ -40,6 +43,14 @@ public class Image {
 
     public void setQuestion(Question question) {
         this.question = question;
+    }
+
+    public void setProposedQuestion(ProposedQuestion question) {
+        this.proposedQuestion = question;
+    }
+
+    public ProposedQuestion getProposedQuestion() {
+        return proposedQuestion;
     }
 
     public String getUrl() {
