@@ -65,6 +65,7 @@ public class ProposedQuestion {
     public ProposedQuestion() {}
 
     public ProposedQuestion(ProposedQuestionDto proposedQuestionDto, Course course, User user) {
+        checkConsistentProposedQuestion(proposedQuestionDto);
         this.title = proposedQuestionDto.getTitle();
         this.key = proposedQuestionDto.getKey();
         this.content = proposedQuestionDto.getContent();

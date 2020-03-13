@@ -120,42 +120,39 @@ class QuestionApprovalTest extends Specification{
         result.getStatus() == ProposedQuestion.Status.REJECTED
     }
 
-    def "User approving is a teacher"(){
-        given:"a teacher"
+    def "User approving is a teacher"() {
+        given: "a teacher"
         teacher = new User('name', USERNAME, 1, User.Role.TEACHER)
         userRepository.save(teacher)
 
         when:
         def result = questionApprovalService.findUserByUsername(teacher.getUsername())
-        then:"verfiy its a teacher"
+        then: "verfiy its a teacher"
         result >> true
-
-    }
-    def "User approving is not a teacher"(){
-        given:"a teacher"
-        teacher = new User('name', USERNAME, 1, User.Role.TEACHER)
-        userRepository.save(teacher)
-
-        when:
-        def result = questionApprovalService.findUserByUsername(teacher.getUsername())
-        then:"verfiy its a teacher"
-        result >> false
-
-
     }
 
-    @TestConfiguration
-    static class QuestionApprovalServiceImplTestContextConfiguration {
+        def "User approving is not a teacher"() {
+            given: "a teacher"
+            teacher = new User('name', USERNAME, 1, User.Role.TEACHER)
+            userRepository.save(teacher)
 
-        @Bean
-        QuestionApprovalService questionApprovalService() {
-            return new QuestionApprovalService()
+            when:
+            def result = questionApprovalService.findUserByUsername(teacher.getUsername())
+            then: "verfiy its a teacher"
+            result >> false
         }
+
+        @TestConfiguration
+        static class QuestionApprovalServiceImplTestContextConfiguration {
+
+            @Bean
+            QuestionApprovalService questionApprovalService() {
+                return new QuestionApprovalService()
+            }
+
+
+        }
+
     }
-
-
-}
-
-
 
 

@@ -53,7 +53,7 @@ public class ProposedQuestionService {
                 .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
     }
 
-    /* FIXME map method not find in proposed question? cannot resolve constructor on ProposedQuestionDto?
+    /* map method not find in proposed question? cannot resolve constructor on ProposedQuestionDto?
 
     @Retryable(
             value = { SQLException.class },
