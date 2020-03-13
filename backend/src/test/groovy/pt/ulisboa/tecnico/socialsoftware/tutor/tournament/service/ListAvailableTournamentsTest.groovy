@@ -4,17 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
-import pt.ulisboa.tecnico.socialsoftware.tutor.statement.StatementService
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService
@@ -24,7 +20,6 @@ import spock.lang.Specification
 
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 
 @DataJpaTest
 class ListAvailableTournamentsTest extends Specification{
@@ -39,6 +34,9 @@ class ListAvailableTournamentsTest extends Specification{
     public static final String ACRONYM            = "AS1"
     public static final String ACADEMIC_TERM      = "1 SEM"
     public static final int    NUMBER_QUESTIONS   = 5
+    public static final int    BEGIN_MINUTES      = 1
+    public static final int    END_MINUTES        = 2
+    public static final int    SLEEP              = 130000
 
     @Autowired
     TournamentRepository tournamentRepository
@@ -101,30 +99,29 @@ class ListAvailableTournamentsTest extends Specification{
     def 'tournaments available'(){
         given:
             tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournament)
-            tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournament)
 
         when:
             def tournaments = tournamentService.listOpenTournaments()
 
         then: "the number of tournaments is correct"
-            tournaments.size() == 2
-        and: "the content of the tournaments is correct"
-            tournaments.each { tour ->
-                tour.getBeginDate() == beginDate
-                tour.getEndDate() == endDate
-                tour.getNumberOfQuestions() == NUMBER_QUESTIONS
-                (tour.getTopics() as HashSet) == (topics as HashSet)
-            }
+            tournaments.size() == 1
+        and: "the content of the tournament is correct"
+            tournaments[0].getBeginDate() == tournament.getBeginDate()
+            tournaments[0].getEndDate() == tournament.getEndDate()
+            tournaments[0].getNumberOfQuestions() == NUMBER_QUESTIONS
+            def tourtopics = tournaments[0].getTopics()
+            tourtopics.size() == 1
+            tourtopics[0].getName() == TOPIC_NAME
     }
 
-    //Testar se dá para listar um torneio acabado
     def 'the tournament is over'() {
         given:
-            beginDate = LocalDateTime.now().plusDays(-2)
-            endDate = LocalDateTime.now().plusDays(-1)
+            beginDate = LocalDateTime.now().plusMinutes(BEGIN_MINUTES)
+            endDate = LocalDateTime.now().plusMinutes(END_MINUTES)
             tournament.setBeginDate(beginDate.format(formatter))
             tournament.setEndDate(endDate.format(formatter))
             tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournament)
+            sleep(SLEEP)
 
         when:
             def tournaments = tournamentService.listOpenTournaments()
@@ -133,11 +130,14 @@ class ListAvailableTournamentsTest extends Specification{
             tournaments.size() == 0
     }
 
-    //Testar se dá para listar um torneio cancelado
     def 'the tournament is canceled'() {
         given:
             tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournament)
-            //tournament.setCanceled(true)
+            def t = tournamentRepository.findAll()
+            def tournament = t[0]
+            def tournamentId = tournament.getId()
+
+            tournamentService.cancelTournament(USER_USERNAME, tournamentId)
 
         when:
             def tournaments = tournamentService.listOpenTournaments()
@@ -146,7 +146,6 @@ class ListAvailableTournamentsTest extends Specification{
             tournaments.size() == 0
     }
 
-    //Testar se dá bem se não houver nenhum torneio
     def 'no tournaments are available'() {
         when:
             def tournaments = tournamentService.listOpenTournaments()

@@ -58,15 +58,17 @@ public enum ErrorMessage {
     BEGIN_DATE_IS_EMPTY("Begin date is empty."),
     INVALID_NUMBER_OF_QUESTIONS ("The number of questions is less than one."),
     NO_TOPICS ("No topics."),
-    END_DATE_IS_BEFORE_BEGIN ("The end date is before the begin date."),
+    END_DATE_IS_NOT_AFTER_BEGIN_DATE ("The end date is not after the begin date."),
 
-    USER_DID_NOT_CREATE_TOURNAMENT ("A tournament must be canceled by the user that created it."),
+    USER_USERNAME_NOT_CREATOR("A tournament must be canceled by the user that created it."),
     TOURNAMENT_ID_NOT_FOUND("Tournament id not found"),
-    TOURNAMENT_ENDED("Tournament already ended"),
-    TOURNAMENT_HAPPENING("Tournament is still occurring"),
+    TOURNAMENT_HAPPENING("Tournament is still happening"),
+    TOURNAMENT_ENDED("Tournament has already ended"),
     TOURNAMENT_ID_EMPTY("Tournament id is empty"),
-    USERNAME_EMPTY ("Username is empty");
-
+    USERNAME_EMPTY ("Username is empty"),
+    TOURNAMENT_ALREADY_CANCELED("This tournament was already canceled"),
+    BEGIN_DATE_HAS_PASSED("The tournament begin date has passed."),
+    ALREADY_ENROLLED_IN_TOURNAMENT("The user is already enrolled in the tournament");
     public final String label;
 
     ErrorMessage(String label) {

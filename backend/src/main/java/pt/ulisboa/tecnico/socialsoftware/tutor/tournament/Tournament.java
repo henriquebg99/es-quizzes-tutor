@@ -2,6 +2,8 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.tournament;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
@@ -29,6 +31,9 @@ public class Tournament {
 
     @Column(name = "number_of_questions")
     private Integer numberOfQuestions;
+
+    @Column(name = "tournament_cancel_status")
+    private Boolean isCanceled;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -60,6 +65,7 @@ public class Tournament {
         this.creator = user;
         this.courseExecution = courseExecution;
         this.numberOfQuestions = tournamentDto.getNumberOfQuestions();
+        setCanceled(false);
     }
 
     public Integer getNumberOfQuestions() {
@@ -118,10 +124,21 @@ public class Tournament {
         if (!this.enrollments.contains(user)){
             this.enrollments.add(user);
         }
+        else {
+            throw new TutorException(ErrorMessage.ALREADY_ENROLLED_IN_TOURNAMENT);
+        }
     }
 
     public Set<User> getEnrollments() {
         return this.enrollments;
+    }
+
+    public Boolean getCanceled() {
+        return isCanceled;
+    }
+
+    public void setCanceled(Boolean canceled) {
+        isCanceled = canceled;
     }
 
     @Override

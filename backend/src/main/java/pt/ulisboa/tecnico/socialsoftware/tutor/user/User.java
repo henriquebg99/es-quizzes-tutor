@@ -5,6 +5,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.Importable;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
@@ -165,6 +167,9 @@ public class User implements UserDetails, Importable {
     public void addEnrolledTournament(Tournament tournament) {
         if (!enrolled_tournaments.contains(tournament)) {
             this.enrolled_tournaments.add(tournament);
+        }
+        else {
+            throw new TutorException(ErrorMessage.ALREADY_ENROLLED_IN_TOURNAMENT);
         }
     }
 

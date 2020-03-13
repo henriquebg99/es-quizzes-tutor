@@ -6,7 +6,6 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
@@ -14,7 +13,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 
@@ -24,8 +22,6 @@ import java.time.format.DateTimeFormatter;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUESTION_NOT_FOUND;
 
 @Service
 public class TournamentService {
@@ -87,8 +83,11 @@ public class TournamentService {
         LocalDateTime beginDate = LocalDateTime.parse(tournamentDto.getBeginDate(), formatter);
         LocalDateTime endDate = LocalDateTime.parse(tournamentDto.getEndDate(), formatter);
 
-        if (endDate.isBefore(beginDate))
-            throw new TutorException(ErrorMessage.END_DATE_IS_BEFORE_BEGIN);
+        if (!endDate.isAfter(beginDate))
+            throw new TutorException(ErrorMessage.END_DATE_IS_NOT_AFTER_BEGIN_DATE);
+
+        if (beginDate.isBefore(LocalDateTime.now()))
+            throw  new TutorException(ErrorMessage.BEGIN_DATE_HAS_PASSED);
 
         tournament.setBeginDate(beginDate);
         tournament.setEndDate(endDate);
@@ -112,22 +111,34 @@ public class TournamentService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void enrollTournament (String username, Integer tournamentId) {
-        //TODO falta testar varios argumentos
-        LocalDateTime date = LocalDateTime.now().plusDays(0);
+
+        LocalDateTime date = LocalDateTime.now();
 
         if (username == null)
             throw new TutorException(ErrorMessage.USERNAME_EMPTY);
+        if(tournamentId == null)
+            throw  new TutorException(ErrorMessage.TOURNAMENT_ID_EMPTY);
+
 
         User user = userRepository.findByUsername(username);
 
         if (user == null)
             throw new TutorException(ErrorMessage.USERNAME_NOT_FOUND, username);
 
-        Tournament tournament = tournamentRepository.getOne(tournamentId);
+        Tournament tournament = tournamentRepository.findById(tournamentId).orElse(null);
+        if (tournament == null) {
+            throw new TutorException(ErrorMessage.TOURNAMENT_ID_NOT_FOUND);
+        }
 
-        if (tournament.getEndDate().isAfter(date)) {
+        if (tournament.getEndDate().isAfter(date) && !tournament.getCanceled()) {
             user.addEnrolledTournament(tournament);
             tournament.addEnrollment(user);
+        }
+        if (tournament.getEndDate().isBefore(date)){
+            throw new TutorException(ErrorMessage.TOURNAMENT_ENDED);
+        }
+        if (tournament.getCanceled()) {
+            throw new TutorException(ErrorMessage.TOURNAMENT_ALREADY_CANCELED);
         }
     }
 
@@ -140,6 +151,7 @@ public class TournamentService {
 
         return tournamentRepository.findAll().stream()
                 .filter(tournament -> date.isBefore(tournament.getEndDate()))
+                .filter(tournament -> !tournament.getCanceled())
                 .map(tournament -> new TournamentDto(tournament))
                 .collect(Collectors.toList());
     }
@@ -149,6 +161,41 @@ public class TournamentService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void cancelTournament (String username, Integer tournamentId) {
+
+        if (username == null)
+            throw new TutorException(ErrorMessage.USERNAME_EMPTY);
+        if (tournamentId == null)
+            throw new TutorException(ErrorMessage.TOURNAMENT_ID_EMPTY);
+
+        //TODO falta apanhar esta exceçao
+        User user = userRepository.findByUsername(username);
+        if (user == null)
+            throw new TutorException(ErrorMessage.USERNAME_NOT_FOUND, username);
+
+        Tournament tournament = tournamentRepository.findById(tournamentId).orElse(null);
+        if (tournament == null)
+            throw new TutorException(ErrorMessage.TOURNAMENT_ID_NOT_FOUND);
+
+        User creator = tournament.getCreator();
+        if (user != creator)
+            throw new TutorException(ErrorMessage.USER_USERNAME_NOT_CREATOR);
+
+        LocalDateTime currentDate = LocalDateTime.now().plusDays(0);
+        LocalDateTime beginDate = tournament.getBeginDate();
+        LocalDateTime endDate = tournament.getEndDate();
+
+        if (currentDate.isAfter(beginDate)) {
+            if (currentDate.isBefore(endDate)) {
+                throw new TutorException(ErrorMessage.TOURNAMENT_HAPPENING);
+            } else {
+                throw new TutorException(ErrorMessage.TOURNAMENT_ENDED);
+            }
+        }
+
+        if (tournament.getCanceled())
+            throw new TutorException(ErrorMessage.TOURNAMENT_ALREADY_CANCELED);
+
+        tournament.setCanceled(true);
 
     }
 }
