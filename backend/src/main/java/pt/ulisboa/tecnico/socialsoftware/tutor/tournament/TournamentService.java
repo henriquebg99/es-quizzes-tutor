@@ -20,6 +20,7 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -151,7 +152,7 @@ public class TournamentService {
         return tournamentRepository.findAll().stream()
                 .filter(tournament -> date.isBefore(tournament.getEndDate()))
                 .filter(tournament -> !tournament.getCanceled())
-                .map(tournament -> new TournamentDto(tournament))
+                .map(TournamentDto::new)
                 .collect(Collectors.toList());
     }
 

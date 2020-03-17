@@ -43,10 +43,10 @@ public class TournamentController {
         //TODO use user.getUsername() if username os required.
     }
 
-    @GetMapping("/executions/{executionId}/tournaments/{tournamentId}")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DEMO_ADMIN')")
+    @GetMapping("/tournaments")
+    @PreAuthorize("hasRole('ROLE_STUDENT')")
     public List<TournamentDto> listOpenTournaments() {
-        return null;
+        return tournamentService.listOpenTournaments();
     }
 
     @PutMapping("/executions/{executionId}/tournaments/{tournamentId}")
