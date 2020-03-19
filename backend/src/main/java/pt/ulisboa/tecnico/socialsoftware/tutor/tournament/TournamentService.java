@@ -146,12 +146,13 @@ public class TournamentService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<TournamentDto> listOpenTournaments() {
+    public List<TournamentDto> listOpenTournaments(int courseExecutionId) {
         LocalDateTime date = LocalDateTime.now().plusDays(0);
 
         return tournamentRepository.findAll().stream()
                 .filter(tournament -> date.isBefore(tournament.getEndDate()))
                 .filter(tournament -> !tournament.getCanceled())
+                .filter(tournament -> (tournament.getCourseExecution().getId() == courseExecutionId))
                 .map(TournamentDto::new)
                 .collect(Collectors.toList());
     }
