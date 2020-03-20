@@ -31,7 +31,7 @@ public class TournamentController {
         return null;
     }
 
-    @PutMapping("/executions/{executionId}/tournaments/{tournamentId}")
+    @PutMapping("/executions/{executionId}/tournaments/{tournamentId}/enroll")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DEMO_ADMIN')")
     public void enrollTournament (Principal principal, Integer tournamentId) {
         User user = (User) ((Authentication) principal).getPrincipal();
@@ -49,7 +49,7 @@ public class TournamentController {
         return tournamentService.listOpenTournaments(executionId);
     }
 
-    @PutMapping("/executions/{executionId}/tournaments/{tournamentId}")
+    @PutMapping("/executions/{executionId}/tournaments/{tournamentId}/cancel")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DEMO_ADMIN')")
     public void cancelTournament (Principal principal, Integer tournamentId) {
         User user = (User) ((Authentication) principal).getPrincipal();
