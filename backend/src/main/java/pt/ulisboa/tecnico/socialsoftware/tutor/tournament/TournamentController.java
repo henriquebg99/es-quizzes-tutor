@@ -26,9 +26,7 @@ public class TournamentController {
             throw new TutorException(AUTHENTICATION_ERROR);
         }
 
-        //TODO use user.getUsername() if username os required.
-
-        return null;
+        return tournamentService.createTournament(user.getUsername(), executionId, tournamentDto);
     }
 
     @PutMapping("/executions/{executionId}/tournaments/{tournamentId}")
