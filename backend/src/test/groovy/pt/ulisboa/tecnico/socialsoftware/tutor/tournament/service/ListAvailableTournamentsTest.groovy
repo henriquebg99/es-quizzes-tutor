@@ -101,7 +101,7 @@ class ListAvailableTournamentsTest extends Specification{
             tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournament)
 
         when:
-            def tournaments = tournamentService.listOpenTournaments()
+            def tournaments = tournamentService.listOpenTournaments(courseExecution.getId())
 
         then: "the number of tournaments is correct"
             tournaments.size() == 1
@@ -124,7 +124,7 @@ class ListAvailableTournamentsTest extends Specification{
             sleep(SLEEP)
 
         when:
-            def tournaments = tournamentService.listOpenTournaments()
+            def tournaments = tournamentService.listOpenTournaments(courseExecution.getId())
 
         then: "no tournaments are listed"
             tournaments.size() == 0
@@ -140,7 +140,7 @@ class ListAvailableTournamentsTest extends Specification{
             tournamentService.cancelTournament(USER_USERNAME, tournamentId)
 
         when:
-            def tournaments = tournamentService.listOpenTournaments()
+            def tournaments = tournamentService.listOpenTournaments(courseExecution.getId())
 
         then: "no tournaments are listed"
             tournaments.size() == 0
@@ -148,7 +148,7 @@ class ListAvailableTournamentsTest extends Specification{
 
     def 'no tournaments are available'() {
         when:
-            def tournaments = tournamentService.listOpenTournaments()
+            def tournaments = tournamentService.listOpenTournaments(courseExecution.getId())
 
         then:
             tournaments.size() == 0

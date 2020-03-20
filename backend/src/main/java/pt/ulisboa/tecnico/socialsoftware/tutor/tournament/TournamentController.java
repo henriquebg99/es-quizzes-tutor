@@ -29,7 +29,7 @@ public class TournamentController {
         return tournamentService.createTournament(user.getUsername(), executionId, tournamentDto);
     }
 
-    @PutMapping("/executions/{executionId}/tournaments/{tournamentId}")
+    @PutMapping("/executions/{executionId}/tournaments/{tournamentId}/enroll")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DEMO_ADMIN')")
     public void enrollTournament (Principal principal, Integer tournamentId) {
         User user = (User) ((Authentication) principal).getPrincipal();
@@ -41,13 +41,13 @@ public class TournamentController {
         //TODO use user.getUsername() if username os required.
     }
 
-    @GetMapping("/tournaments")
-    @PreAuthorize("hasRole('ROLE_STUDENT')")
-    public List<TournamentDto> listOpenTournaments() {
-        return tournamentService.listOpenTournaments();
+    @GetMapping("/executions/{executionId}/tournaments")
+    @PreAuthorize("hasRole('ROLE_STUDENT') or hasRole('ROLE_DEMO_STUDENT')")
+    public List<TournamentDto> listOpenTournaments(@PathVariable int executionId) {
+        return tournamentService.listOpenTournaments(executionId);
     }
 
-    @PutMapping("/executions/{executionId}/tournaments/{tournamentId}")
+    @PutMapping("/executions/{executionId}/tournaments/{tournamentId}/cancel")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DEMO_ADMIN')")
     public void cancelTournament (Principal principal, Integer tournamentId) {
         User user = (User) ((Authentication) principal).getPrincipal();

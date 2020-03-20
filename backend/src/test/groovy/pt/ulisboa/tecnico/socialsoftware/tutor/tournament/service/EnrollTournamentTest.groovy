@@ -102,7 +102,7 @@ class EnrollTournamentTest extends Specification{
     def 'enroll with empty username'() {
         given:
         tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournament)
-        def tournaments = tournamentService.listOpenTournaments()
+        def tournaments = tournamentService.listOpenTournaments(courseExecution.getId())
         def availableTournamentId = tournaments[0].getId()
 
         when:
@@ -125,7 +125,7 @@ class EnrollTournamentTest extends Specification{
     def 'enroll with invalid username'() {
         given:
             tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournament)
-            def tournaments = tournamentService.listOpenTournaments()
+            def tournaments = tournamentService.listOpenTournaments(courseExecution.getId())
             def availableTournamentId = tournaments[0].getId()
 
         when:
@@ -148,7 +148,7 @@ class EnrollTournamentTest extends Specification{
     def 'enroll on an available tournament'(){
         given:
             tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournament)
-            def tournaments = tournamentService.listOpenTournaments()
+            def tournaments = tournamentService.listOpenTournaments(courseExecution.getId())
             def availableTournamentId = tournaments[0].getId()
             def user = userRepository.findByUsername(USER_USERNAME)
             def tournament = tournamentRepository.getOne(availableTournamentId)
@@ -213,7 +213,7 @@ class EnrollTournamentTest extends Specification{
     def 'enroll on a tournament more than once'() {
         given:
             tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournament)
-            def tournaments = tournamentService.listOpenTournaments()
+            def tournaments = tournamentService.listOpenTournaments(courseExecution.getId())
             def availableTournamentId = tournaments[0].getId()
             tournamentService.enrollTournament(USER_USERNAME, availableTournamentId)
 
