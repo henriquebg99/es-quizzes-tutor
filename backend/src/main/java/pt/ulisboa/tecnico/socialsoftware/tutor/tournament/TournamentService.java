@@ -153,7 +153,7 @@ public class TournamentService {
                 .filter(tournament -> date.isBefore(tournament.getEndDate()))
                 .filter(tournament -> !tournament.getCanceled())
                 .filter(tournament -> (tournament.getCourseExecution().getId() == courseExecutionId))
-                .map(TournamentDto::new)
+                .map(tournament -> new TournamentDto(tournament))
                 .collect(Collectors.toList());
     }
 

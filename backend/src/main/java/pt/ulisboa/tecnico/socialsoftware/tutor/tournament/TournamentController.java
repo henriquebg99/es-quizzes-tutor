@@ -43,8 +43,8 @@ public class TournamentController {
         //TODO use user.getUsername() if username os required.
     }
 
-    @GetMapping("/executions/{executionId}/tournaments")
-    @PreAuthorize("hasRole('ROLE_STUDENT') or hasRole('ROLE_DEMO_STUDENT')")
+    @GetMapping("/student/course/executions/{executionId}/tournaments")
+    @PreAuthorize("hasRole('ROLE_STUDENT')")
     public List<TournamentDto> listOpenTournaments(@PathVariable int executionId) {
         return tournamentService.listOpenTournaments(executionId);
     }
