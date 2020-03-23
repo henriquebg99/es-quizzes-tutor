@@ -29,20 +29,20 @@ public class TournamentController {
         return tournamentService.createTournament(user.getUsername(), executionId, tournamentDto);
     }
 
-    @PutMapping("/executions/{executionId}/tournaments/{tournamentId}/enroll")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DEMO_ADMIN')")
-    public void enrollTournament (Principal principal, Integer tournamentId) {
+    @PutMapping("/student/course/executions/{executionId}/tournaments/{tournamentId}/enroll")
+    @PreAuthorize("hasRole('ROLE_STUDENT')")
+    public void enrollTournament (Principal principal, @PathVariable int executionId, @PathVariable int tournamentId) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
         if(user == null){
             throw new TutorException(AUTHENTICATION_ERROR);
         }
 
-        //TODO use user.getUsername() if username os required.
+        tournamentService.enrollTournament(user.getUsername(), tournamentId);
     }
 
-    @GetMapping("/executions/{executionId}/tournaments")
-    @PreAuthorize("hasRole('ROLE_STUDENT') or hasRole('ROLE_DEMO_STUDENT')")
+    @GetMapping("/student/course/executions/{executionId}/tournaments")
+    @PreAuthorize("hasRole('ROLE_STUDENT')")
     public List<TournamentDto> listOpenTournaments(@PathVariable int executionId) {
         return tournamentService.listOpenTournaments(executionId);
     }
