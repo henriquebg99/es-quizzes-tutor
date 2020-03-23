@@ -1,11 +1,12 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.tournament;
 
-import org.apache.catalina.User;
+//import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import javax.validation.Valid;
 import java.security.Principal;
 import java.util.List;
@@ -18,7 +19,7 @@ public class TournamentController {
     private TournamentService tournamentService;
 
     @PostMapping("/executions/{executionId}/tournaments")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DEMO_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_STUDENT')")
     public TournamentDto createTournament (Principal principal, @PathVariable int executionId, @Valid @RequestBody TournamentDto tournamentDto) {
         User user = (User) ((Authentication) principal).getPrincipal();
 

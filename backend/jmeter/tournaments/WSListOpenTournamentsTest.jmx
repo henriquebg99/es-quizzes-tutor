@@ -56,13 +56,13 @@
           <stringProp name="driver">org.postgresql.Driver</stringProp>
           <stringProp name="initQuery"></stringProp>
           <boolProp name="keepAlive">true</boolProp>
-          <stringProp name="password">SECRET</stringProp>
+          <stringProp name="password">sule2065</stringProp>
           <stringProp name="poolMax">0</stringProp>
           <boolProp name="preinit">false</boolProp>
           <stringProp name="timeout">10000</stringProp>
           <stringProp name="transactionIsolation">DEFAULT</stringProp>
           <stringProp name="trimInterval">60000</stringProp>
-          <stringProp name="username">dora</stringProp>
+          <stringProp name="username">henrique</stringProp>
         </JDBCDataSource>
         <hashTree/>
         <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Request" enabled="true">
@@ -187,8 +187,8 @@
           </HTTPSamplerProxy>
           <hashTree>
             <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert tournament begin date" enabled="true">
-              <stringProp name="JSON_PATH">$[0].begin_date</stringProp>
-              <stringProp name="EXPECTED_VALUE">2020-06-12 14:30:00</stringProp>
+              <stringProp name="JSON_PATH">$[0].beginDate</stringProp>
+              <stringProp name="EXPECTED_VALUE">2020-06-12 14:30</stringProp>
               <boolProp name="JSONVALIDATION">true</boolProp>
               <boolProp name="EXPECT_NULL">false</boolProp>
               <boolProp name="INVERT">false</boolProp>
@@ -196,7 +196,7 @@
             </JSONPathAssertion>
             <hashTree/>
             <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert tournament end date" enabled="true">
-              <stringProp name="JSON_PATH">$[0].end_date</stringProp>
+              <stringProp name="JSON_PATH">$[0].endDate</stringProp>
               <stringProp name="EXPECTED_VALUE">2020-06-12 18:30</stringProp>
               <boolProp name="JSONVALIDATION">true</boolProp>
               <boolProp name="EXPECT_NULL">false</boolProp>
@@ -204,36 +204,9 @@
               <boolProp name="ISREGEX">false</boolProp>
             </JSONPathAssertion>
             <hashTree/>
-            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert tournament cancel status" enabled="true">
-              <stringProp name="JSON_PATH">$[0].tournament_cancel_status</stringProp>
-              <stringProp name="EXPECTED_VALUE">false</stringProp>
-              <boolProp name="JSONVALIDATION">true</boolProp>
-              <boolProp name="EXPECT_NULL">false</boolProp>
-              <boolProp name="INVERT">false</boolProp>
-              <boolProp name="ISREGEX">false</boolProp>
-            </JSONPathAssertion>
-            <hashTree/>
             <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert tournament number of questions" enabled="true">
-              <stringProp name="JSON_PATH">$[0].number_of_questions</stringProp>
+              <stringProp name="JSON_PATH">$[0].numberOfQuestions</stringProp>
               <stringProp name="EXPECTED_VALUE">1</stringProp>
-              <boolProp name="JSONVALIDATION">true</boolProp>
-              <boolProp name="EXPECT_NULL">false</boolProp>
-              <boolProp name="INVERT">false</boolProp>
-              <boolProp name="ISREGEX">false</boolProp>
-            </JSONPathAssertion>
-            <hashTree/>
-            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert tournament course execution id" enabled="true">
-              <stringProp name="JSON_PATH">$[0].course_execution_id</stringProp>
-              <stringProp name="EXPECTED_VALUE">11</stringProp>
-              <boolProp name="JSONVALIDATION">true</boolProp>
-              <boolProp name="EXPECT_NULL">false</boolProp>
-              <boolProp name="INVERT">false</boolProp>
-              <boolProp name="ISREGEX">false</boolProp>
-            </JSONPathAssertion>
-            <hashTree/>
-            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert tournament user id" enabled="true">
-              <stringProp name="JSON_PATH">$[0].user_id</stringProp>
-              <stringProp name="EXPECTED_VALUE">676</stringProp>
               <boolProp name="JSONVALIDATION">true</boolProp>
               <boolProp name="EXPECT_NULL">false</boolProp>
               <boolProp name="INVERT">false</boolProp>
@@ -345,8 +318,8 @@
           <stringProp name="checkQuery"></stringProp>
           <stringProp name="dbUrl">jdbc:postgresql://localhost:5432/tutordb?autoReconnect=true</stringProp>
           <stringProp name="driver">org.postgresql.Driver</stringProp>
-          <stringProp name="username">dora</stringProp>
-          <stringProp name="password">secret</stringProp>
+          <stringProp name="username">henrique</stringProp>
+          <stringProp name="password">sule2065</stringProp>
           <stringProp name="connectionProperties"></stringProp>
         </JDBCDataSource>
         <hashTree/>
