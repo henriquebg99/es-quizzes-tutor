@@ -48,15 +48,16 @@ public class TournamentController {
         return tournamentService.listOpenTournaments(executionId);
     }
 
-    @PutMapping("/executions/{executionId}/tournaments/{tournamentId}/cancel")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DEMO_ADMIN')")
-    public void cancelTournament (Principal principal, Integer tournamentId) {
+    @PutMapping("/student/course/executions/{executionId}/tournaments{tournamentId}/cancel")
+    @PreAuthorize("hasRole('ROLE_STUDENT')")
+    public void cancelTournament (Principal principal, @PathVariable int executionId, @PathVariable int tournamentId) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
         if(user == null){
             throw new TutorException(AUTHENTICATION_ERROR);
         }
 
-        //TODO use user.getUsername() if username os required.
+        tournamentService.cancelTournament(user.getUsername(), tournamentId);
+
     }
 }
