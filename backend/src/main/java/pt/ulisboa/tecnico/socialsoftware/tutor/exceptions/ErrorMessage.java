@@ -53,6 +53,7 @@ public enum ErrorMessage {
     QUIZ_NOT_FOUND("Quiz not found with id %d"),
     CANNOT_OPEN_FILE("Cannot open file"),
     QUIZ_OPTION_MISMATCH("Quiz Question %d does not have option %d"),
+    QUIZ_ALREADY_STARTED("Quiz was already started"),
     QUIZ_QUESTION_HAS_ANSWERS("Quiz question has answers"),
     QUIZ_QUESTION_NOT_FOUND("Quiz question not found with id %d"),
     TOPICS_IMPORT_ERROR("Error importing topics: %s"),

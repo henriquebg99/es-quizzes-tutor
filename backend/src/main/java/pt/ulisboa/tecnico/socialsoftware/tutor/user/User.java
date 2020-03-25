@@ -9,7 +9,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.Importable;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.ProposedQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
@@ -382,29 +381,6 @@ public class User implements UserDetails {
     }
 
     public void addProposedQuestion(ProposedQuestion proposedQuestion) { this.proposedQuestions.add(proposedQuestion); }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", role=" + role +
-                ", id=" + id +
-                ", username='" + username + '\'' +
-                ", name='" + name + '\'' +
-                ", courseAcronyms='" + enrolledCoursesAcronyms + '\'' +
-                ", numberOfTeacherQuizzes=" + numberOfTeacherQuizzes +
-                ", numberOfInClassQuizzes=" + numberOfInClassQuizzes +
-                ", numberOfStudentQuizzes=" + numberOfStudentQuizzes +
-                ", numberOfTeacherAnswers=" + numberOfTeacherAnswers +
-                ", numberOfCorrectTeacherAnswers=" + numberOfCorrectTeacherAnswers +
-                ", numberOfInClassAnswers=" + numberOfInClassAnswers +
-                ", numberOfCorrectInClassAnswers=" + numberOfCorrectInClassAnswers +
-                ", numberOfStudentAnswers=" + numberOfStudentAnswers +
-                ", numberOfCorrectStudentAnswers=" + numberOfCorrectStudentAnswers +
-                ", creationDate=" + creationDate +
-                ", courseExecutions=" + courseExecutions +
-                '}';
-    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
