@@ -162,7 +162,7 @@ class EnrollTournamentTest extends Specification{
 
         and: 'the correct user is enrolled'
             user.getEnrolledTournaments().size() == 1
-            user.getEnrolledTournaments().contains(tournament)
+            user.getEnrolledTournaments().contains(tournament) //should use ids
     }
 
     def 'enroll on an ended tournament'() {

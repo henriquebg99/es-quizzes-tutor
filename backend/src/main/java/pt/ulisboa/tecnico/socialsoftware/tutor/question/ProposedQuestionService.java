@@ -60,7 +60,7 @@ public class ProposedQuestionService {
     @Retryable(
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional(isolation = Isolation.REPEATABLE_READ) //the DTO could save the courseId and userId
     public ProposedQuestionDto createProposedQuestion(int courseId, ProposedQuestionDto proposedQuestionDto, int userId) {
         Course course = courseRepository.findById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
@@ -71,8 +71,10 @@ public class ProposedQuestionService {
             proposedQuestionDto.setKey(maxQuestionNumber + 1);
         }
 
+        // do not verify if the user belongs to the course
         ProposedQuestion proposedQuestion = new ProposedQuestion(proposedQuestionDto, course, user);
         course.addProposedQuestion(proposedQuestion);
+        user.addProposedQuestion(proposedQuestion);
         this.entityManager.persist(proposedQuestion);
         return new ProposedQuestionDto(proposedQuestion);
     }

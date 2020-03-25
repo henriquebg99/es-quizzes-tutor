@@ -49,6 +49,7 @@ public class ProposedQuestion {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "proposedQuestion", fetch = FetchType.LAZY, orphanRemoval=true)
     private List<Option> options = new ArrayList<>();
 
+    // missing topics
     /*
     @Enumerated(EnumType.STRING)
     private ProposedQuestion.Status status = ProposedQuestion.Status.DEPENDENT;

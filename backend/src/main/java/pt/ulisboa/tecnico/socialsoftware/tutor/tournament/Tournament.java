@@ -55,6 +55,7 @@ public class Tournament {
     public Tournament() {}
 
     public Tournament(User user, TournamentDto tournamentDto, CourseExecution courseExecution) {
+        // the creator should be enrolled by default
         this.creator = user;
         this.courseExecution = courseExecution;
         this.numberOfQuestions = tournamentDto.getNumberOfQuestions();

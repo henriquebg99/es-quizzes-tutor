@@ -41,6 +41,7 @@ public class TournamentService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
+    // the username and the courseExecution can be inside the DTO
     public TournamentDto createTournament (String username, int courseExecutionId, TournamentDto tournamentDto) {
         if (username == null)
             throw new TutorException(ErrorMessage.USERNAME_EMPTY);
@@ -51,6 +52,7 @@ public class TournamentService {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
+        // could use the same logic as the course instead of many verifications
         if (user == null)
             throw new TutorException(ErrorMessage.USERNAME_NOT_FOUND, username);
 
@@ -58,7 +60,7 @@ public class TournamentService {
 
         Tournament tournament = new Tournament (user, tournamentDto, courseExecution);
 
-        checkAndSetDates(tournamentDto, formatter, tournament);
+        checkAndSetDates(tournamentDto, formatter, tournament); //this check should be before creating the tournament
         courseExecution.addTournament(tournament);
         int courseId = courseExecution.getCourse().getId();
         checkAndAndTopics(tournamentDto, tournament, courseId);
@@ -124,11 +126,14 @@ public class TournamentService {
         if (user == null)
             throw new TutorException(ErrorMessage.USERNAME_NOT_FOUND, username);
 
+        // don't forget to verify if the user belongs to the course execution
+
         Tournament tournament = tournamentRepository.findById(tournamentId).orElse(null);
         if (tournament == null) {
             throw new TutorException(ErrorMessage.TOURNAMENT_ID_NOT_FOUND);
         }
 
+        // the START date should be after the current date - a user cannot enroll if the tournament has already started
         if (tournament.getEndDate().isAfter(date) && !tournament.getCanceled()) {
             user.addEnrolledTournament(tournament);
             tournament.addEnrollment(user);
@@ -148,6 +153,7 @@ public class TournamentService {
     public List<TournamentDto> listOpenTournaments() {
         LocalDateTime date = LocalDateTime.now().plusDays(0);
 
+        // this filter should be done in the repository
         return tournamentRepository.findAll().stream()
                 .filter(tournament -> date.isBefore(tournament.getEndDate()))
                 .filter(tournament -> !tournament.getCanceled())
@@ -175,6 +181,7 @@ public class TournamentService {
             throw new TutorException(ErrorMessage.TOURNAMENT_ID_NOT_FOUND);
 
         User creator = tournament.getCreator();
+        // compare using ids and not objects
         if (user != creator)
             throw new TutorException(ErrorMessage.USER_USERNAME_NOT_CREATOR);
 

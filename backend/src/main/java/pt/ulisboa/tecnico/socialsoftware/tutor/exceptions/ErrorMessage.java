@@ -1,26 +1,16 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.exceptions;
 
 public enum ErrorMessage {
-    ACCESS_DENIED("You do not have permission to view this resource"),
-    ANSWERS_IMPORT_ERROR("Error importing answers: %s"),
+    QUIZ_NOT_FOUND("Quiz not found with id %d"),
+    QUIZ_QUESTION_NOT_FOUND("Quiz question not found with id %d"),
+    QUIZ_ANSWER_NOT_FOUND("Quiz answer not found with id %d"),
+    QUESTION_ANSWER_NOT_FOUND("Question answer not found with id %d"),
+    OPTION_NOT_FOUND("Option not found with id %d"),
+    QUESTION_NOT_FOUND("Question not found with id %d"),
+    USER_NOT_FOUND("User not found with id %d"),
+    TOPIC_NOT_FOUND("Topic not found with id %d"),
     ASSESSMENT_NOT_FOUND("Assessment not found with id %d"),
     TOPIC_CONJUNCTION_NOT_FOUND("Topic Conjunction not found with id %d"),
-
-    COURSE_NOT_FOUND("Course not found with name %s"),
-    COURSE_NAME_IS_EMPTY("The course name is empty"),
-    COURSE_TYPE_NOT_DEFINED("The course type is not defined"),
-    COURSE_EXECUTION_ACRONYM_IS_EMPTY("The course execution acronym is empty"),
-    COURSE_EXECUTION_ACADEMIC_TERM_IS_EMPTY("The course execution academic term is empty"),
-    CANNOT_DELETE_COURSE_EXECUTION("The course execution cannot be deleted %s"),
-    USERNAME_NOT_FOUND("Username %s not found"),
-
-    QUIZ_USER_MISMATCH("Quiz %s is not assigned to student %s"),
-    QUIZ_MISMATCH("Quiz Answer Quiz %d does not match Quiz Question Quiz %d"),
-    QUESTION_OPTION_MISMATCH("Question %d does not have option %d"),
-    AUTHENTICATION_ERROR("Authentication Error"),
-    COURSE_EXECUTION_ACADEMIC_TERM_IS_EMPTY("The course execution academic term is empty"),
-    COURSE_EXECUTION_ACRONYM_IS_EMPTY("The course execution acronym is empty"),
-    COURSE_EXECUTION_MISMATCH("Course Execution %d does not have quiz %d"),
     COURSE_EXECUTION_NOT_FOUND("Course execution not found with id %d"),
 
     COURSE_NOT_FOUND("Course not found with name %s"),
@@ -34,20 +24,17 @@ public enum ErrorMessage {
     QUIZ_USER_MISMATCH("Quiz %s is not assigned to student %s"),
     QUIZ_MISMATCH("Quiz Answer Quiz %d does not match Quiz Question Quiz %d"),
     QUESTION_OPTION_MISMATCH("Question %d does not have option %d"),
-    AUTHENTICATION_ERROR("Authentication Error"),
     COURSE_EXECUTION_MISMATCH("Course Execution %d does not have quiz %d"),
 
-    DUPLICATE_COURSE_EXECUTION("Duplicate course execution: %s"),
     DUPLICATE_TOPIC("Duplicate topic: %s"),
     DUPLICATE_USER("Duplicate user: %s"),
-    FENIX_CONFIGURATION_ERROR("Incorrect server configuration files for fenix"),
-    FENIX_ERROR("Fenix Error"),
-    NOT_ENOUGH_QUESTIONS("Not enough questions to create a quiz"),
+    DUPLICATE_COURSE_EXECUTION("Duplicate course execution: %s"),
 
-    OPTION_NOT_FOUND("Option not found with id %d"),
+    USERS_IMPORT_ERROR("Error importing users: %s"),
     QUESTIONS_IMPORT_ERROR("Error importing questions: %s"),
-    QUESTION_ANSWER_NOT_FOUND("Question answer not found with id %d"),
-    QUESTION_CHANGE_CORRECT_OPTION_HAS_ANSWERS("Can not change correct option of answered question"),
+    TOPICS_IMPORT_ERROR("Error importing topics: %s"),
+    ANSWERS_IMPORT_ERROR("Error importing answers: %s"),
+    QUIZZES_IMPORT_ERROR("Error importing quizzes: %s"),
 
     QUESTION_IS_USED_IN_QUIZ("Question is used in quiz %s"),
     QUIZ_NOT_CONSISTENT("Field %s of quiz is not consistent"),
@@ -56,29 +43,24 @@ public enum ErrorMessage {
     QUIZ_NOT_YET_AVAILABLE("This quiz is not yet available"),
 
     NO_CORRECT_OPTION("Question does not have a correct option"),
-
     NOT_ENOUGH_QUESTIONS("Not enough questions to create a quiz"),
     QUESTION_MISSING_DATA("Missing information for quiz"),
-
     QUESTION_MULTIPLE_CORRECT_OPTIONS("Questions can only have 1 correct option"),
-
-    QUESTION_NOT_FOUND("Question not found with id %d"),
-    QUIZZES_IMPORT_ERROR("Error importing quizzes: %s"),
-    QUIZ_ALREADY_COMPLETED("Quiz already completed"),
-    QUIZ_ANSWER_NOT_FOUND("Quiz answer not found with id %d"),
+    QUESTION_CHANGE_CORRECT_OPTION_HAS_ANSWERS("Can not change correct option of answered question"),
     QUIZ_HAS_ANSWERS("Quiz already has answers"),
+    QUIZ_ALREADY_COMPLETED("Quiz already completed"),
+    QUIZ_ALREADY_STARTED("Quiz was already started"),
+    QUIZ_QUESTION_HAS_ANSWERS("Quiz question has answers"),
+    FENIX_ERROR("Fenix Error"),
+    AUTHENTICATION_ERROR("Authentication Error"),
+    FENIX_CONFIGURATION_ERROR("Incorrect server configuration files for fenix"),
+
 
     ACCESS_DENIED("You do not have permission to view this resource"),
-    CANNOT_OPEN_FILE("Cannot open file");
-    QUIZ_OPTION_MISMATCH("Quiz Question %d does not have option %d"),
-    QUIZ_QUESTION_HAS_ANSWERS("Quiz question has answers"),
-    QUIZ_QUESTION_NOT_FOUND("Quiz question not found with id %d"),
-    TOPICS_IMPORT_ERROR("Error importing topics: %s"),
-    TOPIC_NOT_FOUND("Topic not found with id %d"),
-    TOPIC_NOT_FOUND_NAME("Topic not found with name"),
-    USERS_IMPORT_ERROR("Error importing users: %s"),
+    CANNOT_OPEN_FILE("Cannot open file"),
 
-    USER_NOT_FOUND("User not found with id %d"),
+    QUIZ_OPTION_MISMATCH("Quiz Question %d does not have option %d"),
+    TOPIC_NOT_FOUND_NAME("Topic not found with name"),
     END_DATE_IS_EMPTY("End date is empty."),
     BEGIN_DATE_IS_EMPTY("Begin date is empty."),
     INVALID_NUMBER_OF_QUESTIONS ("The number of questions is less than one."),

@@ -104,6 +104,7 @@ class SubmitQuestionTest extends Specification {
         result.getUsername() == user.getUsername()
         result.getOptions().size() == 2
         course.getProposedQuestions().contains(result)
+        user.getProposedQuestions().contains(result)
         def resOption = result.getOptions().get(0)
         def resOption2 = result.getOptions().get(1)
         resOption.getContent() == OPTION_CONTENT
@@ -305,6 +306,7 @@ class SubmitQuestionTest extends Specification {
         exception.getErrorMessage() == QUESTION_MULTIPLE_CORRECT_OPTIONS
     }
 
+    //should have more incorrect tests - test user p.ex
     @TestConfiguration
     static class ProposedQuestionServiceImplTestContextConfiguration {
 
