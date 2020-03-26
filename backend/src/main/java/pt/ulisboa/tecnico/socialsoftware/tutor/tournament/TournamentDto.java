@@ -72,6 +72,7 @@ public class TournamentDto implements Serializable {
 
     public void addTopic (TopicDto topicDto) {this.topics.add(topicDto);}
 
+
     @Override
     public String toString() {
         return "TournamentDto{}";
