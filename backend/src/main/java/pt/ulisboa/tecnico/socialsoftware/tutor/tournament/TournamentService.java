@@ -111,7 +111,7 @@ public class TournamentService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void enrollTournament (String username, Integer tournamentId) {
+    public TournamentDto enrollTournament (String username, Integer tournamentId) {
 
         LocalDateTime date = LocalDateTime.now();
 
@@ -140,6 +140,8 @@ public class TournamentService {
         if (tournament.getCanceled()) {
             throw new TutorException(ErrorMessage.TOURNAMENT_ALREADY_CANCELED);
         }
+
+        return new TournamentDto(tournament);
     }
 
     @Retryable(
@@ -161,7 +163,7 @@ public class TournamentService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void cancelTournament (String username, Integer tournamentId) {
+    public TournamentDto cancelTournament (String username, Integer tournamentId) {
 
         if (username == null)
             throw new TutorException(ErrorMessage.USERNAME_EMPTY);
@@ -196,5 +198,7 @@ public class TournamentService {
             throw new TutorException(ErrorMessage.TOURNAMENT_ALREADY_CANCELED);
 
         tournament.setCanceled(true);
+
+        return new TournamentDto(tournament);
     }
 }

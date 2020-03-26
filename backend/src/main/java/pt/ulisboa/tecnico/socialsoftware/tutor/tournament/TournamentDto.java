@@ -2,6 +2,8 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.tournament;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 
 import java.io.Serializable;
 import java.time.format.DateTimeFormatter;
@@ -13,6 +15,8 @@ public class TournamentDto implements Serializable {
     private String endDate = null;
     private Set<TopicDto> topics = null;
     private int numberOfQuestions;
+    private Boolean cancelState;
+    private Set<UserDto> enrollements;
 
     public TournamentDto () {}
 
@@ -23,10 +27,16 @@ public class TournamentDto implements Serializable {
         this.beginDate = tournament.getBeginDate().format(formatter);
         this.endDate = tournament.getEndDate().format(formatter);
         this.numberOfQuestions = tournament.getNumberOfQuestions();
+        this.cancelState = tournament.getCanceled();
 
         for (Topic topic : tournament.getTopics()) {
             TopicDto topicDto = new TopicDto(topic);
             this.addTopic(topicDto);
+        }
+
+        for (User user: tournament.getEnrollments()) {
+            UserDto userDto = new UserDto(user);
+            this.addEnrollement(userDto);
         }
     }
 
@@ -71,6 +81,12 @@ public class TournamentDto implements Serializable {
     }
 
     public void addTopic (TopicDto topicDto) {this.topics.add(topicDto);}
+
+    public void addEnrollement (UserDto userDto) {this.enrollements.add(userDto);}
+
+    public Boolean getCancelState () {return this.cancelState;}
+
+    public Set<UserDto> getEnrollements () {return this.enrollements;}
 
     @Override
     public String toString() {
