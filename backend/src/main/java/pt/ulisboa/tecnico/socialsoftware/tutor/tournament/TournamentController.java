@@ -32,14 +32,14 @@ public class TournamentController {
 
     @PutMapping("/student/course/executions/{executionId}/tournaments/{tournamentId}/enroll")
     @PreAuthorize("hasRole('ROLE_STUDENT')")
-    public TournamentDto enrollTournament (Principal principal, @PathVariable int executionId, @PathVariable int tournamentId) {
+    public void enrollTournament (Principal principal, @PathVariable int executionId, @PathVariable int tournamentId) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
         if(user == null){
             throw new TutorException(AUTHENTICATION_ERROR);
         }
 
-        return tournamentService.enrollTournament(user.getUsername(), tournamentId);
+        tournamentService.enrollTournament(user.getUsername(), tournamentId);
     }
 
     @GetMapping("/student/course/executions/{executionId}/tournaments")
