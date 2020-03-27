@@ -19,8 +19,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -161,7 +159,7 @@ public class TournamentService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void cancelTournament (String username, Integer tournamentId) {
+    public TournamentDto cancelTournament (String username, Integer tournamentId) {
 
         if (username == null)
             throw new TutorException(ErrorMessage.USERNAME_EMPTY);
@@ -196,5 +194,7 @@ public class TournamentService {
             throw new TutorException(ErrorMessage.TOURNAMENT_ALREADY_CANCELED);
 
         tournament.setCanceled(true);
+
+        return new TournamentDto(tournament);
     }
 }
