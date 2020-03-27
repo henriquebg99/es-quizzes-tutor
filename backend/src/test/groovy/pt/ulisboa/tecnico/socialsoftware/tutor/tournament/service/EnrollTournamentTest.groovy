@@ -88,6 +88,8 @@ class EnrollTournamentTest extends Specification{
         courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO);
         courseExecutionRepository.save(courseExecution);
 
+        courseExecution.addUser(user);
+
         topic = new Topic(course, topicDto)
         topic.setName(TOPIC_NAME)
         topicRepository.save(topic)
@@ -158,11 +160,11 @@ class EnrollTournamentTest extends Specification{
 
         then: 'tournament has one enrollment'
             tournament.getEnrollments().size() == 1
-            tournament.getEnrollments().contains(user)
+            tournament.userIsEnrolled(user.getId());
 
         and: 'the correct user is enrolled'
             user.getEnrolledTournaments().size() == 1
-            user.getEnrolledTournaments().contains(tournament)
+            user.isEnrolledInTournament(tournament.getId())
     }
 
     def 'enroll on an ended tournament'() {

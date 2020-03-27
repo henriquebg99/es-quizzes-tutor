@@ -186,6 +186,18 @@ public class User implements UserDetails {
         return this.enrolled_tournaments;
     }
 
+    public Boolean isEnrolledInTournament(Integer id)  {
+        Iterator<Tournament> itr = this.enrolled_tournaments.iterator();
+
+        while(itr.hasNext()){
+            if (itr.next().getId() == id) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
     public Integer getNumberOfTeacherQuizzes() {
         if (this.numberOfTeacherQuizzes == null)
             this.numberOfTeacherQuizzes = (int) getQuizAnswers().stream()
