@@ -41,8 +41,8 @@ public enum ErrorMessage {
 
     NO_CORRECT_OPTION("Question does not have a correct option"),
 
-    QUESTION_MISSING_DATA("Missing information for quiz"),
 
+    QUESTION_MISSING_DATA("Missing information for quiz"),
     QUESTION_MULTIPLE_CORRECT_OPTIONS("Questions can only have 1 correct option"),
 
     QUESTION_NOT_FOUND("Question not found with id %d"),

@@ -7,10 +7,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Image;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.ProposedQuestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ProposedQuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.ProposedQuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
@@ -47,6 +49,14 @@ public class ProposedQuestionService {
     public ProposedQuestionDto findProposedQuestionById(Integer questionId) {
         return proposedQuestionRepository.findById(questionId).map(ProposedQuestionDto::new)
                 .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
+    }
+
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public CourseDto findProposedQuestionCourse(Integer proposedQuestionId) {
+        return proposedQuestionRepository.findById(proposedQuestionId)
+                .map(ProposedQuestion::getCourse)
+                .map(CourseDto::new)
+                .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, proposedQuestionId));
     }
 
     @Retryable(
