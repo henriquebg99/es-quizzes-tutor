@@ -79,6 +79,7 @@ class EnrollTournamentPerformanceTest extends Specification{
         course = new Course(COURSE_NAME, Course.Type.TECNICO)
         courseRepository.save(course)
         courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
+        courseExecution.addUser(user)
         courseExecutionRepository.save(courseExecution);
 
         topic = new Topic(course, topicDto)
