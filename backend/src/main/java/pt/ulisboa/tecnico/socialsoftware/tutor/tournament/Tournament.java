@@ -1,19 +1,15 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.tournament;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 @Entity
@@ -57,9 +53,7 @@ public class Tournament {
     @ManyToMany(mappedBy = "tournaments")
     private Set<Topic> topics = new HashSet<Topic>();
 
-    public Tournament() {
-
-    }
+    public Tournament() {}
 
     public Tournament(User user, TournamentDto tournamentDto, CourseExecution courseExecution) {
         this.creator = user;
@@ -131,6 +125,17 @@ public class Tournament {
 
     public Set<User> getEnrollments() {
         return this.enrollments;
+    }
+
+    public Boolean userIsEnrolled(int id) {
+        Iterator<User> itr = this.enrollments.iterator();
+
+        while(itr.hasNext()){
+            if (itr.next().getId() == id) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public Boolean getCanceled() {

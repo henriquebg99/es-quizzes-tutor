@@ -1,21 +1,11 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.tournament;
 
-import org.springframework.data.annotation.Transient;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 
-import javax.persistence.Column;
 import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.stream.Collectors;
-
 
 public class TournamentDto implements Serializable {
     private Integer id;
@@ -23,10 +13,9 @@ public class TournamentDto implements Serializable {
     private String endDate = null;
     private Set<TopicDto> topics = null;
     private int numberOfQuestions;
+    private Boolean isCanceled;
 
-    public TournamentDto () {
-
-    }
+    public TournamentDto () {}
 
     public TournamentDto (Tournament tournament) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
@@ -35,6 +24,7 @@ public class TournamentDto implements Serializable {
         this.beginDate = tournament.getBeginDate().format(formatter);
         this.endDate = tournament.getEndDate().format(formatter);
         this.numberOfQuestions = tournament.getNumberOfQuestions();
+        this.isCanceled = tournament.getCanceled();
 
         for (Topic topic : tournament.getTopics()) {
             TopicDto topicDto = new TopicDto(topic);

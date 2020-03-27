@@ -5,17 +5,22 @@ import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 import pt.ulisboa.tecnico.socialsoftware.tutor.administration.AdministrationService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.AssessmentService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.ProposedQuestionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.Tournament;
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
 
 import java.io.Serializable;
+
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Component
 public class TutorPermissionEvaluator implements PermissionEvaluator {
@@ -39,6 +44,12 @@ public class TutorPermissionEvaluator implements PermissionEvaluator {
 
     @Autowired
     private QuizService quizService;
+
+    @Autowired
+    private TournamentRepository tournamentRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Override
     public boolean hasPermission(Authentication authentication, Object targetDomainObject, Object permission) {
@@ -78,6 +89,8 @@ public class TutorPermissionEvaluator implements PermissionEvaluator {
                     return userHasThisExecution(username, assessmentService.findAssessmentCourseExecution(id).getCourseExecutionId());
                 case "QUIZ.ACCESS":
                     return userHasThisExecution(username, quizService.findQuizCourseExecution(id).getCourseExecutionId());
+                case "TOURNAMENT.CREATOR":
+                    return userIsCreator(username, id);
                 default: return false;
             }
         }
@@ -93,6 +106,20 @@ public class TutorPermissionEvaluator implements PermissionEvaluator {
     private boolean userHasThisExecution(String username, int id) {
         return userService.getCourseExecutions(username).stream()
                 .anyMatch(course -> course.getCourseExecutionId() == id);
+    }
+
+    private boolean userIsCreator(String username, int id) {
+        Tournament tournament = tournamentRepository.findById(id).orElse(null);
+        User user = userRepository.findByUsername(username);
+
+        if (tournament == null) {
+            throw new TutorException(TOURNAMENT_ID_NOT_FOUND);
+        }
+        if (user == null) {
+            throw new TutorException(USER_NOT_FOUND);
+        }
+
+        return tournament.getCreator().getId().equals(user.getId());
     }
 
      @Override
