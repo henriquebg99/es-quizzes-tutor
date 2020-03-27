@@ -88,6 +88,8 @@ class CreateTournamentTest extends Specification {
         courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO);
         courseExecutionRepository.save(courseExecution);
 
+        courseExecution.addUser(user);
+
         topic = new Topic (course, topicDto)
         topic.setName(TOPIC_NAME)
         topicRepository.save(topic)

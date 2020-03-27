@@ -42,7 +42,6 @@ public enum ErrorMessage {
     NO_CORRECT_OPTION("Question does not have a correct option"),
 
     QUESTION_MISSING_DATA("Missing information for quiz"),
-
     QUESTION_MULTIPLE_CORRECT_OPTIONS("Questions can only have 1 correct option"),
 
     QUESTION_NOT_FOUND("Question not found with id %d"),
@@ -53,6 +52,7 @@ public enum ErrorMessage {
     QUIZ_NOT_FOUND("Quiz not found with id %d"),
     CANNOT_OPEN_FILE("Cannot open file"),
     QUIZ_OPTION_MISMATCH("Quiz Question %d does not have option %d"),
+    QUIZ_ALREADY_STARTED("Quiz was already started"),
     QUIZ_QUESTION_HAS_ANSWERS("Quiz question has answers"),
     QUIZ_QUESTION_NOT_FOUND("Quiz question not found with id %d"),
     TOPICS_IMPORT_ERROR("Error importing topics: %s"),
@@ -75,7 +75,8 @@ public enum ErrorMessage {
     USERNAME_EMPTY ("Username is empty"),
     TOURNAMENT_ALREADY_CANCELED("This tournament was already canceled"),
     BEGIN_DATE_HAS_PASSED("The tournament begin date has passed."),
-    ALREADY_ENROLLED_IN_TOURNAMENT("The user is already enrolled in the tournament");
+    ALREADY_ENROLLED_IN_TOURNAMENT("The user is already enrolled in the tournament"),
+    USER_NOT_IN_COURSE_EXECUTION("The course execution does not contain the user");
     public final String label;
 
     ErrorMessage(String label) {
