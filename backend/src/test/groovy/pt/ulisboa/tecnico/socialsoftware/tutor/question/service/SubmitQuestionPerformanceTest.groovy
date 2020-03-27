@@ -45,7 +45,7 @@ class SubmitQuestionPerformanceTest extends Specification {
     @Autowired
     UserRepository userRepository
 
-    def "performance testing to get 1000 proposed questions"() {
+    def "performance testing to get 3000 proposed questions"() {
         given: "a course, a courseExecution, a user, options and a proposedQuestionDto"
         def course = new Course(COURSE_NAME, Course.Type.TECNICO)
         courseRepository.save(course)
@@ -71,8 +71,8 @@ class SubmitQuestionPerformanceTest extends Specification {
         proposedQuestionDto.setUsername(user.getUsername())
         proposedQuestionDto.setOptions(options)
 
-        when: 'are submited 1000 questions'
-        1.upto(1000, {
+        when: 'are submited 3000 questions'
+        1.upto(3000, {
             proposedQuestionService.createProposedQuestion(course.getId(), proposedQuestionDto, user.getId())
             proposedQuestionDto.setKey(null)
         })
