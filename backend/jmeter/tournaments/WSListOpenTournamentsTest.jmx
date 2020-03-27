@@ -56,18 +56,18 @@
           <stringProp name="driver">org.postgresql.Driver</stringProp>
           <stringProp name="initQuery"></stringProp>
           <boolProp name="keepAlive">true</boolProp>
-          <stringProp name="password">sule2065</stringProp>
+          <stringProp name="password">secret</stringProp>
           <stringProp name="poolMax">0</stringProp>
           <boolProp name="preinit">false</boolProp>
           <stringProp name="timeout">10000</stringProp>
           <stringProp name="transactionIsolation">DEFAULT</stringProp>
           <stringProp name="trimInterval">60000</stringProp>
-          <stringProp name="username">henrique</stringProp>
+          <stringProp name="username">dora</stringProp>
         </JDBCDataSource>
         <hashTree/>
         <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Request" enabled="true">
           <stringProp name="dataSource">create_tournaments</stringProp>
-          <stringProp name="query">INSERT INTO tournaments(begin_date, end_date, tournament_cancel_status, number_of_questions, course_execution_id, user_id) VALUES (&apos;2020-06-12 14:30&apos;,&apos;2020-06-12 18:30&apos;, false, 1, 11, 676);</stringProp>
+          <stringProp name="query">INSERT INTO tournaments(begin_date, end_date, number_of_questions, course_execution_id, user_id) VALUES (&apos;2020-06-12 14:30&apos;,&apos;2020-06-12 18:30&apos;, 1, 11, 676);</stringProp>
           <stringProp name="queryArguments"></stringProp>
           <stringProp name="queryArgumentsTypes"></stringProp>
           <stringProp name="queryTimeout"></stringProp>
@@ -318,8 +318,8 @@
           <stringProp name="checkQuery"></stringProp>
           <stringProp name="dbUrl">jdbc:postgresql://localhost:5432/tutordb?autoReconnect=true</stringProp>
           <stringProp name="driver">org.postgresql.Driver</stringProp>
-          <stringProp name="username">henrique</stringProp>
-          <stringProp name="password">sule2065</stringProp>
+          <stringProp name="username">dora</stringProp>
+          <stringProp name="password">secret</stringProp>
           <stringProp name="connectionProperties"></stringProp>
         </JDBCDataSource>
         <hashTree/>

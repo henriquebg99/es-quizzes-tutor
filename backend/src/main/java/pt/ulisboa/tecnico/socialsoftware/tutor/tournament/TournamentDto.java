@@ -74,10 +74,6 @@ public class TournamentDto implements Serializable {
 
     public void addTopic (TopicDto topicDto) {this.topics.add(topicDto);}
 
-    public Boolean getCanceled() {return isCanceled;}
-
-    public void setCanceled(Boolean canceled) {isCanceled = canceled; }
-
     @Override
     public String toString() {
         return "TournamentDto{}";
