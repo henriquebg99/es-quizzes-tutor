@@ -13,6 +13,7 @@ public class TournamentDto implements Serializable {
     private String endDate = null;
     private Set<TopicDto> topics = null;
     private int numberOfQuestions;
+    private Boolean isCanceled;
 
     public TournamentDto () {}
 
@@ -23,6 +24,7 @@ public class TournamentDto implements Serializable {
         this.beginDate = tournament.getBeginDate().format(formatter);
         this.endDate = tournament.getEndDate().format(formatter);
         this.numberOfQuestions = tournament.getNumberOfQuestions();
+        this.isCanceled = tournament.getCanceled();
 
         for (Topic topic : tournament.getTopics()) {
             TopicDto topicDto = new TopicDto(topic);

@@ -9,6 +9,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 @Entity
@@ -124,6 +125,17 @@ public class Tournament {
 
     public Set<User> getEnrollments() {
         return this.enrollments;
+    }
+
+    public Boolean userIsEnrolled(int id) {
+        Iterator<User> itr = this.enrollments.iterator();
+
+        while(itr.hasNext()){
+            if (itr.next().getId() == id) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public Boolean getCanceled() {

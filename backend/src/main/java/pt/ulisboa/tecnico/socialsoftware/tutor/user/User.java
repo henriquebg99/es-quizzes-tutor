@@ -7,9 +7,15 @@ import org.springframework.security.core.userdetails.UserDetails;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 
+/*
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.Importable;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.ProposedQuestion;
+*/
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.ProposedQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
@@ -23,7 +29,7 @@ import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "users")
-public class User implements UserDetails {
+public class User implements UserDetails, DomainEntity {
     public enum Role {STUDENT, TEACHER, ADMIN, DEMO_ADMIN}
 
     @Id
@@ -91,6 +97,11 @@ public class User implements UserDetails {
         this.numberOfCorrectTeacherAnswers = 0;
         this.numberOfCorrectInClassAnswers = 0;
         this.numberOfCorrectStudentAnswers = 0;
+    }
+
+    @Override
+    public void accept(Visitor visitor) {
+        visitor.visitUser(this);
     }
 
     public Integer getId() {
@@ -186,6 +197,18 @@ public class User implements UserDetails {
     public Set<Tournament> getEnrolledTournaments() {
         return this.enrolled_tournaments;
     }
+
+    public Boolean isEnrolledInTournament(Integer id)  {
+        Iterator<Tournament> itr = this.enrolled_tournaments.iterator();
+
+        while(itr.hasNext()){
+            if (itr.next().getId() == id) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     public Integer getNumberOfTeacherQuizzes() {
         if (this.numberOfTeacherQuizzes == null)
@@ -382,29 +405,6 @@ public class User implements UserDetails {
     }
 
     public void addProposedQuestion(ProposedQuestion proposedQuestion) { this.proposedQuestions.add(proposedQuestion); }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", role=" + role +
-                ", id=" + id +
-                ", username='" + username + '\'' +
-                ", name='" + name + '\'' +
-                ", courseAcronyms='" + enrolledCoursesAcronyms + '\'' +
-                ", numberOfTeacherQuizzes=" + numberOfTeacherQuizzes +
-                ", numberOfInClassQuizzes=" + numberOfInClassQuizzes +
-                ", numberOfStudentQuizzes=" + numberOfStudentQuizzes +
-                ", numberOfTeacherAnswers=" + numberOfTeacherAnswers +
-                ", numberOfCorrectTeacherAnswers=" + numberOfCorrectTeacherAnswers +
-                ", numberOfInClassAnswers=" + numberOfInClassAnswers +
-                ", numberOfCorrectInClassAnswers=" + numberOfCorrectInClassAnswers +
-                ", numberOfStudentAnswers=" + numberOfStudentAnswers +
-                ", numberOfCorrectStudentAnswers=" + numberOfCorrectStudentAnswers +
-                ", creationDate=" + creationDate +
-                ", courseExecutions=" + courseExecutions +
-                '}';
-    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

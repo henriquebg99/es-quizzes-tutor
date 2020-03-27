@@ -18,24 +18,8 @@ public enum ErrorMessage {
     QUIZ_MISMATCH("Quiz Answer Quiz %d does not match Quiz Question Quiz %d"),
     QUESTION_OPTION_MISMATCH("Question %d does not have option %d"),
     AUTHENTICATION_ERROR("Authentication Error"),
-    COURSE_EXECUTION_ACADEMIC_TERM_IS_EMPTY("The course execution academic term is empty"),
-    COURSE_EXECUTION_ACRONYM_IS_EMPTY("The course execution acronym is empty"),
     COURSE_EXECUTION_MISMATCH("Course Execution %d does not have quiz %d"),
     COURSE_EXECUTION_NOT_FOUND("Course execution not found with id %d"),
-
-    COURSE_NOT_FOUND("Course not found with name %s"),
-    COURSE_NAME_IS_EMPTY("The course name is empty"),
-    COURSE_TYPE_NOT_DEFINED("The course type is not defined"),
-    COURSE_EXECUTION_ACRONYM_IS_EMPTY("The course execution acronym is empty"),
-    COURSE_EXECUTION_ACADEMIC_TERM_IS_EMPTY("The course execution academic term is empty"),
-    CANNOT_DELETE_COURSE_EXECUTION("The course execution cannot be deleted %s"),
-    USERNAME_NOT_FOUND("Username %s not found"),
-
-    QUIZ_USER_MISMATCH("Quiz %s is not assigned to student %s"),
-    QUIZ_MISMATCH("Quiz Answer Quiz %d does not match Quiz Question Quiz %d"),
-    QUESTION_OPTION_MISMATCH("Question %d does not have option %d"),
-    AUTHENTICATION_ERROR("Authentication Error"),
-    COURSE_EXECUTION_MISMATCH("Course Execution %d does not have quiz %d"),
 
     DUPLICATE_COURSE_EXECUTION("Duplicate course execution: %s"),
     DUPLICATE_TOPIC("Duplicate topic: %s"),
@@ -57,7 +41,6 @@ public enum ErrorMessage {
 
     NO_CORRECT_OPTION("Question does not have a correct option"),
 
-    NOT_ENOUGH_QUESTIONS("Not enough questions to create a quiz"),
     QUESTION_MISSING_DATA("Missing information for quiz"),
 
     QUESTION_MULTIPLE_CORRECT_OPTIONS("Questions can only have 1 correct option"),
@@ -67,10 +50,10 @@ public enum ErrorMessage {
     QUIZ_ALREADY_COMPLETED("Quiz already completed"),
     QUIZ_ANSWER_NOT_FOUND("Quiz answer not found with id %d"),
     QUIZ_HAS_ANSWERS("Quiz already has answers"),
-
-    ACCESS_DENIED("You do not have permission to view this resource"),
-    CANNOT_OPEN_FILE("Cannot open file");
+    QUIZ_NOT_FOUND("Quiz not found with id %d"),
+    CANNOT_OPEN_FILE("Cannot open file"),
     QUIZ_OPTION_MISMATCH("Quiz Question %d does not have option %d"),
+    QUIZ_ALREADY_STARTED("Quiz was already started"),
     QUIZ_QUESTION_HAS_ANSWERS("Quiz question has answers"),
     QUIZ_QUESTION_NOT_FOUND("Quiz question not found with id %d"),
     TOPICS_IMPORT_ERROR("Error importing topics: %s"),
@@ -93,7 +76,8 @@ public enum ErrorMessage {
     USERNAME_EMPTY ("Username is empty"),
     TOURNAMENT_ALREADY_CANCELED("This tournament was already canceled"),
     BEGIN_DATE_HAS_PASSED("The tournament begin date has passed."),
-    ALREADY_ENROLLED_IN_TOURNAMENT("The user is already enrolled in the tournament");
+    ALREADY_ENROLLED_IN_TOURNAMENT("The user is already enrolled in the tournament"),
+    USER_NOT_IN_COURSE_EXECUTION("The course execution does not contain the user");
     public final String label;
 
     ErrorMessage(String label) {
