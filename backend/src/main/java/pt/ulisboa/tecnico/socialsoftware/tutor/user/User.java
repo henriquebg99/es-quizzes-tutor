@@ -186,7 +186,7 @@ public class User implements UserDetails, DomainEntity {
     }
 
     public void addEnrolledTournament(Tournament tournament) {
-        if (!enrolled_tournaments.contains(tournament)) {
+        if (!this.isEnrolledInTournament(tournament.getId())) {
             this.enrolled_tournaments.add(tournament);
         }
         else {
