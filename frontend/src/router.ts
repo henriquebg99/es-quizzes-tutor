@@ -26,6 +26,9 @@ import AssessmentsView from '@/views/teacher/assessments/AssessmentsView.vue';
 import CreateQuizzesView from '@/views/student/CreateQuizzesView.vue';
 import CoursesView from '@/views/admin/Courses/CoursesView.vue';
 
+import CreateTournamentsView from './views/student/CreateTournamentsView.vue';
+import CancelTournamentsView from './views/student/CancelTournamentsView.vue';
+import AvailableTournamentsView from './views/student/AvailableTournamentsView.vue';
 Vue.use(Router);
 
 let router = new Router({
@@ -182,6 +185,33 @@ let router = new Router({
           component: ScanView,
           meta: {
             title: process.env.VUE_APP_NAME + ' - Scan',
+            requiredAuth: 'Student'
+          }
+        },
+        {
+          path: 'createTournaments',
+          name: 'create-tournaments',
+          component: CreateTournamentsView,
+          meta: {
+            title: process.env.VUE_APP_NAME + ' - Create Tournaments',
+            requiredAuth: 'Student'
+          }
+        },
+        {
+          path: 'availableTournaments',
+          name: 'available-tournaments',
+          component: AvailableTournamentsView,
+          meta: {
+            title: process.env.VUE_APP_NAME + ' - Available Tournaments',
+            requiredAuth: 'Student'
+          }
+        },
+        {
+          path: 'cancelTournaments',
+          name: 'cancel-tournaments',
+          component: CancelTournamentsView,
+          meta: {
+            title: process.env.VUE_APP_NAME + ' - Cancel Tournaments',
             requiredAuth: 'Student'
           }
         }
