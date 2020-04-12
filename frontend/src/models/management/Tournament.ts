@@ -6,7 +6,7 @@ export class Tournament {
   endDate!: string;
   topics!: Topic[];
   numberOfQuestions!: number;
-
+  courseExecution!: string;
   constructor(jsonObj?: Tournament) {
     if (jsonObj) {
       this.id = jsonObj.id;
@@ -14,11 +14,8 @@ export class Tournament {
       this.endDate = jsonObj.endDate;
       this.numberOfQuestions = jsonObj.numberOfQuestions;
 
-      if (jsonObj.topics) {
-        this.topics = jsonObj.topics.map(
-          (topic: Topic) => new Topic(topic)
-        );
-      }
+      if (jsonObj.topics)
+        this.topics = jsonObj.topics.map((topic: Topic) => new Topic(topic));
     }
   }
 }
