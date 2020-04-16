@@ -605,4 +605,33 @@ export default class RemoteServices {
         throw Error(await this.errorMessage(error));
       });
   }
+  /*
+  static createdTournaments(): Promise<Tournament[]> {
+    return httpClient
+      .get(
+        '/executions/${Store.getters.getCurrentCourse.courseExecutionId}/tournaments/'
+      )
+      .then(response => {
+        return response.data.map((tournament: any) => {
+          return new Tournament(tournament);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+  static cancelTournament(tournamentId: number) {
+    return httpClient
+      .post(
+        `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/tournaments/${tournamentId}/cancel`
+      )
+      .then(response => {
+        return response.data.map((tournament: any) => {
+          return new Tournament(tournament);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }*/
 }

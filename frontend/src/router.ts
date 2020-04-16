@@ -27,8 +27,8 @@ import CreateQuizzesView from '@/views/student/CreateQuizzesView.vue';
 import CoursesView from '@/views/admin/Courses/CoursesView.vue';
 
 import CreateTournamentsView from './views/student/CreateTournamentsView.vue';
-import CancelTournamentsView from './views/student/CancelTournamentsView.vue';
 import AvailableTournamentsView from './views/student/AvailableTournamentsView.vue';
+import CreatedTournamentsView from './views/student/CreatedTournamentsView.vue';
 Vue.use(Router);
 
 let router = new Router({
@@ -207,11 +207,11 @@ let router = new Router({
           }
         },
         {
-          path: 'cancelTournaments',
-          name: 'cancel-tournaments',
-          component: CancelTournamentsView,
+          path: 'createdTournaments',
+          name: 'created-tournaments',
+          component: CreatedTournamentsView,
           meta: {
-            title: process.env.VUE_APP_NAME + ' - Cancel Tournaments',
+            title: process.env.VUE_APP_NAME + ' - Created Tournaments',
             requiredAuth: 'Student'
           }
         }

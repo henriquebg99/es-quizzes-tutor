@@ -171,12 +171,12 @@
                 <v-list-item-title>Create</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
-            <v-list-item to="/student/cancelTournaments">
+            <v-list-item to="/student/createdTournaments">
               <v-list-item-action>
-                <v-icon>cancel</v-icon>
+                <v-icon>done</v-icon>
               </v-list-item-action>
               <v-list-item-content>
-                <v-list-item-title>Cancel</v-list-item-title>
+                <v-list-item-title>Created</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
           </v-list>
