@@ -18,11 +18,12 @@ public class TournamentController {
     @Autowired
     private TournamentService tournamentService;
 
-    @PostMapping("/executions/{executionId}/tournaments")
-    @PreAuthorize("hasRole('ROLE_STUDENT')")
+    @PostMapping("/student/course/executions/{executionId}/tournaments")
+    //@PreAuthorize("hasRole('ROLE_STUDENT') or hasRole('ROLE_DEMO_STUDENT')")
+    @PreAuthorize("true")
     public TournamentDto createTournament (Principal principal, @PathVariable int executionId, @Valid @RequestBody TournamentDto tournamentDto) {
         User user = (User) ((Authentication) principal).getPrincipal();
-
+        System.out.println("createTournament");
         if(user == null){
             throw new TutorException(AUTHENTICATION_ERROR);
         }

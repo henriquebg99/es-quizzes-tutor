@@ -3,7 +3,7 @@
     <v-card-title>
       <span>Create Tournament</span>
       <v-spacer />
-      <v-btn color="primary" dark click="createTournament()">Create</v-btn>
+      <v-btn color="primary" dark @click="createTournament()">Create</v-btn>
     </v-card-title>
     <v-card-text>
       <v-row>
@@ -48,7 +48,7 @@
       <v-row>
         <v-col>
           <v-data-table
-            v-model="selected"
+            v-model="this.tournament.topics"
             :headers="headers"
             :items="topics"
             :search="search"
@@ -83,7 +83,6 @@ import RemoteServices from '@/services/RemoteServices';
 export default class CreateTournamentsView extends Vue {
   tournament: Tournament = new Tournament();
   topics: Topic[] | null = null;
-  selected: Topic[] | null = null;
   search: string = '';
   headers: object = [
     { text: 'Topic', value: 'name', align: 'left', width: '70%' },
@@ -96,14 +95,18 @@ export default class CreateTournamentsView extends Vue {
   ];
 
   async created() {
-    //this.topics = await RemoteServices.getTopics();
-    let t1: Topic = new Topic(),
-      t2: Topic = new Topic();
-    t1.name = 'Topology';
-    t1.numberOfQuestions = 4;
-    t2.name = 'Manifolds';
-    t2.numberOfQuestions = 5;
-    this.topics = [t1, t2];
+    await this.$store.dispatch('loading');
+    try {
+      this.topics = await RemoteServices.getTopics();
+    } catch (error) {
+      await this.$store.dispatch('error', error);
+    }
+    await this.$store.dispatch('clearLoading');
+
+    /*let t = new Topic();
+    t.numberOfQuestions = 9;
+    t.name = 'MMA';
+    this.topics = [t];*/
   }
 
   async createTournament() {
