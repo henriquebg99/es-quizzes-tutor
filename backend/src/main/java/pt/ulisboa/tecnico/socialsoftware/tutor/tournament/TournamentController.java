@@ -19,6 +19,7 @@ public class TournamentController {
     private TournamentService tournamentService;
 
     @PostMapping("/executions/{executionId}/tournaments")
+    // missing access verification
     @PreAuthorize("hasRole('ROLE_STUDENT')")
     public TournamentDto createTournament (Principal principal, @PathVariable int executionId, @Valid @RequestBody TournamentDto tournamentDto) {
         User user = (User) ((Authentication) principal).getPrincipal();
@@ -30,7 +31,8 @@ public class TournamentController {
         return tournamentService.createTournament(user.getUsername(), executionId, tournamentDto);
     }
 
-    @PutMapping("/student/course/executions/{executionId}/tournaments/{tournamentId}/enroll")
+    @PutMapping("/tournaments/{tournamentId}/enroll")
+    // missing access verification
     @PreAuthorize("hasRole('ROLE_STUDENT')")
     public void enrollTournament (Principal principal, @PathVariable int executionId, @PathVariable int tournamentId) {
         User user = (User) ((Authentication) principal).getPrincipal();
@@ -42,12 +44,16 @@ public class TournamentController {
         tournamentService.enrollTournament(user.getUsername(), tournamentId);
     }
 
+    // unnecessary long url - executions/{executionId}/tournaments
     @GetMapping("/student/course/executions/{executionId}/tournaments")
+    // missing access verification
     @PreAuthorize("hasRole('ROLE_STUDENT')")
     public List<TournamentDto> listOpenTournaments(@PathVariable int executionId) {
         return tournamentService.listOpenTournaments(executionId);
     }
 
+    // unnecessary long url - tournaments/{tournamentId}/cancel
+    // should be a put
     @PostMapping("/student/course/executions/{executionId}/tournaments/{tournamentId}/cancel")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#tournamentId, 'TOURNAMENT.CREATOR')")
     public TournamentDto cancelTournament (Principal principal, @PathVariable int executionId, @PathVariable int tournamentId) {

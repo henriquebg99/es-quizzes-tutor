@@ -39,6 +39,8 @@ public class ProposedQuestionController {
         return this.proposedQuestionService.findProposedQuestions(courseId);
     }
 
+    // username goes in the dto and is available through the Principal
+    // should be something like courses/{courseId}/proposedquestions
     @PostMapping("/student/courses/{courseId}/{userId}/proposedquestions")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#courseId, 'COURSE.ACCESS')")
     public ProposedQuestionDto createProposedQuestion(@PathVariable int courseId, @PathVariable int userId, @Valid @RequestBody ProposedQuestionDto proposedQuestion) {
