@@ -608,11 +608,28 @@ export default class RemoteServices {
         throw Error(await this.errorMessage(error));
       });
   }
-  /*
+
+  static availableTournaments(): Promise<Tournament[]> {
+    return httpClient
+      .get('/student/course/executions/' +
+          Store.getters.getCurrentCourse.courseExecutionId +
+          '/tournaments/')
+      .then(response => {
+        return response.data.map((tournament: any) => {
+          return new Tournament(tournament);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static createdTournaments(): Promise<Tournament[]> {
     return httpClient
       .get(
-        '/executions/${Store.getters.getCurrentCourse.courseExecutionId}/tournaments/'
+        '/student/course/executions/' +
+         Store.getters.getCurrentCourse.courseExecutionId +
+         '/tournaments/'
       )
       .then(response => {
         return response.data.map((tournament: any) => {
@@ -623,6 +640,7 @@ export default class RemoteServices {
         throw Error(await this.errorMessage(error));
       });
   }
+/*
   static cancelTournament(tournamentId: number) {
     return httpClient
       .post(

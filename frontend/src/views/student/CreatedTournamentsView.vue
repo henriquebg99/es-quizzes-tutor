@@ -11,13 +11,10 @@
       </li>
       <li
         class="list-row"
-        v-for="tournament in Tournament"
+        v-for="tournament in createdTournaments"
         :key="tournament.id"
         @click="cancelTournament(tournament)"
       >
-        <div class="col">
-          {{ tournament.topics }}
-        </div>
         <div class="col">
           {{ tournament.numberOfQuestions }}
         </div>
@@ -41,36 +38,23 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { Tournament } from '@/models/management/Tournament';
-import Topic from '@/models/management/Topic';
 import RemoteServices from '@/services/RemoteServices';
 import StatementQuiz from '@/models/statement/StatementQuiz';
 
 @Component
 export default class CreatedTournamentsView extends Vue {
-  tournaments: Tournament = new Tournament();
   createdTournaments: Tournament[] = [];
-  topics: Topic[] | null = null;
-  selected: Topic[] | null = null;
-  search: string = '';
-  headers: object = [
-    { text: 'Topic', value: 'name', align: 'left', width: '70%' },
-    {
-      text: 'Number of questions',
-      value: 'numberOfQuestions',
-      align: 'left',
-      width: '20%'
-    }
-  ];
-  /*
+
   async created() {
     await this.$store.dispatch('loading');
     try {
-      this.createdTournaments = await RemoteServices.createdTournaments();
+      this.createdTournaments = (await RemoteServices.createdTournaments());
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
+    await this.$store.dispatch('clearLoading');
   }
-
+/*
   async cancelTournament(tournament: Tournament) {
     try {
       await RemoteServices.cancelTournament(tournament.id);
