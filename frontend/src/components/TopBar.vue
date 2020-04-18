@@ -152,6 +152,10 @@
           <v-icon>fas fa-user</v-icon>
         </v-btn>
 
+        <v-btn to="/student/submit-question" v-if="isStudent && currentCourse" text dark>
+          Submit
+        </v-btn>
+
         <v-btn
           v-if="isLoggedIn && moreThanOneCourse"
           to="/courses"
@@ -311,6 +315,13 @@
               <v-icon>fas fa-user</v-icon>
             </v-list-item-action>
             <v-list-item-content>Stats</v-list-item-content>
+          </v-list-item>
+
+          <v-list-item to="/student/submit-question">
+            <v-list-item-action>
+              <v-icon>submit</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>Submit</v-list-item-content>
           </v-list-item>
         </v-list-group>
 
