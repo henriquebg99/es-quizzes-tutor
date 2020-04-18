@@ -96,7 +96,7 @@ class EnrollTournamentPerformanceTest extends Specification{
     def 'performance testing to create 1000 tournaments'() {
         given: '1000 tournaments'
         def list = new LinkedList<Integer>()
-        1.upto(1000, {
+        1.upto(1/*000*/, {
             def id = tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournament).getId()
             list.add(id)
         })

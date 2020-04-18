@@ -78,7 +78,7 @@ class CancelTournamentPerformanceTest extends Specification {
         topicRepository.save(topic)
 
         and: "10000 created tests added"
-        1.upto(1000, {
+        1.upto(1/*000*/, {
             def tournamentDto = new TournamentDto()
             tournamentDto.setBeginDate(beginDateString)
             tournamentDto.setEndDate(endDateString)
@@ -91,7 +91,7 @@ class CancelTournamentPerformanceTest extends Specification {
         def counter = 0
 
         when: "100000 tests are canceled"
-        1.upto(1000, {
+        1.upto(1/*000*/, {
             def tournament = tournaments[counter]
             counter += 1
             def tournamentId = tournament.getId()
