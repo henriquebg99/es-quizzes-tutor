@@ -11,7 +11,7 @@
           <v-datetime-picker
             label="Begin Date"
             format="yyyy-MM-dd HH:mm"
-            v-model="tournament.beginDate"
+            v-model="beginDate"
             date-format="yyyy-MM-dd"
             time-format="HH:mm"
           >
@@ -22,7 +22,7 @@
           <v-datetime-picker
             label="End Date"
             format="yyyy-MM-dd HH:mm"
-            v-model="tournament.endDate"
+            v-model="endDate"
             date-format="yyyy-MM-dd"
             time-format="HH:mm"
           >
@@ -48,7 +48,7 @@
       <v-row>
         <v-col>
           <v-data-table
-            v-model="this.tournament.topics"
+            v-model="tournament.topics"
             :headers="headers"
             :items="topics"
             :search="search"
@@ -82,7 +82,9 @@ import RemoteServices from '@/services/RemoteServices';
 @Component
 export default class CreateTournamentsView extends Vue {
   tournament: Tournament = new Tournament();
-  topics: Topic[] | null = null;
+  beginDate: Date = new Date();
+  endDate: Date = new Date();
+  topics: Topic[] = [];
   search: string = '';
   headers: object = [
     { text: 'Topic', value: 'name', align: 'left', width: '70%' },
@@ -95,6 +97,10 @@ export default class CreateTournamentsView extends Vue {
   ];
 
   async created() {
+    await this.init();
+  }
+
+  private async init() {
     await this.$store.dispatch('loading');
     try {
       this.topics = await RemoteServices.getTopics();
@@ -102,19 +108,71 @@ export default class CreateTournamentsView extends Vue {
       await this.$store.dispatch('error', error);
     }
     await this.$store.dispatch('clearLoading');
+  }
 
-    /*let t = new Topic();
-    t.numberOfQuestions = 9;
-    t.name = 'MMA';
-    this.topics = [t];*/
+  static formatDate(date: Date): string {
+    let month: string =
+      date.getMonth() < 9
+        ? '0' + (date.getMonth() + 1)
+        : (date.getMonth() + 1).toString();
+    let day: string =
+      date.getDate() < 10 ? '0' + date.getDate() : date.getDate().toString();
+    let hours: string =
+      date.getHours() < 10 ? '0' + date.getHours() : date.getHours().toString();
+    let minutes: string =
+      date.getMinutes() < 10
+        ? '0' + date.getMinutes()
+        : date.getMinutes().toString();
+    return (
+      date.getFullYear() + '-' + month + '-' + day + ' ' + hours + ':' + minutes
+    );
+  }
+
+  async validateInput(): Promise<boolean> {
+    if (this.tournament.topics.length == 0) {
+      await this.$store.dispatch('error', 'No topics selected.');
+      return false;
+    }
+
+    let now: Date = new Date();
+    if (this.beginDate < now) {
+      await this.$store.dispatch('error', 'Begin date has passed.');
+      return false;
+    }
+
+    if (this.endDate < now) {
+      await this.$store.dispatch('error', 'End date has passed.');
+      return false;
+    }
+
+    if (this.beginDate >= this.endDate) {
+      await this.$store.dispatch(
+        'error',
+        'The end date is not after the begin date.'
+      );
+      return false;
+    }
+    return true;
   }
 
   async createTournament() {
+    if (!(await this.validateInput())) return;
+
+    this.tournament.beginDate = CreateTournamentsView.formatDate(
+      this.beginDate
+    );
+    this.tournament.endDate = CreateTournamentsView.formatDate(this.endDate);
+
     try {
       await RemoteServices.createTournament(this.tournament);
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
+    alert('Tournament created.');
+    await this.init();
+
+    // reset the form
+    this.tournament = new Tournament();
   }
 }
 </script>

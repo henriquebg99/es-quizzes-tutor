@@ -596,7 +596,10 @@ export default class RemoteServices {
   static createTournament(tournament: Tournament): Promise<Tournament> {
     return httpClient
       .post(
-        '/student/course/executions/${Store.getters.getCurrentCourse.courseExecutionId}/tournaments/'
+        '/student/course/executions/' +
+          Store.getters.getCurrentCourse.courseExecutionId +
+          '/tournaments/',
+        tournament
       )
       .then(response => {
         return new Tournament(response.data);

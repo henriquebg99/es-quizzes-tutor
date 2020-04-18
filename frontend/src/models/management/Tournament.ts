@@ -4,7 +4,7 @@ export class Tournament {
   id!: number;
   beginDate!: string;
   endDate!: string;
-  topics!: Topic[];
+  topics: Topic[] = [];
   numberOfQuestions!: number;
   courseExecution!: string;
   constructor(jsonObj?: Tournament) {
