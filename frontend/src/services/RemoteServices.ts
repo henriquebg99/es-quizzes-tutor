@@ -624,6 +624,17 @@ export default class RemoteServices {
       });
   }
 
+  static enrollTournament(id : number) {
+    return httpClient
+      .put('/student/course/executions/' +
+          Store.getters.getCurrentCourse.courseExecutionId +
+          '/tournaments/' +
+          id + '/enroll/')
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static createdTournaments(): Promise<Tournament[]> {
     return httpClient
       .get(

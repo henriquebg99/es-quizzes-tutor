@@ -2,6 +2,8 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.tournament;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 
 import java.io.Serializable;
 import java.time.format.DateTimeFormatter;
@@ -14,6 +16,7 @@ public class TournamentDto implements Serializable {
     private Set<TopicDto> topics = null;
     private int numberOfQuestions;
     private Boolean isCanceled;
+    private Set<UserDto> enrollments = null;
 
     public TournamentDto () {}
 
@@ -25,11 +28,23 @@ public class TournamentDto implements Serializable {
         this.endDate = tournament.getEndDate().format(formatter);
         this.numberOfQuestions = tournament.getNumberOfQuestions();
         this.isCanceled = tournament.getCanceled();
+        this.enrollments = new HashSet<UserDto>();
 
         for (Topic topic : tournament.getTopics()) {
             TopicDto topicDto = new TopicDto(topic);
             this.addTopic(topicDto);
         }
+
+        for (User user : tournament.getEnrollments()) {
+            UserDto userDto = new UserDto(user);
+            this.addEnrollment(userDto);
+        }
+
+        System.out.println("TAMANHO " + tournament.getEnrollments().size());
+    }
+
+    public void addEnrollment(UserDto user) {
+        this.enrollments.add(user);
     }
 
     public Set<TopicDto> getTopics() {
