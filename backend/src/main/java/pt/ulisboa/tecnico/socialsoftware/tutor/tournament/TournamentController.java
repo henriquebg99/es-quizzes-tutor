@@ -34,7 +34,7 @@ public class TournamentController {
     @PutMapping("/tournaments/{tournamentId}/enroll")
     // missing access verification
     @PreAuthorize("hasRole('ROLE_STUDENT')")
-    public void enrollTournament (Principal principal, @PathVariable int executionId, @PathVariable int tournamentId) {
+    public void enrollTournament (Principal principal, @PathVariable int tournamentId) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
         if(user == null){
