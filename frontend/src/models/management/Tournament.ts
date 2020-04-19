@@ -9,6 +9,7 @@ export class Tournament {
   endDate!: string;
   topics: Topic[] = [];
   enrollments: User[] = [];
+  creator!: User;
   numberOfQuestions!: number;
   courseExecution!: string;
   enrolled: Boolean = false;
@@ -18,6 +19,8 @@ export class Tournament {
       this.beginDate = jsonObj.beginDate;
       this.endDate = jsonObj.endDate;
       this.numberOfQuestions = jsonObj.numberOfQuestions;
+      this.creator = new User(jsonObj.creator);
+      console.log('criador ' + jsonObj.creator.username);
 
       if (jsonObj.topics)
         this.topics = jsonObj.topics.map((topic: Topic) => new Topic(topic));
