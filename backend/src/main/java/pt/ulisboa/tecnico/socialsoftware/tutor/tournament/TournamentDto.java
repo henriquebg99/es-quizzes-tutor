@@ -39,8 +39,6 @@ public class TournamentDto implements Serializable {
             UserDto userDto = new UserDto(user);
             this.addEnrollment(userDto);
         }
-
-        System.out.println("TAMANHO " + tournament.getEnrollments().size());
     }
 
     public void addEnrollment(UserDto user) {
@@ -49,6 +47,14 @@ public class TournamentDto implements Serializable {
 
     public Set<TopicDto> getTopics() {
         return topics;
+    }
+
+    public Set<UserDto> getEnrollments() {
+        return enrollments;
+    }
+
+    public void setEnrollments(Set<UserDto> enrollments) {
+        this.enrollments = enrollments;
     }
 
     public void setTopics(Set<TopicDto> topics) {

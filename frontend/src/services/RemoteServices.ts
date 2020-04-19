@@ -602,7 +602,7 @@ export default class RemoteServices {
         tournament
       )
       .then(response => {
-        return new Tournament(response.data);
+        return new Tournament(response.data, Store.getters.getUser.id);
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));
@@ -616,7 +616,7 @@ export default class RemoteServices {
           '/tournaments/')
       .then(response => {
         return response.data.map((tournament: any) => {
-          return new Tournament(tournament);
+          return new Tournament(tournament, Store.getters.getUser.id);
         });
       })
       .catch(async error => {
@@ -644,7 +644,7 @@ export default class RemoteServices {
       )
       .then(response => {
         return response.data.map((tournament: any) => {
-          return new Tournament(tournament);
+          return new Tournament(tournament,Store.getters.getUser.id);
         });
       })
       .catch(async error => {
@@ -659,7 +659,7 @@ export default class RemoteServices {
       )
       .then(response => {
         return response.data.map((tournament: any) => {
-          return new Tournament(tournament);
+          return new Tournament(tournament, Store.getters.getUser.id);
         });
       })
       .catch(async error => {
