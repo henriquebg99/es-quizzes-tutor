@@ -52,7 +52,6 @@ export default class CreatedTournamentsView extends Vue {
   }
 
   async cancelTournament(tournament: Tournament) {
-    if (!(await this.validateInput(tournament))) return;
     if (confirm('Are you sure you want to delete this tournament?')) {
       try {
         await RemoteServices.cancelTournament(tournament.id);
@@ -60,10 +59,6 @@ export default class CreatedTournamentsView extends Vue {
         await this.$store.dispatch('error', error);
       }
     }
-  }
-
-  async validateInput(tournament: Tournament): Promise<boolean> {
-    return true;
   }
 }
 </script>

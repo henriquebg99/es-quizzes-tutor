@@ -610,9 +610,12 @@ export default class RemoteServices {
   }
 
   static availableTournaments(): Promise<Tournament[]> {
-    return httpClient.get('/student/course/executions/' +
+    return httpClient
+      .get(
+        '/student/course/executions/' +
           Store.getters.getCurrentCourse.courseExecutionId +
-          '/tournaments/')
+          '/tournaments/'
+      )
       .then(response => {
         return response.data.map((tournament: any) => {
           return new Tournament(tournament, Store.getters.getUser.id);
@@ -623,29 +626,15 @@ export default class RemoteServices {
       });
   }
 
-  static enrollTournament(id : number) {
+  static enrollTournament(id: number) {
     return httpClient
-      .put('/student/course/executions/' +
+      .put(
+        '/student/course/executions/' +
           Store.getters.getCurrentCourse.courseExecutionId +
           '/tournaments/' +
-          id + '/enroll/')
-      .catch(async error => {
-        throw Error(await this.errorMessage(error));
-      });
-  }
-
-  static createdTournaments(): Promise<Tournament[]> {
-    return httpClient
-      .get(
-        '/student/course/executions/' +
-         Store.getters.getCurrentCourse.courseExecutionId +
-         '/tournaments/'
+          id +
+          '/enroll/'
       )
-      .then(response => {
-        return response.data.map((tournament: any) => {
-          return new Tournament(tournament,Store.getters.getUser.id);
-        });
-      })
       .catch(async error => {
         throw Error(await this.errorMessage(error));
       });
@@ -654,13 +643,12 @@ export default class RemoteServices {
   static cancelTournament(tournamentId: number) {
     return httpClient
       .post(
-        `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/tournaments/${tournamentId}/cancel`
+        '/student/course/executions/' +
+          Store.getters.getCurrentCourse.courseExecutionId +
+          '/tournaments/' +
+          tournamentId +
+          '/cancel/'
       )
-      .then(response => {
-        return response.data.map((tournament: any) => {
-          return new Tournament(tournament, Store.getters.getUser.id);
-        });
-      })
       .catch(async error => {
         throw Error(await this.errorMessage(error));
       });
