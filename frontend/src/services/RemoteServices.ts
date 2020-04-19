@@ -610,8 +610,7 @@ export default class RemoteServices {
   }
 
   static availableTournaments(): Promise<Tournament[]> {
-    return httpClient
-      .get('/student/course/executions/' +
+    return httpClient.get('/student/course/executions/' +
           Store.getters.getCurrentCourse.courseExecutionId +
           '/tournaments/')
       .then(response => {
@@ -651,7 +650,7 @@ export default class RemoteServices {
         throw Error(await this.errorMessage(error));
       });
   }
-/*
+
   static cancelTournament(tournamentId: number) {
     return httpClient
       .post(
@@ -665,5 +664,5 @@ export default class RemoteServices {
       .catch(async error => {
         throw Error(await this.errorMessage(error));
       });
-  }*/
+  }
 }

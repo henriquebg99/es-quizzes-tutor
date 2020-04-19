@@ -1,17 +1,16 @@
 <template>
   <div class="container">
-    <h2>Created Tournaments</h2>
+    <h2>Cancel Tournaments</h2>
     <ul>
       <li class="list-header">
-        <div class="col">Topics</div>
         <div class="col">Questions</div>
         <div class="col">Available since</div>
         <div class="col">Available until</div>
-        <div class="col"></div>
+        <div class="col">Cancel</div>
       </li>
       <li
         class="list-row"
-        v-for="tournament in createdTournaments"
+        v-for="tournament in tournaments"
         :key="tournament.id"
         @click="cancelTournament(tournament)"
       >
@@ -24,11 +23,8 @@
         <div class="col">
           {{ tournament.endDate }}
         </div>
-        <div class="col">
-          {{ tournament.endDate }}
-        </div>
         <div class="col last-col">
-          <i class="fas fa-chevron-cancel"></i>
+          <i class="fas fa-times-circle"></i>
         </div>
       </li>
     </ul>
@@ -39,29 +35,36 @@
 import { Component, Vue } from 'vue-property-decorator';
 import { Tournament } from '@/models/management/Tournament';
 import RemoteServices from '@/services/RemoteServices';
-import StatementQuiz from '@/models/statement/StatementQuiz';
+import store from '@/store.ts';
 
 @Component
 export default class CreatedTournamentsView extends Vue {
-  createdTournaments: Tournament[] = [];
+  tournaments: Tournament[] = [];
 
   async created() {
     await this.$store.dispatch('loading');
     try {
-      this.createdTournaments = (await RemoteServices.createdTournaments());
+      this.tournaments = await RemoteServices.availableTournaments();
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
     await this.$store.dispatch('clearLoading');
   }
-/*
+
   async cancelTournament(tournament: Tournament) {
-    try {
-      await RemoteServices.cancelTournament(tournament.id);
-    } catch (error) {
-      await this.$store.dispatch('error', error);
+    if (!(await this.validateInput(tournament))) return;
+    if (confirm('Are you sure you want to delete this tournament?')) {
+      try {
+        await RemoteServices.cancelTournament(tournament.id);
+      } catch (error) {
+        await this.$store.dispatch('error', error);
+      }
     }
-  }*/
+  }
+
+  async validateInput(tournament: Tournament): Promise<boolean> {
+    return true;
+  }
 }
 </script>
 
