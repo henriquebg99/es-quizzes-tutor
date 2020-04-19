@@ -124,7 +124,7 @@ public class Tournament {
     }
 
     public Set<User> getEnrollments() {
-        return this.enrollments;
+        return enrollments;
     }
 
     public Boolean userIsEnrolled(int id) {

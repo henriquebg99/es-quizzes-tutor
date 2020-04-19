@@ -3,18 +3,19 @@
     <h2>Available Tournaments</h2>
     <ul>
       <li class="list-header">
-        <div class="col">Questions</div>
+        <div class="col">Number</div>
         <div class="col">Available since</div>
         <div class="col">Available until</div>
-        <div class="col"></div>
+        <div class="col">Enroll</div>
       </li>
       <li
         class="list-row"
         v-for="tournament in tournaments"
         :key="tournament.id"
+        @click="enroll(tournament)"
       >
         <div class="col">
-          {{ tournament.numberOfQuestions }}
+          {{ tournament.id }}
         </div>
         <div class="col">
           {{ tournament.beginDate }}
@@ -23,7 +24,7 @@
           {{ tournament.endDate }}
         </div>
         <div class="col last-col">
-          <i class="fas fa-chevron-circle-right"></i>
+          <i v-bind:class="{'fa-square': !tournament.enrolled , 'fa-check-square': tournament.enrolled}" class="far enroll"></i>
         </div>
       </li>
     </ul>
@@ -47,6 +48,18 @@ export default class AvailableTournamentsView extends Vue {
       await this.$store.dispatch('error', error);
     }
     await this.$store.dispatch('clearLoading');
+  }
+
+  async enroll(tournament: Tournament) {
+     await this.$store.dispatch('loading');
+     try {
+       await RemoteServices.enrollTournament(tournament.id);
+       tournament.enrolled = true;
+     } catch (error) {
+       await this.$store.dispatch('error', error);
+     }
+     await this.$store.dispatch('clearLoading');
+
   }
 }
 </script>
@@ -92,6 +105,11 @@ export default class AvailableTournamentsView extends Vue {
     .col {
       flex-basis: 25% !important;
       margin: auto; /* Important */
+      text-align: center;
+    }
+
+    .enroll {
+      font-size: 25px;
       text-align: center;
     }
 
