@@ -19,7 +19,7 @@ describe('Tournament walkthrough', () => {
 
   it('enroll in tournament', () => {
     cy.goToCreateTournaments()
-    //cy.addTournament()
+    cy.createTournament()
     cy.goToAvailableTournaments()
     cy.enrollTournaments()
   });
