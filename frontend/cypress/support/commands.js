@@ -69,6 +69,11 @@ Cypress.Commands.add('createCourseExecution', (name, acronym, academicTerm) => {
     cy.get('[data-cy="saveButton"]').click()
 })
 
+Cypress.Commands.add('enrollTournaments', () => {
+    cy.get('ul li:first').click()
+    cy.get('ul i:first').should('have.class', 'fa-check-square')
+})
+
 Cypress.Commands.add('closeErrorMessage', (name, acronym, academicTerm) => {
     cy.contains('Error')
         .parent()
@@ -99,3 +104,25 @@ Cypress.Commands.add('createFromCourseExecution', (name, acronym, academicTerm) 
     cy.get('[data-cy="saveButton"]').click()
 })
 
+Cypress.Commands.add('createTournament', () => {
+    // select day 29
+    cy.get('#input-69').click();
+    cy.get(':nth-child(3) > .v-btn__content > .v-icon').click()
+    cy.get('.tab-transition-enter-active > tbody > :nth-child(5) > :nth-child(4) > .v-btn > .v-btn__content').click()
+    cy.get('.green--text > .v-btn__content').click()
+
+    // select day 30
+    cy.get('#input-74').click();
+    cy.get('.v-dialog__content--active > .v-dialog > .v-sheet > .v-card__text > .v-tabs > .v-window > .v-window__container > .v-window-item > .v-picker > .v-picker__body > :nth-child(1) > .v-date-picker-header > :nth-child(3) > .v-btn__content > .v-icon').click()
+    cy.get('.v-dialog__content--active > .v-dialog > .v-sheet > .v-card__text > .v-tabs > .v-window > .v-window__container > .v-window-item > .v-picker > .v-picker__body > :nth-child(1) > .v-date-picker-table > table > tbody > :nth-child(6) > td > .v-btn > .v-btn__content').click()
+    cy.get('.v-dialog__content--active > .v-dialog > .v-sheet > .v-card__actions > .green--text > .v-btn__content').click()
+
+    // 10 questions
+    cy.get('[data-cy="tenNumber"]').click();
+
+    // select topic
+    cy.get(':nth-child(2) > .text-start > .v-data-table__checkbox > .v-icon').click();
+
+    // create it
+    cy.get('[data-cy="createButton"]').click()
+})
