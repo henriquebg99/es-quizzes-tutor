@@ -26,24 +26,17 @@ describe('Tournament walkthrough', () => {
 
   it('cancel tournament', () => {
     cy.goToCreateTournaments()
-    cy.addTournament()
+    cy.createTournament()
     cy.goToCancelTournaments()
-    cy.cancelTournament(5)
-  });
-/*
-  it('cancel tournament twice', () => {
-    cy.goToCreateTournaments()
-    cy.addTournament()
-    cy.goToCancelTournaments(5)
-    cy.goToCancelTournaments(5)
-    cy.closeErrorMessage()
+    cy.cancelTournament()
   });
 
-  it('cancel tournament if not creator', () => {
+  it('cancel tournament twice', () => {
     cy.goToCreateTournaments()
-    cy.addTournament()
-    cy.goToCreateTournaments()
-    cy.goToCancelTournaments(5)
+    cy.createTournament()
+    cy.goToCancelTournaments()
+    cy.cancelTournament()
+    cy.cancelTournament()
     cy.closeErrorMessage()
-  });*/
+  });
 });

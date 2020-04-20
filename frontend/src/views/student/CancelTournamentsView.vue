@@ -10,10 +10,10 @@
       </li>
       <li
         class="list-row"
+        data-cy="cancelTournament"
         v-for="tournament in tournaments"
         :key="tournament.id"
         @click="cancelTournament(tournament)"
-        data-cy="cancelTournament"
       >
         <div class="col">
           {{ tournament.numberOfQuestions }}
@@ -45,7 +45,9 @@ export default class CreatedTournamentsView extends Vue {
   async created() {
     await this.$store.dispatch('loading');
     try {
-      this.tournaments = await RemoteServices.availableTournaments();
+      this.tournaments = (
+        await RemoteServices.availableTournaments()
+      ).reverse();
     } catch (error) {
       await this.$store.dispatch('error', error);
     }

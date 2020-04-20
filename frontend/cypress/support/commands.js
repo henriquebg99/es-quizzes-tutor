@@ -51,16 +51,6 @@ Cypress.Commands.add('goToCancelTournaments', () => {
     cy.contains('Cancel').click()
 })
 
-Cypress.Commands.add('cancelTournament',  (questions) => {
-    cy.contains(questions).parent().should('have.length', 1)
-        .children()
-        .should('have.length', 4)
-        .find('[data-cy="cancelTournament"]')
-        .click()
-})
-
-
-
 Cypress.Commands.add('createCourseExecution', (name, acronym, academicTerm) => {
     cy.get('[data-cy="createButton"]').click()
     cy.get('[data-cy="Name"]').type(name)
@@ -125,4 +115,8 @@ Cypress.Commands.add('createTournament', () => {
 
     // create it
     cy.get('[data-cy="createButton"]').click()
+})
+
+Cypress.Commands.add('cancelTournament',  () => {
+    cy.get(':nth-child(2) > .last-col > .fas').click()
 })
