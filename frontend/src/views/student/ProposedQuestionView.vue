@@ -3,20 +3,21 @@
     <v-card-title>
       <span class="headline">Submit Question</span>
       <v-spacer />
-			<v-btn color="primary" dark>Upload Image
-				<v-file-input
-          @change="handleFileUpload($event, item)"
-          accept="image/*"
-					data-cy="upImage"
-        />
-			</v-btn>
       <v-btn color="primary" dark @click="createProposedQuestion()" data-cy="submitQuestion">Submit</v-btn>
     </v-card-title>
-		<v-card-text class="text-left">
+		<v-card-text class="text-left">      
         <v-container grid-list-md fluid>
           <v-layout column wrap>
             <v-flex xs24 sm12 md8>
               <v-text-field v-model="proposedQuestion.title" label="Question Title" data-cy="questionTitle" />
+            </v-flex>
+            <v-flex xs24 sm12 md8>
+              <v-file-input
+                label="Upload Image"
+                @change="handleFileUpload($event, item)"
+                accept="image/*"
+                data-cy="upImage"
+              />
             </v-flex>
             <v-flex xs24 sm12 md12>
               <v-textarea
