@@ -64,8 +64,6 @@ public class TournamentService {
         int courseId = courseExecution.getCourse().getId();
         checkAndAndTopics(tournamentDto, tournament, courseId);
 
-        System.out.println("begin: " + tournament.getBeginDate() + ", end: " + tournament.getEndDate());
-
         tournamentRepository.save(tournament);
 
         return new TournamentDto(tournament);

@@ -183,7 +183,7 @@ export default class CreateTournamentsView extends Vue {
       await this.$store.dispatch('error', error);
     }
 
-    this.$router.push('createdTournaments');
+    this.$router.push('availableTournaments');
   }
 }
 </script>
