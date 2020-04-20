@@ -1,6 +1,7 @@
 import axios from 'axios';
 import Store from '@/store';
 import Question from '@/models/management/Question';
+import ProposedQuestion from '@/models/management/ProposedQuestion';
 import { Quiz } from '@/models/management/Quiz';
 import Course from '@/models/user/Course';
 import StatementCorrectAnswer from '@/models/statement/StatementCorrectAnswer';
@@ -183,7 +184,38 @@ export default class RemoteServices {
       });
   }
 
-  static async uploadImage(file: File, questionId: number): Promise<string> {
+  static createProposedQuestion(proposedQuestion: ProposedQuestion): Promise<ProposedQuestion> {
+    return httpClient
+      .post(
+        `/courses/${Store.getters.getCurrentCourse.courseId}/proposedquestions/`,
+        proposedQuestion
+      )
+      .then(response => {
+        return new ProposedQuestion(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static uploadImageProposedQuestion(file: File, proposedQuestionId: number): Promise<string> {
+    let formData = new FormData();
+    formData.append('file', file);
+    return httpClient
+      .put(`/proposedquestions/${proposedQuestionId}/image`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      })
+      .then(response => {
+        return response.data as string;
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static uploadImage(file: File, questionId: number): Promise<string> {
     let formData = new FormData();
     formData.append('file', file);
     return httpClient
