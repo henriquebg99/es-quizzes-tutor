@@ -144,25 +144,25 @@ export default class CreateTournamentsView extends Vue {
 
   async validateInput(): Promise<boolean> {
     if (this.tournament.topics.length == 0) {
-      await this.$store.dispatch('error', 'No topics selected.');
+      await this.$store.dispatch('error', 'Error: No topics selected.');
       return false;
     }
 
     let now: Date = new Date();
     if (this.beginDate < now) {
-      await this.$store.dispatch('error', 'Begin date has passed.');
+      await this.$store.dispatch('error', 'Error: Begin date has passed.');
       return false;
     }
 
     if (this.endDate < now) {
-      await this.$store.dispatch('error', 'End date has passed.');
+      await this.$store.dispatch('error', 'Error: End date has passed.');
       return false;
     }
 
     if (this.beginDate >= this.endDate) {
       await this.$store.dispatch(
         'error',
-        'The end date is not after the begin date.'
+        'Error: The end date is not after the begin date.'
       );
       return false;
     }
