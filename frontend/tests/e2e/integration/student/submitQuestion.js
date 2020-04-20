@@ -1,6 +1,8 @@
 describe('Student walkthrough', () => {
 	beforeEach(() => {
-		cy.demoStudentLogin()
+		cy.visit('/')
+		cy.get('[data-cy="studentButton"]').click()
+		cy.get('[data-cy="submit"]').click()
 	})
 
 	afterEach(() => {

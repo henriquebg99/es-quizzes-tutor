@@ -115,7 +115,7 @@ public class Tournament {
     }
 
     public void addEnrollment(User user) {
-        if (!this.enrollments.contains(user)){
+        if (!this.userIsEnrolled(user.getId())){
             this.enrollments.add(user);
         }
         else {
@@ -124,7 +124,7 @@ public class Tournament {
     }
 
     public Set<User> getEnrollments() {
-        return this.enrollments;
+        return enrollments;
     }
 
     public Boolean userIsEnrolled(int id) {

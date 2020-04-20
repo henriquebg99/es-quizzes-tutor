@@ -160,7 +160,7 @@ class EnrollTournamentTest extends Specification{
 
         then: 'tournament has one enrollment'
             tournament.getEnrollments().size() == 1
-            tournament.userIsEnrolled(user.getId());
+            tournament.userIsEnrolled(user.getId())
 
         and: 'the correct user is enrolled'
             user.getEnrolledTournaments().size() == 1
