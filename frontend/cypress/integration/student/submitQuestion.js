@@ -67,7 +67,7 @@ describe('Student walkthrough', () => {
     	cy.get('[data-cy="optionContent3"]').type("opt3")
     	cy.get('[data-cy="optionContent4"]').type("opt4")
 		cy.contains('Option 1 Correct').click()
-		cy.get('[data-cy="upImage"]').fixture("./public/logo.png")
+		cy.get('[data-cy="upImage"]').fixture("./question.jpg")
 		cy.get('[data-cy="submitQuestion"]').click()
 	});
 
