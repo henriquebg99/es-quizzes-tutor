@@ -21,7 +21,7 @@ describe('Tournament walkthrough', () => {
     cy.goToCreateTournaments()
     //cy.addTournament()
     cy.goToAvailableTournaments()
-    //cy.enrollTournament()
+    cy.enrollTournaments()
   });
 
   it('cancel tournament', () => {

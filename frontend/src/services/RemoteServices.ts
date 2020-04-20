@@ -602,7 +602,7 @@ export default class RemoteServices {
         tournament
       )
       .then(response => {
-        return new Tournament(response.data);
+        return new Tournament(response.data, Store.getters.getUser.id);
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));
@@ -611,59 +611,46 @@ export default class RemoteServices {
 
   static availableTournaments(): Promise<Tournament[]> {
     return httpClient
-      .get('/student/course/executions/' +
-          Store.getters.getCurrentCourse.courseExecutionId +
-          '/tournaments/')
-      .then(response => {
-        return response.data.map((tournament: any) => {
-          return new Tournament(tournament);
-        });
-      })
-      .catch(async error => {
-        throw Error(await this.errorMessage(error));
-      });
-  }
-
-  static enrollTournament(id : number) {
-    return httpClient
-      .put('/student/course/executions/' +
-          Store.getters.getCurrentCourse.courseExecutionId +
-          '/tournaments/' +
-          id + '/enroll/')
-      .catch(async error => {
-        throw Error(await this.errorMessage(error));
-      });
-  }
-
-  static createdTournaments(): Promise<Tournament[]> {
-    return httpClient
       .get(
         '/student/course/executions/' +
-         Store.getters.getCurrentCourse.courseExecutionId +
-         '/tournaments/'
+          Store.getters.getCurrentCourse.courseExecutionId +
+          '/tournaments/'
       )
       .then(response => {
         return response.data.map((tournament: any) => {
-          return new Tournament(tournament);
+          return new Tournament(tournament, Store.getters.getUser.id);
         });
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));
       });
   }
-/*
+
+  static enrollTournament(id: number) {
+    return httpClient
+      .put(
+        '/student/course/executions/' +
+          Store.getters.getCurrentCourse.courseExecutionId +
+          '/tournaments/' +
+          id +
+          '/enroll/'
+      )
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static cancelTournament(tournamentId: number) {
     return httpClient
       .post(
-        `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/tournaments/${tournamentId}/cancel`
+        '/student/course/executions/' +
+          Store.getters.getCurrentCourse.courseExecutionId +
+          '/tournaments/' +
+          tournamentId +
+          '/cancel/'
       )
-      .then(response => {
-        return response.data.map((tournament: any) => {
-          return new Tournament(tournament);
-        });
-      })
       .catch(async error => {
         throw Error(await this.errorMessage(error));
       });
-  }*/
+  }
 }

@@ -2,12 +2,12 @@
   <div class="container">
     <h2>Available Tournaments</h2>
     <ul>
-      <li class="list-header">
+      <span class="list-header">
         <div class="col">Number</div>
         <div class="col">Available since</div>
         <div class="col">Available until</div>
         <div class="col">Enroll</div>
-      </li>
+      </span>
       <li
         class="list-row"
         v-for="tournament in tournaments"
@@ -24,7 +24,13 @@
           {{ tournament.endDate }}
         </div>
         <div class="col last-col">
-          <i v-bind:class="{'fa-square': !tournament.enrolled , 'fa-check-square': tournament.enrolled}" class="far enroll"></i>
+          <i
+            v-bind:class="{
+              'fa-square': !tournament.enrolled,
+              'fa-check-square': tournament.enrolled
+            }"
+            class="far enroll"
+          ></i>
         </div>
       </li>
     </ul>
@@ -33,7 +39,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import {Tournament} from '@/models/management/Tournament';
+import { Tournament } from '@/models/management/Tournament';
 import RemoteServices from '@/services/RemoteServices';
 
 @Component
@@ -43,7 +49,9 @@ export default class AvailableTournamentsView extends Vue {
   async created() {
     await this.$store.dispatch('loading');
     try {
-      this.tournaments = (await RemoteServices.availableTournaments()).reverse();
+      this.tournaments = (
+        await RemoteServices.availableTournaments()
+      ).reverse();
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
@@ -51,15 +59,14 @@ export default class AvailableTournamentsView extends Vue {
   }
 
   async enroll(tournament: Tournament) {
-     await this.$store.dispatch('loading');
-     try {
-       await RemoteServices.enrollTournament(tournament.id);
-       tournament.enrolled = true;
-     } catch (error) {
-       await this.$store.dispatch('error', error);
-     }
-     await this.$store.dispatch('clearLoading');
-
+    await this.$store.dispatch('loading');
+    try {
+      await RemoteServices.enrollTournament(tournament.id);
+      tournament.enrolled = true;
+    } catch (error) {
+      await this.$store.dispatch('error', error);
+    }
+    await this.$store.dispatch('clearLoading');
   }
 }
 </script>
@@ -85,7 +92,7 @@ export default class AvailableTournamentsView extends Vue {
     overflow: hidden;
     padding: 0 5px;
 
-    li {
+    li, span {
       border-radius: 3px;
       padding: 15px 10px;
       display: flex;

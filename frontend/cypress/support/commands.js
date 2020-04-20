@@ -59,7 +59,10 @@ Cypress.Commands.add('createCourseExecution', (name, acronym, academicTerm) => {
     cy.get('[data-cy="saveButton"]').click()
 })
 
-
+Cypress.Commands.add('enrollTournaments', () => {
+    cy.get('ul li:first').click()
+    cy.get('ul i:first').should('have.class', 'fa-check-square')
+})
 
 Cypress.Commands.add('closeErrorMessage', (name, acronym, academicTerm) => {
     cy.contains('Error')
