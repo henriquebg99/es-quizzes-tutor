@@ -5,11 +5,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.ProposedQuestionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.ProposedQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ProposedQuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.validation.Valid;
 import java.io.IOException;
@@ -17,8 +20,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.security.Principal;
 import java.util.List;
 import java.util.Objects;
+
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.AUTHENTICATION_ERROR;
 
 @RestController
 public class ProposedQuestionController {
@@ -39,10 +45,15 @@ public class ProposedQuestionController {
         return this.proposedQuestionService.findProposedQuestions(courseId);
     }
 
-    @PostMapping("/student/courses/{courseId}/{userId}/proposedquestions")
+    @PostMapping("/courses/{courseId}/proposedquestions")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#courseId, 'COURSE.ACCESS')")
-    public ProposedQuestionDto createProposedQuestion(@PathVariable int courseId, @PathVariable int userId, @Valid @RequestBody ProposedQuestionDto proposedQuestion) {
-        return this.proposedQuestionService.createProposedQuestion(courseId, proposedQuestion, userId);
+    public ProposedQuestionDto createProposedQuestion(Principal principal, @PathVariable int courseId, @Valid @RequestBody ProposedQuestionDto proposedQuestion) {
+        User user = (User) ((Authentication) principal).getPrincipal();
+
+        if(user == null){
+            throw new TutorException(AUTHENTICATION_ERROR);
+        }
+        return this.proposedQuestionService.createProposedQuestion(courseId, proposedQuestion, user.getId());
     }
 
     @PutMapping("/proposedquestions/{proposedQuestionId}/image")
