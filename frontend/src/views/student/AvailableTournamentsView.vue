@@ -2,12 +2,12 @@
   <div class="container">
     <h2>Available Tournaments</h2>
     <ul>
-      <li class="list-header">
+      <span class="list-header">
         <div class="col">Number</div>
         <div class="col">Available since</div>
         <div class="col">Available until</div>
         <div class="col">Enroll</div>
-      </li>
+      </span>
       <li
         class="list-row"
         v-for="tournament in tournaments"
@@ -92,7 +92,7 @@ export default class AvailableTournamentsView extends Vue {
     overflow: hidden;
     padding: 0 5px;
 
-    li {
+    li, span {
       border-radius: 3px;
       padding: 15px 10px;
       display: flex;
