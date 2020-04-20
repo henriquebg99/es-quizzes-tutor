@@ -152,7 +152,7 @@
           <v-icon>fas fa-user</v-icon>
         </v-btn>
 
-        <v-btn to="/student/submit-question" v-if="isStudent && currentCourse" text dark>
+        <v-btn to="/student/submit-question" v-if="isStudent && currentCourse" text dark data-cy="submit">
           Submit
         </v-btn>
 

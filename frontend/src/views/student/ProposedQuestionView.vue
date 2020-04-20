@@ -7,15 +7,16 @@
 				<v-file-input
           @change="handleFileUpload($event, item)"
           accept="image/*"
+					data-cy="upImage"
         />
 			</v-btn>
-      <v-btn color="primary" dark @click="createProposedQuestion()">Submit</v-btn>
+      <v-btn color="primary" dark @click="createProposedQuestion()" data-cy="submitQuestion">Submit</v-btn>
     </v-card-title>
 		<v-card-text class="text-left">
         <v-container grid-list-md fluid>
           <v-layout column wrap>
             <v-flex xs24 sm12 md8>
-              <v-text-field v-model="proposedQuestion.title" label="Question Title" />
+              <v-text-field v-model="proposedQuestion.title" label="Question Title" data-cy="questionTitle" />
             </v-flex>
             <v-flex xs24 sm12 md12>
               <v-textarea
@@ -23,25 +24,63 @@
                 rows="10"
                 v-model="proposedQuestion.content"
                 label="Question"
+								data-cy="questionContent"
               ></v-textarea>
             </v-flex>
-            <v-flex
-              xs24
-              sm12
-              md12
-              v-for="index in proposedQuestion.options.length"
-              :key="index"
-            >
+            <v-flex xs24 sm12 md12>
               <v-switch
-                v-model="proposedQuestion.options[index - 1].correct"
+                v-model="proposedQuestion.options[0].correct"
                 class="ma-4"
-                label="Correct"
+                label="Option 1 Correct"
               />
               <v-textarea
                 outline
                 rows="10"
-                v-model="proposedQuestion.options[index - 1].content"
-                label="Option"
+                v-model="proposedQuestion.options[0].content"
+                label="Option 1"
+								data-cy="optionContent1"
+              ></v-textarea>
+            </v-flex>
+						<v-flex xs24 sm12 md12>
+              <v-switch
+                v-model="proposedQuestion.options[1].correct"
+                class="ma-4"
+                label="Option 2 Correct"
+              />
+              <v-textarea
+                outline
+                rows="10"
+                v-model="proposedQuestion.options[1].content"
+                label="Option 2"
+								data-cy="optionContent2"
+              ></v-textarea>
+            </v-flex>
+						<v-flex xs24 sm12 md12>
+              <v-switch
+                v-model="proposedQuestion.options[2].correct"
+                class="ma-4"
+                label="Option 3 Correct"
+              />
+              <v-textarea
+                outline
+                rows="10"
+                v-model="proposedQuestion.options[2].content"
+                label="Option 3"
+								data-cy="optionContent3"
+              ></v-textarea>
+            </v-flex>
+						<v-flex xs24 sm12 md12>
+              <v-switch
+                v-model="proposedQuestion.options[3].correct"
+                class="ma-4"
+                label="Option 4 Correct"
+              />
+              <v-textarea
+                outline
+                rows="10"
+                v-model="proposedQuestion.options[3].content"
+                label="Option 4"
+								data-cy="optionContent4"
               ></v-textarea>
             </v-flex>
           </v-layout>
