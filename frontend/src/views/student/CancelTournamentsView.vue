@@ -13,6 +13,7 @@
         v-for="tournament in tournaments"
         :key="tournament.id"
         @click="cancelTournament(tournament)"
+        data-cy="cancelTournament"
       >
         <div class="col">
           {{ tournament.numberOfQuestions }}

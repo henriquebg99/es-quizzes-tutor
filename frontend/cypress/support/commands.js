@@ -46,10 +46,20 @@ Cypress.Commands.add('goToCreateTournaments', () => {
     cy.contains('Create').click()
 })
 
-Cypress.Commands.add('goToCreatedTournaments', () => {
+Cypress.Commands.add('goToCancelTournaments', () => {
     cy.contains('Tournaments').click()
-    cy.contains('Created').click()
+    cy.contains('Cancel').click()
 })
+
+Cypress.Commands.add('cancelTournament',  (questions) => {
+    cy.contains(questions).parent().should('have.length', 1)
+        .children()
+        .should('have.length', 4)
+        .find('[data-cy="cancelTournament"]')
+        .click()
+})
+
+
 
 Cypress.Commands.add('createCourseExecution', (name, acronym, academicTerm) => {
     cy.get('[data-cy="createButton"]').click()

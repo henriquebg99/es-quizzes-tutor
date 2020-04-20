@@ -19,7 +19,7 @@ export default class User {
       this.role = jsonObj.role;
       this.id = jsonObj.id;
 
-      if (jsonObj.courses){
+      if (jsonObj.courses) {
         for (let [name, courses] of Object.entries(jsonObj.courses)) {
           this.courses[name] = courses.map(course => new Course(course));
           this.coursesNumber += this.courses[name].length;
