@@ -13,12 +13,14 @@ public class AuthUserDto implements Serializable {
     private String username;
     private User.Role role;
     private Map<String, List<CourseDto>> courses;
+    private Integer id;
 
     public AuthUserDto(User user) {
         this.name = user.getName();
         this.username = user.getUsername();
         this.role = user.getRole();
         this.courses = getActiveAndInactiveCourses(user, new ArrayList<>());
+        this.id = user.getId();
     }
 
     public AuthUserDto(User user, List<CourseDto> currentCourses) {
@@ -26,6 +28,7 @@ public class AuthUserDto implements Serializable {
         this.username = user.getUsername();
         this.role = user.getRole();
         this.courses = getActiveAndInactiveCourses(user, currentCourses);
+        this.id = user.getId();
     }
 
     public String getName() {
@@ -34,6 +37,12 @@ public class AuthUserDto implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Integer getId() { return this.id; }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getUsername() {

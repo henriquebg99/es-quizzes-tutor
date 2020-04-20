@@ -12,8 +12,8 @@ import { Student } from '@/models/management/Student';
 import Assessment from '@/models/management/Assessment';
 import AuthDto from '@/models/user/AuthDto';
 import StatementAnswer from '@/models/statement/StatementAnswer';
-import { QuizAnswer } from '@/models/management/QuizAnswer';
 import { QuizAnswers } from '@/models/management/QuizAnswers';
+import { Tournament } from '@/models/management/Tournament';
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 10000;
@@ -138,7 +138,7 @@ export default class RemoteServices {
       });
   }
 
-  static createQuestion(question: Question): Promise<Question> {
+  static async createQuestion(question: Question): Promise<Question> {
     return httpClient
       .post(
         `/courses/${Store.getters.getCurrentCourse.courseId}/questions/`,
@@ -152,7 +152,7 @@ export default class RemoteServices {
       });
   }
 
-  static updateQuestion(question: Question): Promise<Question> {
+  static async updateQuestion(question: Question): Promise<Question> {
     return httpClient
       .put(`/questions/${question.id}`, question)
       .then(response => {
@@ -163,13 +163,13 @@ export default class RemoteServices {
       });
   }
 
-  static deleteQuestion(questionId: number) {
+  static async deleteQuestion(questionId: number) {
     return httpClient.delete(`/questions/${questionId}`).catch(async error => {
       throw Error(await this.errorMessage(error));
     });
   }
 
-  static setQuestionStatus(
+  static async setQuestionStatus(
     questionId: number,
     status: String
   ): Promise<Question> {
@@ -183,7 +183,7 @@ export default class RemoteServices {
       });
   }
 
-  static uploadImage(file: File, questionId: number): Promise<string> {
+  static async uploadImage(file: File, questionId: number): Promise<string> {
     let formData = new FormData();
     formData.append('file', file);
     return httpClient
@@ -200,11 +200,11 @@ export default class RemoteServices {
       });
   }
 
-  static updateQuestionTopics(questionId: number, topics: Topic[]) {
+  static async updateQuestionTopics(questionId: number, topics: Topic[]) {
     return httpClient.put(`/questions/${questionId}/topics`, topics);
   }
 
-  static getTopics(): Promise<Topic[]> {
+  static async getTopics(): Promise<Topic[]> {
     return httpClient
       .get(`/courses/${Store.getters.getCurrentCourse.courseId}/topics`)
       .then(response => {
@@ -217,7 +217,7 @@ export default class RemoteServices {
       });
   }
 
-  static getAvailableQuizzes(): Promise<StatementQuiz[]> {
+  static async getAvailableQuizzes(): Promise<StatementQuiz[]> {
     return httpClient
       .get(
         `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/quizzes/available`
@@ -232,7 +232,7 @@ export default class RemoteServices {
       });
   }
 
-  static generateStatementQuiz(params: object): Promise<StatementQuiz> {
+  static async generateStatementQuiz(params: object): Promise<StatementQuiz> {
     return httpClient
       .post(
         `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/quizzes/generate`,
@@ -246,7 +246,7 @@ export default class RemoteServices {
       });
   }
 
-  static getSolvedQuizzes(): Promise<SolvedQuiz[]> {
+  static async getSolvedQuizzes(): Promise<SolvedQuiz[]> {
     return httpClient
       .get(
         `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/quizzes/solved`
@@ -293,7 +293,7 @@ export default class RemoteServices {
     });
   }
 
-  static submitAnswer(quizId: number, answer: StatementAnswer) {
+  static async submitAnswer(quizId: number, answer: StatementAnswer) {
     return httpClient
       .post(`/quizzes/${quizId}/submit`, answer)
       .catch(async error => {
@@ -301,7 +301,7 @@ export default class RemoteServices {
       });
   }
 
-  static concludeQuiz(
+  static async concludeQuiz(
     quizId: number
   ): Promise<StatementCorrectAnswer[] | void> {
     return httpClient
@@ -318,7 +318,7 @@ export default class RemoteServices {
       });
   }
 
-  static createTopic(topic: Topic): Promise<Topic> {
+  static async createTopic(topic: Topic): Promise<Topic> {
     return httpClient
       .post(
         `/courses/${Store.getters.getCurrentCourse.courseId}/topics/`,
@@ -332,7 +332,7 @@ export default class RemoteServices {
       });
   }
 
-  static updateTopic(topic: Topic): Promise<Topic> {
+  static async updateTopic(topic: Topic): Promise<Topic> {
     return httpClient
       .put(`/topics/${topic.id}`, topic)
       .then(response => {
@@ -343,13 +343,13 @@ export default class RemoteServices {
       });
   }
 
-  static deleteTopic(topic: Topic) {
+  static async deleteTopic(topic: Topic) {
     return httpClient.delete(`/topics/${topic.id}`).catch(async error => {
       throw Error(await this.errorMessage(error));
     });
   }
 
-  static getNonGeneratedQuizzes(): Promise<Quiz[]> {
+  static async getNonGeneratedQuizzes(): Promise<Quiz[]> {
     return httpClient
       .get(
         `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/quizzes/non-generated`
@@ -430,7 +430,7 @@ export default class RemoteServices {
       });
   }
 
-  static getAssessments(): Promise<Assessment[]> {
+  static async getAssessments(): Promise<Assessment[]> {
     return httpClient
       .get(
         `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/assessments`
@@ -522,7 +522,7 @@ export default class RemoteServices {
       });
   }
 
-  static getCourses(): Promise<Course[]> {
+  static async getCourses(): Promise<Course[]> {
     return httpClient
       .get('/admin/courses/executions')
       .then(response => {
@@ -590,5 +590,66 @@ export default class RemoteServices {
       console.log(error);
       return 'Unknown Error - Contact admin';
     }
+  }
+
+  static createTournament(tournament: Tournament): Promise<Tournament> {
+    return httpClient
+      .post(
+        '/student/course/executions/' +
+          Store.getters.getCurrentCourse.courseExecutionId +
+          '/tournaments/',
+        tournament
+      )
+      .then(response => {
+        return new Tournament(response.data, Store.getters.getUser.id);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static availableTournaments(): Promise<Tournament[]> {
+    return httpClient
+      .get(
+        '/student/course/executions/' +
+          Store.getters.getCurrentCourse.courseExecutionId +
+          '/tournaments/'
+      )
+      .then(response => {
+        return response.data.map((tournament: any) => {
+          return new Tournament(tournament, Store.getters.getUser.id);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static enrollTournament(id: number) {
+    return httpClient
+      .put(
+        '/student/course/executions/' +
+          Store.getters.getCurrentCourse.courseExecutionId +
+          '/tournaments/' +
+          id +
+          '/enroll/'
+      )
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static cancelTournament(tournamentId: number) {
+    return httpClient
+      .post(
+        '/student/course/executions/' +
+          Store.getters.getCurrentCourse.courseExecutionId +
+          '/tournaments/' +
+          tournamentId +
+          '/cancel/'
+      )
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
   }
 }
