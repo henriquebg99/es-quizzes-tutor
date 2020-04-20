@@ -67,14 +67,12 @@ describe('Tournament walkthrough', () => {
   it('enroll in tournament', () => {
     cy.goToCreateTournaments()
     cy.createTournament()
-    cy.goToAvailableTournaments()
     cy.enrollTournaments()
   });
 
   it('enroll twice in a tournament', () => {
     cy.goToCreateTournaments()
     cy.createTournament()
-    cy.goToAvailableTournaments()
     cy.enrollTournaments()
     cy.enrollTournaments()
     cy.closeErrorMessage()
