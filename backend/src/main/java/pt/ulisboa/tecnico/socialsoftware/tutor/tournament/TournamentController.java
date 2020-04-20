@@ -38,7 +38,6 @@ public class TournamentController {
     @PreAuthorize("hasRole('ROLE_STUDENT')")
     public TournamentDto createTournament (Principal principal, @PathVariable int executionId, @Valid @RequestBody TournamentDto tournamentDto) {
         User user = (User) ((Authentication) principal).getPrincipal();
-        System.out.println("createTournament");
         if(user == null){
             throw new TutorException(AUTHENTICATION_ERROR);
         }

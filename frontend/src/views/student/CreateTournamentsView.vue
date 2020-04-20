@@ -3,7 +3,13 @@
     <v-card-title>
       <span>Create Tournament</span>
       <v-spacer />
-      <v-btn color="primary" dark @click="createTournament()">Create</v-btn>
+      <v-btn
+        color="primary"
+        data-cy="createButton"
+        dark
+        @click="createTournament()"
+        >Create</v-btn
+      >
     </v-card-title>
     <v-card-text>
       <v-row>
@@ -14,6 +20,7 @@
             v-model="beginDate"
             date-format="yyyy-MM-dd"
             time-format="HH:mm"
+            data-cy="beginPicker"
           >
           </v-datetime-picker>
         </v-col>
@@ -25,6 +32,7 @@
             v-model="endDate"
             date-format="yyyy-MM-dd"
             time-format="HH:mm"
+            data-cy="endPicker"
           >
           </v-datetime-picker>
         </v-col>
@@ -38,9 +46,9 @@
               mandatory
               class="button-group"
             >
-              <v-btn text value="5">5</v-btn>
-              <v-btn text value="10">10</v-btn>
-              <v-btn text value="20">20</v-btn>
+              <v-btn text value="5" data-cy="fiveNumber">5</v-btn>
+              <v-btn text value="10" data-cy="tenNumber">10</v-btn>
+              <v-btn text value="20" data-cy="twentyNumber">20</v-btn>
             </v-btn-toggle>
           </v-container>
         </v-col>
@@ -57,6 +65,7 @@
             show-select
             class="elevation-1"
             :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
+            data-cy="topicsTable"
           >
             <template v-slot:top>
               <span>Select Topics</span>
@@ -104,6 +113,11 @@ export default class CreateTournamentsView extends Vue {
     await this.$store.dispatch('loading');
     try {
       this.topics = await RemoteServices.getTopics();
+      this.beginDate.setHours(this.beginDate.getHours() + 1);
+      this.beginDate.setMinutes(0);
+      this.endDate.setHours(this.endDate.getHours() + 1);
+      this.endDate.setMinutes(0);
+      this.endDate.setDate(this.endDate.getDate() + 1);
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
@@ -168,11 +182,8 @@ export default class CreateTournamentsView extends Vue {
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
-    alert('Tournament created.');
-    await this.init();
 
-    // reset the form
-    this.tournament = new Tournament();
+    this.$router.push('createdTournaments');
   }
 }
 </script>

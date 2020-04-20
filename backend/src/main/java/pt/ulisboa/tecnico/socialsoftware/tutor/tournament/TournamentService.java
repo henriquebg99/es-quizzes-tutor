@@ -64,6 +64,8 @@ public class TournamentService {
         int courseId = courseExecution.getCourse().getId();
         checkAndAndTopics(tournamentDto, tournament, courseId);
 
+        System.out.println("begin: " + tournament.getBeginDate() + ", end: " + tournament.getEndDate());
+
         tournamentRepository.save(tournament);
 
         return new TournamentDto(tournament);
@@ -83,11 +85,6 @@ public class TournamentService {
 
         LocalDateTime beginDate = LocalDateTime.parse(tournamentDto.getBeginDate(), formatter);
         LocalDateTime endDate = LocalDateTime.parse(tournamentDto.getEndDate(), formatter);
-
-        System.out.println(beginDate);
-        System.out.println(tournamentDto.getBeginDate());
-        System.out.println(endDate);
-        System.out.println(tournamentDto.getEndDate());
 
         if (!endDate.isAfter(beginDate))
             throw new TutorException(ErrorMessage.END_DATE_IS_NOT_AFTER_BEGIN_DATE);
