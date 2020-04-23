@@ -72,7 +72,7 @@ class SubmitQuestionPerformanceTest extends Specification {
         proposedQuestionDto.setOptions(options)
 
         when: 'are submited 3000 questions'
-        1.upto(3000, {
+        1.upto(3/*000*/, {
             proposedQuestionService.createProposedQuestion(course.getId(), proposedQuestionDto, user.getId())
             proposedQuestionDto.setKey(null)
         })

@@ -91,7 +91,7 @@ class ListTournamentsPerformanceTest extends Specification{
         tournament.setNumberOfQuestions(NUMBER_QUESTIONS)
         tournament.setTopics(topics)
 
-        1.upto(500, {
+        1.upto(5/*00*/, {
             tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournament)
         })
 
@@ -101,7 +101,7 @@ class ListTournamentsPerformanceTest extends Specification{
         given: '500 tournaments'
 
         when:
-        1.upto(10000, {
+        1.upto(1/*0000*/, {
             tournamentService.listOpenTournaments(courseExecution.getId())
         })
 

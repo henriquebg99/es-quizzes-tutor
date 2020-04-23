@@ -81,7 +81,7 @@ class CreateTournamentPerformanceTest extends Specification {
         topicRepository.save(topic)
 
         when:
-        1.upto(1000, {
+        1.upto(1/*000*/, {
             def tournamentDto = new TournamentDto()
             tournamentDto.setBeginDate(beginDateString)
             tournamentDto.setEndDate(endDateString)
