@@ -5,7 +5,7 @@
       <v-spacer />
       <v-btn color="primary" dark @click="createProposedQuestion()" data-cy="submitQuestion">Submit</v-btn>
     </v-card-title>
-		<v-card-text class="text-left">      
+		<v-card-text class="text-left">
         <v-container grid-list-md fluid>
           <v-layout column wrap>
             <v-flex xs24 sm12 md8>
@@ -104,7 +104,7 @@ export default class ProposedQuestionView extends Vue {
   proposedQuestion: ProposedQuestion = new ProposedQuestion();
 
     headers: object = [
-    { text: 'Qestion Title', value: 'title', align: 'center' },
+    { text: 'Question Title', value: 'title', align: 'center' },
     { text: 'Question', value: 'content', align: 'left' },
     {
       text: 'Image',
@@ -117,18 +117,18 @@ export default class ProposedQuestionView extends Vue {
   async createProposedQuestion() {
     try {
       await RemoteServices.createProposedQuestion(this.proposedQuestion);
+      alert('Question Submitted.'); //if there's an error this should not appear
     } catch (error) {
-      await this.$store.dispatch('error', error);
+      await this.$store.dispatch('error', error); //appears "Missing Information for Quiz" copy paste?
     }
-    alert('Question Submited.');
-    
+
     this.proposedQuestion = new ProposedQuestion();
 	}
-	
+
 	convertMarkDownNoFigure(text: string, image: Image | null = null): string {
     return convertMarkDownNoFigure(text, image);
 	}
-	
+
 	async handleFileUpload(event: File, proposedQuestion: ProposedQuestion) {
     if (proposedQuestion.id) {
       try {

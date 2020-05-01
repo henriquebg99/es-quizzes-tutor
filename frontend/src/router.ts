@@ -199,7 +199,7 @@ let router = new Router({
             }
         },
         {
-          path: 'createTournaments',
+          path: 'createTournaments', //should not have camel case - create-tournaments
           name: 'create-tournaments',
           component: CreateTournamentsView,
           meta: {
@@ -208,7 +208,7 @@ let router = new Router({
           }
         },
         {
-          path: 'availableTournaments',
+          path: 'availableTournaments', //same as before
           name: 'available-tournaments',
           component: AvailableTournamentsView,
           meta: {
@@ -217,7 +217,7 @@ let router = new Router({
           }
         },
         {
-          path: 'cancelTournaments',
+          path: 'cancelTournaments', //same as before
           name: 'cancel-tournaments',
           component: CancelTournamentsView,
           meta: {

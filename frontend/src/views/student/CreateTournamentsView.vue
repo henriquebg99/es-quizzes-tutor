@@ -46,6 +46,7 @@
               mandatory
               class="button-group"
             >
+              <!-- i should be able to choose the number i want -->
               <v-btn text value="5" data-cy="fiveNumber">5</v-btn>
               <v-btn text value="10" data-cy="tenNumber">10</v-btn>
               <v-btn text value="20" data-cy="twentyNumber">20</v-btn>
@@ -143,6 +144,7 @@ export default class CreateTournamentsView extends Vue {
   }
 
   async validateInput(): Promise<boolean> {
+    // these type of errors should come from the backend
     if (this.tournament.topics.length == 0) {
       await this.$store.dispatch('error', 'Error: No topics selected.');
       return false;
@@ -179,11 +181,10 @@ export default class CreateTournamentsView extends Vue {
 
     try {
       await RemoteServices.createTournament(this.tournament);
+      await this.$router.push('availableTournaments');
     } catch (error) {
-      await this.$store.dispatch('error', error);
+      await this.$store.dispatch('error', error); //this should be in the remote services
     }
-
-    this.$router.push('availableTournaments');
   }
 }
 </script>

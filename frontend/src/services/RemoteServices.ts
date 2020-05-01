@@ -184,7 +184,9 @@ export default class RemoteServices {
       });
   }
 
-  static createProposedQuestion(proposedQuestion: ProposedQuestion): Promise<ProposedQuestion> {
+  static async createProposedQuestion(
+    proposedQuestion: ProposedQuestion
+  ): Promise<ProposedQuestion> {
     return httpClient
       .post(
         `/courses/${Store.getters.getCurrentCourse.courseId}/proposedquestions/`,
@@ -624,7 +626,7 @@ export default class RemoteServices {
     }
   }
 
-  static createTournament(tournament: Tournament): Promise<Tournament> {
+  static async createTournament(tournament: Tournament): Promise<Tournament> {
     return httpClient
       .post(
         '/student/course/executions/' +
@@ -640,7 +642,7 @@ export default class RemoteServices {
       });
   }
 
-  static availableTournaments(): Promise<Tournament[]> {
+  static async availableTournaments(): Promise<Tournament[]> {
     return httpClient
       .get(
         '/student/course/executions/' +
@@ -657,7 +659,7 @@ export default class RemoteServices {
       });
   }
 
-  static enrollTournament(id: number) {
+  static async enrollTournament(id: number) {
     return httpClient
       .put(
         '/student/course/executions/' +
@@ -671,7 +673,7 @@ export default class RemoteServices {
       });
   }
 
-  static cancelTournament(tournamentId: number) {
+  static async cancelTournament(tournamentId: number) {
     return httpClient
       .post(
         '/student/course/executions/' +

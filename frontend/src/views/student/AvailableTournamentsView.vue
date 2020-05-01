@@ -6,6 +6,7 @@
         <div class="col">Number</div>
         <div class="col">Available since</div>
         <div class="col">Available until</div>
+        <!-- shoulb be able to see the topics -->
         <div class="col">Enroll</div>
       </span>
       <li

@@ -22,15 +22,14 @@ export class Tournament {
       this.numberOfQuestions = jsonObj.numberOfQuestions;
       this.creator = new User(jsonObj.creator);
       this.isCanceled = jsonObj.isCanceled;
-      console.log('criador ' + jsonObj.creator.username);
+      //console.log('criador ' + jsonObj.creator.username);
 
       if (jsonObj.topics)
         this.topics = jsonObj.topics.map((topic: Topic) => new Topic(topic));
 
       if (jsonObj.enrollments) {
-        this.enrollments = jsonObj.enrollments.map(
-          (user: User) => new User(user)
-        );
+        this.enrollments = jsonObj.enrollments.map((user: User) => new User(user));
+        // this logic should be in the service
         for (var user of this.enrollments) {
           if (user.id == user_id) {
             this.enrolled = true;
