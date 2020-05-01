@@ -74,4 +74,5 @@ describe('Student walkthrough', () => {
 	});
 
 });
-  
+
+//the logic should be inside commands.js - courseExecutions

@@ -98,13 +98,13 @@ Cypress.Commands.add('createTournament', () => {
     // select day 29
     cy.get('#input-71').click();
     cy.get(':nth-child(3) > .v-btn__content > .v-icon').click()
-    cy.get('.tab-transition-enter-active > tbody > :nth-child(5) > :nth-child(4) > .v-btn > .v-btn__content').click()
+    cy.get('.tab-transition-enter-active > tbody > :nth-child(2) > :nth-child(4) > .v-btn > .v-btn__content').click() //doesn't work in May - be careful
     cy.get('.green--text > .v-btn__content').click()
 
     // select day 30
     cy.get('#input-76').click();
     cy.get('.v-dialog__content--active > .v-dialog > .v-sheet > .v-card__text > .v-tabs > .v-window > .v-window__container > .v-window-item > .v-picker > .v-picker__body > :nth-child(1) > .v-date-picker-header > :nth-child(3) > .v-btn__content > .v-icon').click()
-    cy.get('.v-dialog__content--active > .v-dialog > .v-sheet > .v-card__text > .v-tabs > .v-window > .v-window__container > .v-window-item > .v-picker > .v-picker__body > :nth-child(1) > .v-date-picker-table > table > tbody > :nth-child(6) > td > .v-btn > .v-btn__content').click()
+    cy.get('.tab-transition-enter-active > tbody > :nth-child(5) > :nth-child(3) > .v-btn').click()
     cy.get('.v-dialog__content--active > .v-dialog > .v-sheet > .v-card__actions > .green--text > .v-btn__content').click()
 
     // 10 questions
