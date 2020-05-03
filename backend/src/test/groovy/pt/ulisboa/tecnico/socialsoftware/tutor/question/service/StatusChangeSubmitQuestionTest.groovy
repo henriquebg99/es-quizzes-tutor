@@ -10,6 +10,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.ProposedQuestionService
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.ProposedQuestion
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ImageDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ProposedQuestionDto
@@ -22,6 +24,13 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*
 
 @DataJpaTest
 class StatusChangeSubmitQuestionTest extends Specification {
+    public static final String COURSE_NAME = "Software Architecture"
+    public static final String ACRONYM = "AS1"
+    public static final String ACADEMIC_TERM = "1 SEM"
+    public static final String QUESTION_TITLE = 'question title'
+    public static final String QUESTION_CONTENT = 'question content'
+    public static final String OPTION_CONTENT = "optionId content"
+    public static final String JUSTIFICATION = "justification of choice"
 
     @Autowired
     ProposedQuestionService proposedQuestionService
@@ -38,17 +47,81 @@ class StatusChangeSubmitQuestionTest extends Specification {
     @Autowired
     UserRepository userRepository
 
-    def setup() {
+    def course
+    def courseExecution
 
+    def userStudent
+    def userTeacher
+
+    def proposedQuestionDto
+
+    def setup() {
+        course = new Course(COURSE_NAME, Course.Type.TECNICO)
+        courseRepository.save(course)
+
+        courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
+        courseExecutionRepository.save(courseExecution)
+
+        userStudent = new User('name', "username", 1, User.Role.STUDENT)
+        userStudent.getCourseExecutions().add(courseExecution)
+        courseExecution.getUsers().add(userStudent)
+        userRepository.save(userStudent)
+
+        userTeacher = new User('name2', "username2", 2, User.Role.TEACHER)
+        userTeacher.getCourseExecutions().add(courseExecution)
+        courseExecution.getUsers().add(userTeacher)
+        userRepository.save(userTeacher)
+
+        proposedQuestionDto = new ProposedQuestionDto()
+        proposedQuestionDto.setKey(1)
+        proposedQuestionDto.setTitle(QUESTION_TITLE)
+        proposedQuestionDto.setContent(QUESTION_CONTENT)
+        proposedQuestionDto.setUsername(userStudent.getUsername())
+        def optionDto = new OptionDto()
+        optionDto.setContent(OPTION_CONTENT)
+        optionDto.setCorrect(true)
+        def options = new ArrayList<OptionDto>()
+        options.add(optionDto)
+        optionDto = new OptionDto()
+        optionDto.setContent(OPTION_CONTENT)
+        optionDto.setCorrect(false)
+        options.add(optionDto)
+        proposedQuestionDto.setOptions(options)
+        proposedQuestionDto.setStatus(ProposedQuestion.Status.DEPENDENT.name())
     }
 
     def "approve submitted question without justification"() {
+        given: "a submitted question"
+        proposedQuestionService.createProposedQuestion(course.getId(), proposedQuestionDto, userStudent.getId())
+
+        when: "teacher approves question"
+        proposedQuestionService.changeStatus(course.getId(), proposedQuestionDto.getKey(), ProposedQuestion.Status.APPROVED.name(), '', userTeacher.getId())
+
+        then: "question has approved status"
+        proposedQuestionDto.getStatus()==ProposedQuestion.Status.APPROVED.name()
     }
 
     def "reject submitted question with justification"() {
+        given: "a submitted question"
+        proposedQuestionService.createProposedQuestion(course.getId(), proposedQuestionDto, userStudent.getId())
+
+        when: "teacher rejects question and gives justification"
+        proposedQuestionService.changeStatus(course.getId(), proposedQuestionDto.getKey(), ProposedQuestion.Status.REJECTED.name(), JUSTIFICATION, userTeacher.getId())
+
+        then: "question has rejected status and justification"
+        proposedQuestionDto.getStatus()==ProposedQuestion.Status.REJECTED.name()
     }
 
     def "no choice with justification"() {
+        given: "a submitted question"
+        proposedQuestionService.createProposedQuestion(course.getId(), proposedQuestionDto, userStudent.getId())
+
+        when: "teacher gives justification without status"
+        proposedQuestionService.changeStatus(course.getId(), proposedQuestionDto.getKey(), ProposedQuestion.Status.DEPENDENT.name(), JUSTIFICATION, userTeacher.getId())
+
+        then: "should throw exception"
+        TutorException exception = thrown()
+        exception.getErrorMessage() == QUESTION_NEEDS_STATUS
     }
 
     @TestConfiguration
