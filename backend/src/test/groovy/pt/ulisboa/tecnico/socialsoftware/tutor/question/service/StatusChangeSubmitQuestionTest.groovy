@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
+import org.springframework.security.access.method.P
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
@@ -95,10 +96,10 @@ class StatusChangeSubmitQuestionTest extends Specification {
         proposedQuestionService.createProposedQuestion(course.getId(), proposedQuestionDto, userStudent.getId())
 
         when: "teacher approves question"
-        proposedQuestionService.changeStatus(course.getId(), proposedQuestionDto.getKey(), ProposedQuestion.Status.APPROVED.name(), '', userTeacher.getId())
+        proposedQuestionService.changeStatus(proposedQuestionDto.getKey(), ProposedQuestion.Status.APPROVED, '')
 
         then: "question has approved status"
-        proposedQuestionDto.getStatus()==ProposedQuestion.Status.APPROVED.name()
+        proposedQuestionDto.getStatus()==ProposedQuestion.Status.APPROVED
     }
 
     def "reject submitted question with justification"() {
@@ -106,10 +107,10 @@ class StatusChangeSubmitQuestionTest extends Specification {
         proposedQuestionService.createProposedQuestion(course.getId(), proposedQuestionDto, userStudent.getId())
 
         when: "teacher rejects question and gives justification"
-        proposedQuestionService.changeStatus(course.getId(), proposedQuestionDto.getKey(), ProposedQuestion.Status.REJECTED.name(), JUSTIFICATION, userTeacher.getId())
+        proposedQuestionService.changeStatus(proposedQuestionDto.getKey(), ProposedQuestion.Status.REJECTED, JUSTIFICATION)
 
         then: "question has rejected status and justification"
-        proposedQuestionDto.getStatus()==ProposedQuestion.Status.REJECTED.name()
+        proposedQuestionDto.getStatus()==ProposedQuestion.Status.REJECTED
     }
 
     def "no choice with justification"() {
@@ -117,7 +118,7 @@ class StatusChangeSubmitQuestionTest extends Specification {
         proposedQuestionService.createProposedQuestion(course.getId(), proposedQuestionDto, userStudent.getId())
 
         when: "teacher gives justification without status"
-        proposedQuestionService.changeStatus(course.getId(), proposedQuestionDto.getKey(), ProposedQuestion.Status.DEPENDENT.name(), JUSTIFICATION, userTeacher.getId())
+        proposedQuestionService.changeStatus(proposedQuestionDto.getKey(), ProposedQuestion.Status.DEPENDENT, JUSTIFICATION)
 
         then: "should throw exception"
         TutorException exception = thrown()

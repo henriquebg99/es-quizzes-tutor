@@ -7,8 +7,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ProposedQuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
@@ -21,11 +20,9 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 public class ProposedQuestion {
     @SuppressWarnings("unused")
 
-    /*
     public enum Status{
         REJECTED,APPROVED,DEPENDENT
     }
-    */
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -49,10 +46,11 @@ public class ProposedQuestion {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "proposedQuestion", fetch = FetchType.LAZY, orphanRemoval=true)
     private List<Option> options = new ArrayList<>();
 
-    /*
     @Enumerated(EnumType.STRING)
     private ProposedQuestion.Status status = ProposedQuestion.Status.DEPENDENT;
-     */
+
+    @Column(columnDefinition = "TEXT")
+    private String justification;
 
     @ManyToOne
     @JoinColumn(name = "course_id")
@@ -67,7 +65,8 @@ public class ProposedQuestion {
         this.content = proposedQuestionDto.getContent();
         this.course = course;
         this.user = user;
-        //this.status = Status.valueOf(proposedQuestionDto.getStatus());
+        this.status = Status.valueOf(proposedQuestionDto.getStatus());
+        this.justification = proposedQuestionDto.getJustification();
 
         int index = 0;
         for (OptionDto optionDto : proposedQuestionDto.getOptions()) {
@@ -147,13 +146,17 @@ public class ProposedQuestion {
         options.add(option);
     }
 
-    /*
-    public ProposedQuestion.Status getStatus() {
+    public Status getStatus() {
         return status;
     }
 
     public void setStatus(Status status) { this.status = status; }
-    */
+
+    public String getJustification() {
+        return justification;
+    }
+
+    public void setJustification(String justification) { this.justification = justification; }
 
     @Override
     public String toString() {
@@ -162,7 +165,8 @@ public class ProposedQuestion {
                 ", id=" + id +
                 ", title='" + title + '\'' +
                 ", content='" + content + '\'' +
-        //        ", status=" + status +
+                ", status=" + status +
+                ", justification='" + justification + '\'' +
                 ", image=" + image +
                 ", options=" + options +
                 ", user="+ user +

@@ -107,4 +107,18 @@ public class ProposedQuestionService {
         proposedQuestion.getImage().setUrl(proposedQuestion.getKey() + "." + type);
     }
 
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public void changeStatus(Integer proposedQuestionKey, ProposedQuestion.Status newStatus, String justification) {
+        ProposedQuestion proposedQuestion = proposedQuestionRepository.findById(proposedQuestionKey).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, proposedQuestionKey));
+
+        //if (newStatus != ProposedQuestion.Status.APPROVED && newStatus != ProposedQuestion.Status.REJECTED)
+            //QUESTION_NEEDS_STATUS
+
+        proposedQuestion.setStatus(newStatus);
+        proposedQuestion.setJustification(justification);
+    }
+
 }

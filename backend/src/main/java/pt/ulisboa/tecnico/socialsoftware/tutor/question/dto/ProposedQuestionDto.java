@@ -15,7 +15,8 @@ public class ProposedQuestionDto implements Serializable {
     private String username;
     private List<OptionDto> options = new ArrayList<>();
     private ImageDto image;
-    //private String status;
+    private String status;
+    private String justification;
 
     public ProposedQuestionDto() {
     }
@@ -26,7 +27,8 @@ public class ProposedQuestionDto implements Serializable {
         this.title = proposedQuestion.getTitle();
         this.content = proposedQuestion.getContent();
         this.username = proposedQuestion.getUsername();
-        //this.status = proposedQuestion.getStatus().name();
+        this.status = proposedQuestion.getStatus().name();
+        this.justification = proposedQuestion.getJustification();
 
         this.options = proposedQuestion.getOptions().stream().map(OptionDto::new).collect(Collectors.toList());
         if (proposedQuestion.getImage() != null)
@@ -87,7 +89,6 @@ public class ProposedQuestionDto implements Serializable {
         this.image = image;
     }
 
-    /*
     public String getStatus() {
         return status;
     }
@@ -95,7 +96,14 @@ public class ProposedQuestionDto implements Serializable {
     public void setStatus(String status) {
         this.status = status;
     }
-    */
+
+    public String getJustification() {
+        return justification;
+    }
+
+    public void setJustification(String justification) {
+        this.justification = justification;
+    }
 
     @Override
     public String toString() {
@@ -105,7 +113,8 @@ public class ProposedQuestionDto implements Serializable {
                 ", title='" + title + '\'' +
                 ", content='" + content + '\'' +
                 ", image=" + image +
-    //            ", status=" + status +
+                ", status=" + status + '\'' +
+                ", justification=" + justification + '\'' +
                 ", options=" + options +
                 '}';
     }
