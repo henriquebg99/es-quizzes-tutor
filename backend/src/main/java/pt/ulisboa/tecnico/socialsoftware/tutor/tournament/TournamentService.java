@@ -12,6 +12,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
@@ -36,6 +37,9 @@ public class TournamentService {
 
     @Autowired
     private TournamentRepository tournamentRepository;
+
+    @Autowired
+    private TournamentAnswerRepository tournamentAnswerRepository;
 
     @Retryable(
             value = { SQLException.class },
@@ -204,5 +208,9 @@ public class TournamentService {
         tournament.setCanceled(true);
 
         return new TournamentDto(tournament);
+    }
+
+    public List<QuestionDto> listQuestions(int executionId, int tournamentId) {
+        return null;
     }
 }

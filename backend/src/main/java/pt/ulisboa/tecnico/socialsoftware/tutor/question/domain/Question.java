@@ -8,6 +8,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.Tournament;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -62,6 +63,9 @@ public class Question implements DomainEntity {
 
     @ManyToMany(mappedBy = "questions")
     private Set<Topic> topics = new HashSet<>();
+
+    @ManyToMany(cascade = CascadeType.ALL, fetch=FetchType.LAZY)
+    private Set<Tournament> tournaments = new HashSet<Tournament>();
 
     @ManyToOne
     @JoinColumn(name = "course_id")

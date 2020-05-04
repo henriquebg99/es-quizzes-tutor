@@ -6,6 +6,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import javax.validation.Valid;
@@ -61,6 +62,12 @@ public class TournamentController {
     @PreAuthorize("hasRole('ROLE_STUDENT')")
     public List<TournamentDto> listOpenTournaments(@PathVariable int executionId) {
         return tournamentService.listOpenTournaments(executionId);
+    }
+
+    @GetMapping("/student/course/executions/{executionId}/tournaments/{tournamentId}/questions")
+    @PreAuthorize("hasRole('ROLE_STUDENT')")
+    public List<QuestionDto> listQuestions(@PathVariable int executionId, @PathVariable int tournamentId) {
+        return tournamentService.listQuestions(executionId, tournamentId);
     }
 }
 

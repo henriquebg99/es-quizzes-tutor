@@ -3,6 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.tournament;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
@@ -52,6 +53,9 @@ public class Tournament {
 
     @ManyToMany(mappedBy = "tournaments")
     private Set<Topic> topics = new HashSet<Topic>();
+
+    @ManyToMany(mappedBy = "tournaments")
+    private Set<Question> questions = new HashSet<Question>();
 
     public Tournament() {}
 
