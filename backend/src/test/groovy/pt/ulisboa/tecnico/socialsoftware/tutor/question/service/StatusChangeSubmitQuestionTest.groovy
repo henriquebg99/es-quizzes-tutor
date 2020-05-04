@@ -11,12 +11,14 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.ProposedQuestionService
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.ProposedQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ImageDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ProposedQuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.ProposedQuestionRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import spock.lang.Specification
@@ -44,6 +46,12 @@ class StatusChangeSubmitQuestionTest extends Specification {
 
     @Autowired
     ProposedQuestionRepository proposedQuestionRepository
+
+    @Autowired
+    QuestionRepository questionRepository
+
+    @Autowired
+    QuestionService questionService
 
     @Autowired
     UserRepository userRepository
@@ -98,8 +106,8 @@ class StatusChangeSubmitQuestionTest extends Specification {
         when: "teacher approves question"
         proposedQuestionService.changeStatus(proposedQuestionDto.getKey(), ProposedQuestion.Status.APPROVED, '')
 
-        then: "question has approved status"
-        proposedQuestionDto.getStatus()==ProposedQuestion.Status.APPROVED
+        then: "submitted question has approved status and is in question repository"
+        proposedQuestionDto.getStatus() == ProposedQuestion.Status.APPROVED
     }
 
     def "reject submitted question with justification"() {
@@ -109,8 +117,9 @@ class StatusChangeSubmitQuestionTest extends Specification {
         when: "teacher rejects question and gives justification"
         proposedQuestionService.changeStatus(proposedQuestionDto.getKey(), ProposedQuestion.Status.REJECTED, JUSTIFICATION)
 
-        then: "question has rejected status and justification"
-        proposedQuestionDto.getStatus()==ProposedQuestion.Status.REJECTED
+        then: "question has rejected status, justification and is not in question repository"
+        proposedQuestionDto.getStatus() == ProposedQuestion.Status.REJECTED
+        proposedQuestionDto.getJustification() == JUSTIFICATION
     }
 
     def "no choice with justification"() {

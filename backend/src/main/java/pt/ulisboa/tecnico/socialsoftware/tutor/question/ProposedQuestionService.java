@@ -39,6 +39,9 @@ public class ProposedQuestionService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private QuestionService questionService;
+
     @PersistenceContext
     EntityManager entityManager;
 
@@ -114,8 +117,12 @@ public class ProposedQuestionService {
     public void changeStatus(Integer proposedQuestionKey, ProposedQuestion.Status newStatus, String justification) {
         ProposedQuestion proposedQuestion = proposedQuestionRepository.findById(proposedQuestionKey).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, proposedQuestionKey));
 
-        //if (newStatus != ProposedQuestion.Status.APPROVED && newStatus != ProposedQuestion.Status.REJECTED)
-            //QUESTION_NEEDS_STATUS
+        if (newStatus != ProposedQuestion.Status.APPROVED && newStatus != ProposedQuestion.Status.REJECTED)
+            throw new TutorException(QUESTION_NEEDS_STATUS, proposedQuestionKey);
+
+        //if (newStatus == ProposedQuestion.Status.APPROVED)
+            //QuestionDto question
+            //questionService.createQuestion(proposedQuestion.getCourse().getId(), question);
 
         proposedQuestion.setStatus(newStatus);
         proposedQuestion.setJustification(justification);
