@@ -5,13 +5,17 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name="tournaments")
@@ -56,6 +60,9 @@ public class Tournament {
 
     @ManyToMany(mappedBy = "tournaments")
     private Set<Question> questions = new HashSet<Question>();
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tournament", fetch=FetchType.LAZY, orphanRemoval=true)
+    private Set<TournamentAnswer> answers = new HashSet<>();
 
     public Tournament() {}
 
@@ -163,5 +170,47 @@ public class Tournament {
                     this.topics.equals(t.topics);
         }
         return false;
+    }
+
+    public Set<Question> getQuestions() {
+        return questions;
+    }
+
+    public Set<TournamentAnswer> getAnswers() {
+        return answers;
+    }
+
+    public void addTournamentAnswer (@NotNull Question question, @NotNull User user, int selected) {
+        // check if the question belongs to the tournament
+        if (this.questions.stream().filter(q -> q.getId() == question.getId()).count() != 1)
+            throw new TutorException(ErrorMessage.QUESTION_NOT_IN_TOURNAMENT);
+
+        // check if the user is enrolled in the quiz
+        if (this.enrollments.stream().filter(user1 -> user1.getId() == user.getId()).count() != 1)
+            throw new TutorException(ErrorMessage.USER_NOT_ENROLLED_IN_TOURNAMENT);
+
+        // check if the selected answer is valid
+        if (selected < question.getNumberOfCorrect() && selected > 0)
+            throw new TutorException(ErrorMessage.INVALID_SELECTED_OPTION);
+
+        // check if there is already any answer
+        List<TournamentAnswer> answers = this.answers.stream().filter(
+                answer -> answer.getUser().getId() == user.getId() &&
+                    question.getId() == answer.getQuestion().getId()).collect(Collectors.toList());
+
+        // at most one is expected
+        assert answers.size() == 1 || answers.size() == 0;
+
+        // if exists, reuse
+        if (answers.size() == 1) {
+            answers.get(0).setSelectedAnswer(selected);
+        } else {
+            this.answers.add(new TournamentAnswer(this, question, user, selected));
+        }
+    }
+
+    public void setQuestions(Set<Question> questions) {
+        //FIXME throw if number of questions mismatch
+        this.questions = questions;
     }
 }

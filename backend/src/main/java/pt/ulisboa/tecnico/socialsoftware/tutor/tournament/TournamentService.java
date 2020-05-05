@@ -11,9 +11,11 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
@@ -21,7 +23,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -40,6 +44,9 @@ public class TournamentService {
 
     @Autowired
     private TournamentAnswerRepository tournamentAnswerRepository;
+
+    @Autowired
+    private QuestionRepository questionRepository;
 
     @Retryable(
             value = { SQLException.class },
@@ -211,6 +218,59 @@ public class TournamentService {
     }
 
     public List<QuestionDto> listQuestions(int executionId, int tournamentId) {
-        return null;
+        Tournament tournament = tournamentRepository.findById(tournamentId).orElseThrow(
+                ()-> new TutorException(ErrorMessage.TOURNAMENT_ID_NOT_FOUND)
+        );
+
+        Set<Question> questions = tournament.getQuestions ();
+        List<QuestionDto> questionDtos = new LinkedList<>();
+
+        for (Question question : questions) {
+            questionDtos.add(new QuestionDto(question));
+        }
+
+        return questionDtos;
+    }
+
+    public List<TournamentAnswerDto> listAnswers(String username, int tournamentId) {
+        if (username == null)
+            throw new TutorException(ErrorMessage.USERNAME_EMPTY);
+
+        User user = userRepository.findByUsername(username);
+        if (user == null)
+            throw new TutorException(ErrorMessage.USERNAME_NOT_FOUND);
+
+        Tournament tournament = tournamentRepository.findById(tournamentId).orElseThrow(
+                ()-> new TutorException(ErrorMessage.TOURNAMENT_ID_NOT_FOUND)
+        );
+
+        List<TournamentAnswer> answers = tournamentAnswerRepository.findTournamentAnswers(tournamentId, user.getId());
+        List<TournamentAnswerDto> answerDtos = new LinkedList<>();
+
+        for (TournamentAnswer answer : answers) {
+            answerDtos.add(new TournamentAnswerDto(answer));
+        }
+
+        //FIXME o controller ja faz search  do user
+        return answerDtos;
+    }
+
+    public void submitAnswer(String username, int tournamentId, TournamentAnswerDto answerDto) {
+        if (username == null)
+            throw new TutorException(ErrorMessage.USERNAME_EMPTY);
+
+        User user = userRepository.findByUsername(username);
+        if (user == null)
+            throw new TutorException(ErrorMessage.USERNAME_NOT_FOUND);
+
+        Tournament tournament = tournamentRepository.findById(tournamentId).orElseThrow(
+                ()-> new TutorException(ErrorMessage.TOURNAMENT_ID_NOT_FOUND)
+        );
+
+        Question question = questionRepository.getOne(answerDto.getQuestionId());
+        if (question == null)
+            throw new TutorException(ErrorMessage.QUESTION_NOT_FOUND);
+
+        tournament.addTournamentAnswer(question, user, answerDto.getSelected());
     }
 }

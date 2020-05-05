@@ -13,4 +13,8 @@ public interface TournamentAnswerRepository extends JpaRepository<TournamentAnsw
 
     @Query(value = "SELECT * FROM tournament_answers t, WHERE t.tournament_id = :tournamentId AND t.user_id = :userId", nativeQuery = true)
     List<TournamentAnswer> findTournamentAnswers(int tournamentId, int userId);
+
+    @Query(value = "SELECT * FROM tournament_answers t, WHERE t.tournament_id = :tournamentId AND t.user_id = :userId " +
+            "AND t.question_id = :questionId", nativeQuery = true)
+    List<TournamentAnswer> findByQuestion (int tournamentId, int userId, int questionId);
 }
