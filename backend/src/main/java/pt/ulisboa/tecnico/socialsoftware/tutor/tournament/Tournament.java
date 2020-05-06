@@ -5,7 +5,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.persistence.*;
@@ -113,6 +112,8 @@ public class Tournament {
         this.creator = creator;
     }
 
+    public Boolean isCreator(User user) {return this.creator.equals(user);}
+
     public LocalDateTime getEndDate() {
         return endDate;
     }
@@ -155,6 +156,10 @@ public class Tournament {
 
     public void setCanceled(Boolean canceled) {
         isCanceled = canceled;
+    }
+
+    public Boolean hasEnded() {
+        return this.endDate.isBefore(LocalDateTime.now());
     }
 
     @Override
