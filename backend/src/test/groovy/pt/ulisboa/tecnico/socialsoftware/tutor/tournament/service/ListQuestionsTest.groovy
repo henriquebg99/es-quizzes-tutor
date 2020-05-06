@@ -136,13 +136,14 @@ class ListQuestionsTest extends Specification {
         tournamentDto.setEndDate(endDateString)
         tournamentDto.setNumberOfQuestions(NUMBER_OF_QUESTIONS)
         tournamentDto.setTopics(topics)
+
+        tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournamentDto);
+        tournamentRepository.findAll().get(0).setQuestions(questions)
     }
 
     def "list questions of a tournament" () {
         given: 'a valid tournament with one question'
-        tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournamentDto);
         def tournament = tournamentRepository.findAll().get(0)
-        tournament.setQuestions(questions)
 
         and: 'students enrolled'
         tournamentService.enrollTournament(USER_USERNAME2, tournament.getId())
@@ -164,9 +165,7 @@ class ListQuestionsTest extends Specification {
 
     def "list questions but the user is not enrolled in the tournament" () {
         given: 'a valid tournament with one question'
-        tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournamentDto);
         def tournament = tournamentRepository.findAll().get(0)
-        tournament.setQuestions(questions)
 
         when: 'list answers'
         tournamentService.listQuestions(USER_USERNAME2, tournament.getId())
@@ -178,9 +177,7 @@ class ListQuestionsTest extends Specification {
 
     def "list questions but the tournament does not exists" () {
         given: 'a valid tournament with one question'
-        tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournamentDto);
         def tournament = tournamentRepository.findAll().get(0)
-        tournament.setQuestions(questions)
 
         when: 'list questions for a tournament that does not exists'
         tournamentService.listQuestions(USER_USERNAME2, 1006);
@@ -192,9 +189,7 @@ class ListQuestionsTest extends Specification {
 
     def "list questions but user do not exists" () {
         given: 'a valid tournament with one question'
-        tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournamentDto);
         def tournament = tournamentRepository.findAll().get(0)
-        tournament.setQuestions(questions)
         tournamentService.enrollTournament(USER_USERNAME2, tournament.getId())
 
         when: 'list questions'
@@ -207,9 +202,7 @@ class ListQuestionsTest extends Specification {
 
     def "list questions but username is null" () {
         given: 'a valid tournament with one question'
-        tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournamentDto);
         def tournament = tournamentRepository.findAll().get(0)
-        tournament.setQuestions(questions)
         tournamentService.enrollTournament(USER_USERNAME2, tournament.getId())
 
         when: 'list answers'
