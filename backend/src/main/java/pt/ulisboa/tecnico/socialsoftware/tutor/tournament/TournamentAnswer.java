@@ -30,6 +30,10 @@ public class TournamentAnswer {
         this.selectedAnswer = selectedAnswer;
     }
 
+    public TournamentAnswer () {
+
+    }
+
     public TournamentAnswer(Tournament tournament, Question question, User user, int selectedAnswer) {
         this.tournament = tournament;
         this.question = question;

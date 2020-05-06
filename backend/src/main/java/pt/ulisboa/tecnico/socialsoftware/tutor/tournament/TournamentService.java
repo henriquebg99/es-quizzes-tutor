@@ -217,60 +217,44 @@ public class TournamentService {
         return new TournamentDto(tournament);
     }
 
-    public List<QuestionDto> listQuestions(int executionId, int tournamentId) {
-        Tournament tournament = tournamentRepository.findById(tournamentId).orElseThrow(
-                ()-> new TutorException(ErrorMessage.TOURNAMENT_ID_NOT_FOUND)
-        );
+    public List<QuestionDto> listQuestions(String username, int tournamentId) {
+        User user = getAndCheckUser(username);
+        Tournament tournament = getAndCheckTournament(tournamentId);
 
-        Set<Question> questions = tournament.getQuestions ();
-        List<QuestionDto> questionDtos = new LinkedList<>();
+        return tournament.listQuestions(user);
+    }
 
-        for (Question question : questions) {
-            questionDtos.add(new QuestionDto(question));
-        }
+    private User getAndCheckUser(String username) {
+        // check username
+        if (username == null)
+            throw new TutorException(ErrorMessage.USERNAME_EMPTY);
 
-        return questionDtos;
+        // find user
+        User user = userRepository.findByUsername(username);
+        if (user == null)
+            throw new TutorException(ErrorMessage.USERNAME_NOT_FOUND);
+        return user;
     }
 
     public List<TournamentAnswerDto> listAnswers(String username, int tournamentId) {
-        if (username == null)
-            throw new TutorException(ErrorMessage.USERNAME_EMPTY);
+        User user = getAndCheckUser(username);
+        Tournament tournament = getAndCheckTournament(tournamentId);
 
-        User user = userRepository.findByUsername(username);
-        if (user == null)
-            throw new TutorException(ErrorMessage.USERNAME_NOT_FOUND);
-
-        Tournament tournament = tournamentRepository.findById(tournamentId).orElseThrow(
-                ()-> new TutorException(ErrorMessage.TOURNAMENT_ID_NOT_FOUND)
-        );
-
-        List<TournamentAnswer> answers = tournamentAnswerRepository.findTournamentAnswers(tournamentId, user.getId());
-        List<TournamentAnswerDto> answerDtos = new LinkedList<>();
-
-        for (TournamentAnswer answer : answers) {
-            answerDtos.add(new TournamentAnswerDto(answer));
-        }
-
-        //FIXME o controller ja faz search  do user
-        return answerDtos;
+        return tournament.listAnswers(user);
     }
 
     public void submitAnswer(String username, int tournamentId, TournamentAnswerDto answerDto) {
-        if (username == null)
-            throw new TutorException(ErrorMessage.USERNAME_EMPTY);
+        User user = getAndCheckUser(username);
+        Tournament tournament = getAndCheckTournament(tournamentId);
 
-        User user = userRepository.findByUsername(username);
-        if (user == null)
-            throw new TutorException(ErrorMessage.USERNAME_NOT_FOUND);
-
-        Tournament tournament = tournamentRepository.findById(tournamentId).orElseThrow(
-                ()-> new TutorException(ErrorMessage.TOURNAMENT_ID_NOT_FOUND)
-        );
-
-        Question question = questionRepository.getOne(answerDto.getQuestionId());
-        if (question == null)
-            throw new TutorException(ErrorMessage.QUESTION_NOT_FOUND);
+        Question question = questionRepository.findById(answerDto.getQuestionId())
+                .orElseThrow(() -> new TutorException(ErrorMessage.QUESTION_NOT_FOUND));
 
         tournament.addTournamentAnswer(question, user, answerDto.getSelected());
+    }
+
+    private Tournament getAndCheckTournament(int tournamentId) {
+        return tournamentRepository.findById(tournamentId).orElseThrow(
+                () -> new TutorException(ErrorMessage.TOURNAMENT_ID_NOT_FOUND));
     }
 }

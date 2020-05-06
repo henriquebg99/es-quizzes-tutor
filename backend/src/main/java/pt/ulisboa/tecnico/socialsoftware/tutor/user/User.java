@@ -13,6 +13,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.ProposedQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.Tournament;
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentAnswer;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -70,6 +71,9 @@ public class User implements UserDetails, DomainEntity {
 
     @ManyToMany
     private Set<Tournament> enrolled_tournaments = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch=FetchType.LAZY, orphanRemoval=true)
+    private Set<TournamentAnswer> answers = new HashSet<>();
 
     public User() {
     }
