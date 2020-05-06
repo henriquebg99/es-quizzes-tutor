@@ -16,6 +16,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentAnswerRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 
@@ -39,22 +41,26 @@ public class StatsService {
     @Autowired
     private CourseExecutionRepository courseExecutionRepository;
 
+    @Autowired
+    private TournamentRepository tournamentRepository;
+
+    @Autowired
+    private TournamentAnswerRepository tournamentAnswerRepository;
+
     @Retryable(
       value = { SQLException.class },
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public StatsDto getStats(String username, int executionId) {
+    public StatsDto getStats(String username, int executionId, StatsDto statsDto) {
         User user = userRepository.findByUsername(username);
 
         CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
-
-        StatsDto statsDto = new StatsDto();
 
         int totalQuizzes = (int) user.getQuizAnswers().stream()
                 .filter(quizAnswer -> quizAnswer.canResultsBePublic(courseExecution))
                 .count();
 
-        int totalAnswers = (int) user.getQuizAnswers().stream()
+        int totalQuizzesAnswers = (int) user.getQuizAnswers().stream()
                 .filter(quizAnswer -> quizAnswer.canResultsBePublic(courseExecution))
                 .map(QuizAnswer::getQuestionAnswers)
                 .mapToLong(Collection::size)
@@ -89,18 +95,45 @@ public class StatsService {
                 .filter(Option::getCorrect)
                 .count();
 
+        int totalTournaments = (int) user.getQuizAnswers().stream().count();
+
+        int totalCreatedTournaments = (int) courseExecution.getTournaments().stream()
+                .filter(tournament -> tournament.isCreator(user))
+                .count();
+
+        /*int bestTournamentScore = (int) user.getEnrolledTournaments().stream()
+                .filter(tournament -> tournament.hasEnded())
+                .map(Tournament::getScore)
+                .mapToLong(Collection::size)
+                .max();
+
+        int tournamentScores = (float) user.getEnrolledTournaments().stream()
+                .filter(tournament -> tournament.hasEnded())
+                .map(Tournament::getScore)
+                .mapToLong(Collection::size)
+                .sum();*/
+
         Course course = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId)).getCourse();
 
         int totalAvailableQuestions = questionRepository.getAvailableQuestionsSize(course.getId());
 
         statsDto.setTotalQuizzes(totalQuizzes);
-        statsDto.setTotalAnswers(totalAnswers);
+        statsDto.setTotalAnswers(totalQuizzesAnswers);
         statsDto.setTotalUniqueQuestions(uniqueQuestions);
         statsDto.setTotalAvailableQuestions(totalAvailableQuestions);
-        if (totalAnswers != 0) {
-            statsDto.setCorrectAnswers(((float)correctAnswers)*100/totalAnswers);
+        statsDto.setTotalTournaments(totalTournaments);
+        statsDto.setTotalCreatedTournaments(totalCreatedTournaments);
+
+        if (totalQuizzesAnswers != 0) {
+            statsDto.setCorrectAnswers(((float)correctAnswers)*100/totalQuizzesAnswers);
             statsDto.setImprovedCorrectAnswers(((float)uniqueCorrectAnswers)*100/uniqueQuestions);
         }
+
+        /*if (totalTournaments != 0) {
+            statsDto.setBestTournamentScore(bestTournamentScore);
+            statsDto.setAverageTournamentScore(((float)tournamentScores)*100/uniqueQuestions);
+        }*/
+
         return statsDto;
     }
 }
