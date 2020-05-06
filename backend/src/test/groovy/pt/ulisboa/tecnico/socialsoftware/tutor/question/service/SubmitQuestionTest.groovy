@@ -10,6 +10,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.ProposedQuestionService
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ImageDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ProposedQuestionDto
@@ -32,6 +33,9 @@ class SubmitQuestionTest extends Specification {
 
     @Autowired
     ProposedQuestionService proposedQuestionService
+
+    @Autowired
+    QuestionService questionService
 
     @Autowired
     CourseRepository courseRepository
@@ -311,6 +315,11 @@ class SubmitQuestionTest extends Specification {
         @Bean
         ProposedQuestionService proposedQuestionService1() {
             return new ProposedQuestionService()
+        }
+
+        @Bean
+        QuestionService questionService1() {
+            return new QuestionService()
         }
     }
 

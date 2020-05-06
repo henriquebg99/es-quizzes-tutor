@@ -8,6 +8,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
 
 import javax.persistence.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
@@ -157,6 +158,11 @@ public class ProposedQuestion {
     }
 
     public void setJustification(String justification) { this.justification = justification; }
+
+    public List<OptionDto> getOptionsDto() {
+        return this.getOptions().stream().map(OptionDto::new).collect(Collectors.toList());
+    }
+
 
     @Override
     public String toString() {

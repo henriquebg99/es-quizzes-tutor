@@ -108,6 +108,7 @@ class StatusChangeSubmitQuestionTest extends Specification {
 
         then: "submitted question has approved status and is in question repository"
         proposedQuestionDto.getStatus() == ProposedQuestion.Status.APPROVED
+        //FIXME missing check on question creation in question repository
     }
 
     def "reject submitted question with justification"() {
@@ -140,6 +141,11 @@ class StatusChangeSubmitQuestionTest extends Specification {
         @Bean
         ProposedQuestionService proposedQuestionService1() {
             return new ProposedQuestionService()
+        }
+
+        @Bean
+        QuestionService questionService1() {
+            return new QuestionService()
         }
     }
 

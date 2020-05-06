@@ -13,7 +13,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Image;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.ProposedQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ImageDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ProposedQuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.ProposedQuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
@@ -21,6 +23,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -117,12 +121,20 @@ public class ProposedQuestionService {
     public void changeStatus(Integer proposedQuestionKey, ProposedQuestion.Status newStatus, String justification) {
         ProposedQuestion proposedQuestion = proposedQuestionRepository.findById(proposedQuestionKey).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, proposedQuestionKey));
 
-        if (newStatus != ProposedQuestion.Status.APPROVED && newStatus != ProposedQuestion.Status.REJECTED)
+        if (newStatus != ProposedQuestion.Status.APPROVED && newStatus != ProposedQuestion.Status.REJECTED) {
             throw new TutorException(QUESTION_NEEDS_STATUS, proposedQuestionKey);
+        }
 
-        //if (newStatus == ProposedQuestion.Status.APPROVED)
-            //QuestionDto question
-            //questionService.createQuestion(proposedQuestion.getCourse().getId(), question);
+        if (newStatus == ProposedQuestion.Status.APPROVED) {
+            QuestionDto questionDto = new QuestionDto();
+            questionDto.setTitle(proposedQuestion.getTitle());
+            questionDto.setContent(proposedQuestion.getContent());
+            questionDto.setOptions(proposedQuestion.getOptionsDto());
+            if (proposedQuestion.getImage() != null) {
+                questionDto.setImage(new ImageDto(proposedQuestion.getImage()));
+            }
+            questionService.createQuestion(proposedQuestion.getCourse().getId(), questionDto);
+        }
 
         proposedQuestion.setStatus(newStatus);
         proposedQuestion.setJustification(justification);
