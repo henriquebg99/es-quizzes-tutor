@@ -190,7 +190,7 @@ public class Tournament {
             throw new TutorException(ErrorMessage.USER_NOT_ENROLLED_IN_TOURNAMENT);
 
         // check if the selected answer is valid
-        if (selected < question.getNumberOfCorrect() && selected > 0)
+        if (selected >= question.getOptions().size() || selected < 0)
             throw new TutorException(ErrorMessage.INVALID_SELECTED_OPTION);
 
         // check if there is already any answer
@@ -212,5 +212,12 @@ public class Tournament {
     public void setQuestions(Set<Question> questions) {
         //FIXME throw if number of questions mismatch
         this.questions = questions;
+    }
+
+    public List<TournamentAnswerDto> listAnswers (User user) {
+        return this.answers.stream()
+                .filter(answer -> answer.getUser().getId() == user.getId())
+                .map(TournamentAnswerDto::new)
+                .collect(Collectors.toList());
     }
 }

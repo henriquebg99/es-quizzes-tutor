@@ -236,23 +236,20 @@ public class TournamentService {
         if (username == null)
             throw new TutorException(ErrorMessage.USERNAME_EMPTY);
 
+        // find user
         User user = userRepository.findByUsername(username);
         if (user == null)
             throw new TutorException(ErrorMessage.USERNAME_NOT_FOUND);
 
+        // find tournament
         Tournament tournament = tournamentRepository.findById(tournamentId).orElseThrow(
-                ()-> new TutorException(ErrorMessage.TOURNAMENT_ID_NOT_FOUND)
-        );
+                ()-> new TutorException(ErrorMessage.TOURNAMENT_ID_NOT_FOUND));
 
-        List<TournamentAnswer> answers = tournamentAnswerRepository.findTournamentAnswers(tournamentId, user.getId());
-        List<TournamentAnswerDto> answerDtos = new LinkedList<>();
+        // check if the user is enrolled in the quiz
+        if (tournament.getEnrollments().stream().filter(user1 -> user1.getId() == user.getId()).count() != 1)
+            throw new TutorException(ErrorMessage.USER_NOT_ENROLLED_IN_TOURNAMENT);
 
-        for (TournamentAnswer answer : answers) {
-            answerDtos.add(new TournamentAnswerDto(answer));
-        }
-
-        //FIXME o controller ja faz search  do user
-        return answerDtos;
+        return tournament.listAnswers(user);
     }
 
     public void submitAnswer(String username, int tournamentId, TournamentAnswerDto answerDto) {
@@ -264,12 +261,10 @@ public class TournamentService {
             throw new TutorException(ErrorMessage.USERNAME_NOT_FOUND);
 
         Tournament tournament = tournamentRepository.findById(tournamentId).orElseThrow(
-                ()-> new TutorException(ErrorMessage.TOURNAMENT_ID_NOT_FOUND)
-        );
+                ()-> new TutorException(ErrorMessage.TOURNAMENT_ID_NOT_FOUND));
 
-        Question question = questionRepository.getOne(answerDto.getQuestionId());
-        if (question == null)
-            throw new TutorException(ErrorMessage.QUESTION_NOT_FOUND);
+        Question question = questionRepository.findById(answerDto.getQuestionId())
+                .orElseThrow(() -> new TutorException(ErrorMessage.QUESTION_NOT_FOUND));
 
         tournament.addTournamentAnswer(question, user, answerDto.getSelected());
     }
