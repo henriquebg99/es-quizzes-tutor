@@ -214,7 +214,11 @@ public class Tournament {
         this.questions = questions;
     }
 
-    public List<TournamentAnswerDto> listAnswers (User user) {
+    public List<TournamentAnswerDto> listAnswers (@NotNull User user) {
+        // check if the user is enrolled in the quiz
+        if (this.getEnrollments().stream().filter(user1 ->    user1.getId() == user.getId()).count() != 1)
+            throw new TutorException(ErrorMessage.USER_NOT_ENROLLED_IN_TOURNAMENT);
+
         return this.answers.stream()
                 .filter(answer -> answer.getUser().getId() == user.getId())
                 .map(TournamentAnswerDto::new)

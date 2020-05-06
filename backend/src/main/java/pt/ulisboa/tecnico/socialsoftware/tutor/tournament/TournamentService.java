@@ -245,10 +245,6 @@ public class TournamentService {
         Tournament tournament = tournamentRepository.findById(tournamentId).orElseThrow(
                 ()-> new TutorException(ErrorMessage.TOURNAMENT_ID_NOT_FOUND));
 
-        // check if the user is enrolled in the quiz
-        if (tournament.getEnrollments().stream().filter(user1 -> user1.getId() == user.getId()).count() != 1)
-            throw new TutorException(ErrorMessage.USER_NOT_ENROLLED_IN_TOURNAMENT);
-
         return tournament.listAnswers(user);
     }
 
