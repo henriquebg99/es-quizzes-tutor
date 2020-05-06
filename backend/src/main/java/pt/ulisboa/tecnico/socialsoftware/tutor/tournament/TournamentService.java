@@ -217,22 +217,25 @@ public class TournamentService {
         return new TournamentDto(tournament);
     }
 
-    public List<QuestionDto> listQuestions(int executionId, int tournamentId) {
+    public List<QuestionDto> listQuestions(String username, int tournamentId) {
+        // check username
+        if (username == null)
+            throw new TutorException(ErrorMessage.USERNAME_EMPTY);
+
+        // find user
+        User user = userRepository.findByUsername(username);
+        if (user == null)
+            throw new TutorException(ErrorMessage.USERNAME_NOT_FOUND);
+
+        //find tournament
         Tournament tournament = tournamentRepository.findById(tournamentId).orElseThrow(
-                ()-> new TutorException(ErrorMessage.TOURNAMENT_ID_NOT_FOUND)
-        );
+                ()-> new TutorException(ErrorMessage.TOURNAMENT_ID_NOT_FOUND));
 
-        Set<Question> questions = tournament.getQuestions ();
-        List<QuestionDto> questionDtos = new LinkedList<>();
-
-        for (Question question : questions) {
-            questionDtos.add(new QuestionDto(question));
-        }
-
-        return questionDtos;
+        return tournament.listQuestions(user);
     }
 
     public List<TournamentAnswerDto> listAnswers(String username, int tournamentId) {
+        // check username
         if (username == null)
             throw new TutorException(ErrorMessage.USERNAME_EMPTY);
 

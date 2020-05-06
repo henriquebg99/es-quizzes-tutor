@@ -224,4 +224,14 @@ public class Tournament {
                 .map(TournamentAnswerDto::new)
                 .collect(Collectors.toList());
     }
+
+    public List<QuestionDto> listQuestions (@NotNull User user) {
+        // check if the user is enrolled in the quiz
+        if (this.getEnrollments().stream().filter(user1 ->    user1.getId() == user.getId()).count() != 1)
+            throw new TutorException(ErrorMessage.USER_NOT_ENROLLED_IN_TOURNAMENT);
+
+        return this.questions.stream()
+                .map(QuestionDto::new)
+                .collect(Collectors.toList());
+    }
 }
