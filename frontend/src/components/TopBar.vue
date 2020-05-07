@@ -156,6 +156,15 @@
           </template>
           <v-list dense>
 
+            <v-list-item to="/student/participate">
+              <v-list-item-action>
+                <v-icon>fas fa-play-circle</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Participate</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+
             <v-list-item to="/student/availableTournaments">
               <v-list-item-action>
                 <v-icon>assignment</v-icon>
