@@ -80,7 +80,9 @@ public enum ErrorMessage {
     QUESTION_NOT_IN_TOURNAMENT ("The question does not belong to the specified tournament"),
     USER_NOT_ENROLLED_IN_TOURNAMENT ("The user is not enrolled in the specified tournament"),
     INVALID_SELECTED_OPTION("The selected option is invalid"),
-    USER_NOT_IN_COURSE_EXECUTION("The course execution does not contain the user");
+    USER_NOT_IN_COURSE_EXECUTION("The course execution does not contain the user"),
+    USER_PRIVACY_ALREADY_TRUE("The user's information is already private"),
+    USER_PRIVACY_ALREADY_FALSE("The user's information is already public");
 
 
     public final String label;
