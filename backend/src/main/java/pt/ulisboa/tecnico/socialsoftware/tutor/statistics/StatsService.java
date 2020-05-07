@@ -132,4 +132,36 @@ public class StatsService {
 
         return statsDto;
     }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public StatsDto setPrivacy(String username, int executionId, StatsDto statsDto, Boolean privacy) {
+        if (username == null)
+            throw new TutorException(ErrorMessage.USERNAME_EMPTY);
+
+        User user = userRepository.findByUsername(username);
+
+        if (user == null)
+            throw new TutorException(ErrorMessage.USERNAME_NOT_FOUND, username);
+
+        CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
+
+        if (!courseExecution.getUsers().contains(user)) {
+            throw new TutorException(ErrorMessage.USER_NOT_IN_COURSE_EXECUTION);
+        }
+
+        if (statsDto.getPrivacy().equals(privacy) && privacy == true) {
+            throw new TutorException(ErrorMessage.USER_PRIVACY_ALREADY_TRUE);
+        }
+
+        if (statsDto.getPrivacy().equals(privacy) && privacy ==false) {
+            throw new TutorException(ErrorMessage.USER_PRIVACY_ALREADY_FALSE);
+        }
+
+        statsDto.setPrivacy(privacy);
+
+        return statsDto;
+    }
 }
