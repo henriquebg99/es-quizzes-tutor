@@ -11,6 +11,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.ProposedQuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.ProposedQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ImageDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ProposedQuestionDto
@@ -80,6 +81,7 @@ class SubmitQuestionTest extends Specification {
         proposedQuestionDto.setTitle(QUESTION_TITLE)
         proposedQuestionDto.setContent(QUESTION_CONTENT)
         proposedQuestionDto.setUsername(user.getUsername())
+        proposedQuestionDto.setStatus(ProposedQuestion.Status.DEPENDENT.name())
 
         and: 'two options'
         def optionDto = new OptionDto()
@@ -122,6 +124,7 @@ class SubmitQuestionTest extends Specification {
         proposedQuestionDto.setTitle(QUESTION_TITLE)
         proposedQuestionDto.setContent(QUESTION_CONTENT)
         proposedQuestionDto.setUsername(user.getUsername())
+        proposedQuestionDto.setStatus(ProposedQuestion.Status.DEPENDENT.name())
 
         and: 'an image'
         def image = new ImageDto()
@@ -170,6 +173,7 @@ class SubmitQuestionTest extends Specification {
         proposedQuestionDto.setTitle(QUESTION_TITLE)
         proposedQuestionDto.setContent(QUESTION_CONTENT)
         proposedQuestionDto.setUsername(user.getUsername())
+        proposedQuestionDto.setStatus(ProposedQuestion.Status.DEPENDENT.name())
 
         and: 'two options'
         def optionDto = new OptionDto()
@@ -202,6 +206,7 @@ class SubmitQuestionTest extends Specification {
         proposedQuestionDto.setTitle(QUESTION_TITLE)
         proposedQuestionDto.setContent(QUESTION_CONTENT)
         proposedQuestionDto.setUsername(user.getUsername())
+        proposedQuestionDto.setStatus(ProposedQuestion.Status.DEPENDENT.name())
 
         and: 'two options'
         def optionDto = new OptionDto()
@@ -236,6 +241,7 @@ class SubmitQuestionTest extends Specification {
         proposedQuestionDto.setTitle(QUESTION_TITLE)
         proposedQuestionDto.setContent(QUESTION_CONTENT)
         proposedQuestionDto.setUsername(user.getUsername())
+        proposedQuestionDto.setStatus(ProposedQuestion.Status.DEPENDENT.name())
 
         and: 'two options'
         def optionDto = new OptionDto()
@@ -265,6 +271,7 @@ class SubmitQuestionTest extends Specification {
         proposedQuestionDto.setTitle(" ")
         proposedQuestionDto.setContent(" ")
         proposedQuestionDto.setUsername(user.getUsername())
+        proposedQuestionDto.setStatus(ProposedQuestion.Status.DEPENDENT.name())
 
         and: 'an option'
         def optionDto = new OptionDto()
@@ -288,6 +295,7 @@ class SubmitQuestionTest extends Specification {
         proposedQuestionDto.setTitle(QUESTION_TITLE)
         proposedQuestionDto.setContent(QUESTION_CONTENT)
         proposedQuestionDto.setUsername(user.getUsername())
+        proposedQuestionDto.setStatus(ProposedQuestion.Status.DEPENDENT.name())
 
         and: '2 correct option'
         def optionDto = new OptionDto()

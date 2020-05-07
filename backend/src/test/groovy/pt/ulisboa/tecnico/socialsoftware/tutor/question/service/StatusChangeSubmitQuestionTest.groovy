@@ -63,6 +63,7 @@ class StatusChangeSubmitQuestionTest extends Specification {
     def userTeacher
 
     def proposedQuestionDto
+    def proposedQuestion
 
     def setup() {
         course = new Course(COURSE_NAME, Course.Type.TECNICO)
@@ -82,7 +83,6 @@ class StatusChangeSubmitQuestionTest extends Specification {
         userRepository.save(userTeacher)
 
         proposedQuestionDto = new ProposedQuestionDto()
-        proposedQuestionDto.setKey(1)
         proposedQuestionDto.setTitle(QUESTION_TITLE)
         proposedQuestionDto.setContent(QUESTION_CONTENT)
         proposedQuestionDto.setUsername(userStudent.getUsername())
@@ -96,18 +96,25 @@ class StatusChangeSubmitQuestionTest extends Specification {
         optionDto.setCorrect(false)
         options.add(optionDto)
         proposedQuestionDto.setOptions(options)
+        proposedQuestionDto.setStatus(ProposedQuestion.Status.DEPENDENT.name())
+        proposedQuestionDto.setKey(1)
+        proposedQuestionRepository.deleteAll()
+        proposedQuestionService.createProposedQuestion(course.getId(), proposedQuestionDto, userStudent.getId())
+        proposedQuestion = proposedQuestionRepository.findProposedQuestionByKey(1)
     }
 
     def "approve submitted question without justification"() {
         given: "a submitted question"
-        proposedQuestionService.createProposedQuestion(course.getId(), proposedQuestionDto, userStudent.getId())
+        questionRepository.deleteAll()
 
         when: "teacher approves question"
-        proposedQuestionService.changeStatus(proposedQuestionDto.getKey(), ProposedQuestion.Status.APPROVED, "")
+        proposedQuestionService.changeStatus(proposedQuestion.getId() , ProposedQuestion.Status.APPROVED.name(), "")
 
         then: "submitted question has approved status and is in question repository"
-        proposedQuestionDto.getStatus() == ProposedQuestion.Status.APPROVED
-        def result = questionRepository.findAll().get(questionRepository.count() as int)
+        proposedQuestion.getStatus() == ProposedQuestion.Status.APPROVED
+
+        questionRepository.count() == 1L
+        def result = questionRepository.findAll().get(0)
         result.getId() != null
         result.getKey() == 1
         result.getTitle() == QUESTION_TITLE
@@ -115,33 +122,27 @@ class StatusChangeSubmitQuestionTest extends Specification {
         result.getImage() == null
         result.getCourse().getName() == COURSE_NAME
         result.getOptions().size() == 2
-        course.getProposedQuestions().contains(result)
+        course.getQuestions().contains(result)
         def resOption = result.getOptions().get(0)
         def resOption2 = result.getOptions().get(1)
         resOption.getContent() == OPTION_CONTENT
         resOption2.getContent() == OPTION_CONTENT
         resOption.getCorrect()
-        result.getStatus() == Question.Status.DISABLED
+        result.getStatus() == Question.Status.AVAILABLE
     }
 
     def "reject submitted question with justification"() {
-        given: "a submitted question"
-        proposedQuestionService.createProposedQuestion(course.getId(), proposedQuestionDto, userStudent.getId())
-
         when: "teacher rejects question and gives justification"
-        proposedQuestionService.changeStatus(proposedQuestionDto.getKey(), ProposedQuestion.Status.REJECTED, JUSTIFICATION)
+        proposedQuestionService.changeStatus(proposedQuestion.getId(), ProposedQuestion.Status.REJECTED.name(), JUSTIFICATION)
 
         then: "question has rejected status, justification and is not in question repository"
-        proposedQuestionDto.getStatus() == ProposedQuestion.Status.REJECTED
-        proposedQuestionDto.getJustification() == JUSTIFICATION
+        proposedQuestion.getStatus() == ProposedQuestion.Status.REJECTED
+        proposedQuestion.getJustification() == JUSTIFICATION
     }
 
     def "no choice with justification"() {
-        given: "a submitted question"
-        proposedQuestionService.createProposedQuestion(course.getId(), proposedQuestionDto, userStudent.getId())
-
         when: "teacher gives justification without status"
-        proposedQuestionService.changeStatus(proposedQuestionDto.getKey(), ProposedQuestion.Status.DEPENDENT, JUSTIFICATION)
+        proposedQuestionService.changeStatus(proposedQuestion.getId(), ProposedQuestion.Status.DEPENDENT.name(), JUSTIFICATION)
 
         then: "should throw exception"
         TutorException exception = thrown()

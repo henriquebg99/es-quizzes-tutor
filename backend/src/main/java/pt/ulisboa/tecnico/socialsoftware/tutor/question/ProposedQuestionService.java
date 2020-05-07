@@ -118,27 +118,29 @@ public class ProposedQuestionService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void changeStatus(Integer proposedQuestionKey, ProposedQuestion.Status newStatus, String justification) {
-        ProposedQuestion proposedQuestion = proposedQuestionRepository.findById(proposedQuestionKey).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, proposedQuestionKey));
+    public void changeStatus(Integer proposedQuestionId, String newStatus, String justification) {
+        ProposedQuestion proposedQuestion = proposedQuestionRepository.findById(proposedQuestionId).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, proposedQuestionId));
 
-        if (newStatus != ProposedQuestion.Status.APPROVED && newStatus != ProposedQuestion.Status.REJECTED) {
-            throw new TutorException(QUESTION_NEEDS_STATUS, proposedQuestionKey);
+        if (newStatus.equals(ProposedQuestion.Status.DEPENDENT.name())) {
+            throw new TutorException(QUESTION_NEEDS_STATUS, proposedQuestionId);
         }
 
-        if (newStatus == ProposedQuestion.Status.APPROVED) {
+        if (newStatus.equals(ProposedQuestion.Status.APPROVED.name())) {
+            proposedQuestion.setStatus(ProposedQuestion.Status.APPROVED);
             QuestionDto questionDto = new QuestionDto();
             questionDto.setTitle(proposedQuestion.getTitle());
             questionDto.setContent(proposedQuestion.getContent());
             questionDto.setOptions(proposedQuestion.getOptionsDto());
-            //FIXME may need status
-            //questionDto.setStatus(Question.Status.AVAILABLE.name());
+            questionDto.setStatus(Question.Status.AVAILABLE.name());
             if (proposedQuestion.getImage() != null) {
                 questionDto.setImage(new ImageDto(proposedQuestion.getImage()));
             }
             questionService.createQuestion(proposedQuestion.getCourse().getId(), questionDto);
         }
+        else {
+            proposedQuestion.setStatus(ProposedQuestion.Status.REJECTED);
+        }
 
-        proposedQuestion.setStatus(newStatus);
         if (!justification.equals("")) {
             proposedQuestion.setJustification(justification);
         }
