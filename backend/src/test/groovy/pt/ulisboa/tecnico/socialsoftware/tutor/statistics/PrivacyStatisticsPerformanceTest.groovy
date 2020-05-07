@@ -62,8 +62,7 @@ class PrivacyStatisticsPerformanceTest extends Specification{
 
         when: "set stats as private 1000 times"
         1.upto(1000, {
-            StatsDto stats = new StatsDto()
-            statsService.setPrivacy(USER_USERNAME, courseExecution.getId(), stats, true)
+            statsService.setPrivacy(USER_USERNAME, courseExecution.getId(), true)
         })
 
         then:
