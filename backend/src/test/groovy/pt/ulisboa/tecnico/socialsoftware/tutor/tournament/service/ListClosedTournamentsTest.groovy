@@ -22,7 +22,8 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 @DataJpaTest
-class ListTournamentsPerformanceTest extends Specification{
+class ListClosedTournamentsTest extends Specification{
+
     public static final String USER_USERNAME      = "username"
     public static final String USER_NAME          = "name"
     public static final int    USER_KEY           = 1
@@ -33,6 +34,9 @@ class ListTournamentsPerformanceTest extends Specification{
     public static final String ACRONYM            = "AS1"
     public static final String ACADEMIC_TERM      = "1 SEM"
     public static final int    NUMBER_QUESTIONS   = 5
+    public static final int    BEGIN_MINUTES      = 1
+    public static final int    END_MINUTES        = 2
+    public static final int    SLEEP              = 130000
 
     @Autowired
     TournamentRepository tournamentRepository
@@ -78,8 +82,10 @@ class ListTournamentsPerformanceTest extends Specification{
 
         course = new Course(COURSE_NAME, Course.Type.TECNICO)
         courseRepository.save(course)
-        courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
+        courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO);
         courseExecutionRepository.save(courseExecution);
+
+        courseExecution.addUser(user);
 
         topic = new Topic(course, topicDto)
         topic.setName(TOPIC_NAME)
@@ -90,23 +96,69 @@ class ListTournamentsPerformanceTest extends Specification{
         tournament.setEndDate(endDate.format(formatter))
         tournament.setNumberOfQuestions(NUMBER_QUESTIONS)
         tournament.setTopics(topics)
-
-        1.upto(500, {
-            tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournament)
-        })
-
     }
 
-    def 'performance testing to list 500 tournaments 10000 times'() {
-        given: '500 tournaments'
+    def 'tournament closed'() {
+        given:
+        beginDate = LocalDateTime.now().plusMinutes(BEGIN_MINUTES)
+        endDate = LocalDateTime.now().plusMinutes(END_MINUTES)
+        tournament.setBeginDate(beginDate.format(formatter))
+        tournament.setEndDate(endDate.format(formatter))
+        tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournament)
+        sleep(SLEEP)
 
         when:
-        1.upto(10000, {
-            tournamentService.listOpenTournaments(courseExecution.getId())
-        })
+        def tournaments = tournamentService.listClosedTournaments(courseExecution.getId())
+
+        then: "the number of tournaments is correct"
+        tournaments.size() == 1
+        and: "the content of the tournament is correct"
+        tournaments[0].getBeginDate() == tournament.getBeginDate()
+        tournaments[0].getEndDate() == tournament.getEndDate()
+        tournaments[0].getNumberOfQuestions() == NUMBER_QUESTIONS
+        def tourTopics = tournaments[0].getTopics()
+        tourTopics.size() == 1
+        tourTopics[0].getName() == TOPIC_NAME
+    }
+
+    def 'the tournament is canceled'() {
+        given:
+        beginDate = LocalDateTime.now().plusMinutes(BEGIN_MINUTES)
+        endDate = LocalDateTime.now().plusMinutes(END_MINUTES)
+        tournament.setBeginDate(beginDate.format(formatter))
+        tournament.setEndDate(endDate.format(formatter))
+        tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournament)
+        def t = tournamentRepository.findAll()
+        def tournament = t[0]
+        def tournamentId = tournament.getId()
+        tournamentService.cancelTournament(USER_USERNAME, tournamentId)
+        sleep(SLEEP)
+
+        when:
+        def tournaments = tournamentService.listClosedTournaments(courseExecution.getId())
+
+        then: "no tournaments are listed"
+        tournaments.size() == 0
+    }
+
+    def 'tournaments available but none are closed'() {
+        when:
+        def tournaments = tournamentService.listClosedTournaments(courseExecution.getId())
 
         then:
-        true
+        tournaments.size() == 0
+    }
+
+    def 'no tournaments'() {
+        given:
+        tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournament)
+
+        when:
+        def tournaments = tournamentService.listClosedTournaments(courseExecution.getId())
+
+        then:
+        tournaments.size() == 0
+
     }
 
     @TestConfiguration

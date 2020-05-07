@@ -30,6 +30,7 @@ import CoursesView from '@/views/admin/Courses/CoursesView.vue';
 import CreateTournamentsView from './views/student/CreateTournamentsView.vue';
 import AvailableTournamentsView from './views/student/AvailableTournamentsView.vue';
 import CancelTournamentsView from './views/student/CancelTournamentsView.vue';
+import DashboardView from './views/student/DashboardView.vue';
 Vue.use(Router);
 
 let router = new Router({
@@ -186,6 +187,15 @@ let router = new Router({
           component: ScanView,
           meta: {
             title: process.env.VUE_APP_NAME + ' - Scan',
+            requiredAuth: 'Student'
+          }
+        },
+        {
+          path: 'dashboard',
+          name: 'dashboard',
+          component: DashboardView,
+          meta: {
+            title: process.env.VUE_APP_NAME + ' - Dashboard',
             requiredAuth: 'Student'
           }
         },
