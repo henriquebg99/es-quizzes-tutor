@@ -96,7 +96,6 @@ class StatusChangeSubmitQuestionTest extends Specification {
         optionDto.setCorrect(false)
         options.add(optionDto)
         proposedQuestionDto.setOptions(options)
-        proposedQuestionDto.setStatus(ProposedQuestion.Status.DEPENDENT.name())
     }
 
     def "approve submitted question without justification"() {
@@ -104,11 +103,25 @@ class StatusChangeSubmitQuestionTest extends Specification {
         proposedQuestionService.createProposedQuestion(course.getId(), proposedQuestionDto, userStudent.getId())
 
         when: "teacher approves question"
-        proposedQuestionService.changeStatus(proposedQuestionDto.getKey(), ProposedQuestion.Status.APPROVED, '')
+        proposedQuestionService.changeStatus(proposedQuestionDto.getKey(), ProposedQuestion.Status.APPROVED, "")
 
         then: "submitted question has approved status and is in question repository"
         proposedQuestionDto.getStatus() == ProposedQuestion.Status.APPROVED
-        //FIXME missing check on question creation in question repository
+        def result = questionRepository.findAll().get(questionRepository.count() as int)
+        result.getId() != null
+        result.getKey() == 1
+        result.getTitle() == QUESTION_TITLE
+        result.getContent() == QUESTION_CONTENT
+        result.getImage() == null
+        result.getCourse().getName() == COURSE_NAME
+        result.getOptions().size() == 2
+        course.getProposedQuestions().contains(result)
+        def resOption = result.getOptions().get(0)
+        def resOption2 = result.getOptions().get(1)
+        resOption.getContent() == OPTION_CONTENT
+        resOption2.getContent() == OPTION_CONTENT
+        resOption.getCorrect()
+        result.getStatus() == Question.Status.DISABLED
     }
 
     def "reject submitted question with justification"() {

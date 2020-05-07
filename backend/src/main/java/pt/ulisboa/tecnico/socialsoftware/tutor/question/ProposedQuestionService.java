@@ -130,6 +130,8 @@ public class ProposedQuestionService {
             questionDto.setTitle(proposedQuestion.getTitle());
             questionDto.setContent(proposedQuestion.getContent());
             questionDto.setOptions(proposedQuestion.getOptionsDto());
+            //FIXME may need status
+            //questionDto.setStatus(Question.Status.AVAILABLE.name());
             if (proposedQuestion.getImage() != null) {
                 questionDto.setImage(new ImageDto(proposedQuestion.getImage()));
             }
@@ -137,7 +139,9 @@ public class ProposedQuestionService {
         }
 
         proposedQuestion.setStatus(newStatus);
-        proposedQuestion.setJustification(justification);
+        if (!justification.equals("")) {
+            proposedQuestion.setJustification(justification);
+        }
     }
 
 }
