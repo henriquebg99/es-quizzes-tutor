@@ -16,7 +16,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import spock.lang.Specification
 
 @DataJpaTest
-class StatisticsPerformanceTest extends Specification{
+class PrivacyStatisticsPerformanceTest extends Specification{
     public static final String USER_NAME = "name"
     public static final String USER_USERNAME = "username"
     public static final int USER_KEY = 1
@@ -60,10 +60,10 @@ class StatisticsPerformanceTest extends Specification{
         courseExecutionRepository.save(courseExecution);
 
 
-        when: "check stats 1000 times"
+        when: "set stats as private 1000 times"
         1.upto(1000, {
             StatsDto stats = new StatsDto()
-            statsService.getStats(USER_USERNAME, courseExecution.getId(), stats)
+            statsService.setPrivacy(USER_USERNAME, courseExecution.getId(), stats, true)
         })
 
         then:
