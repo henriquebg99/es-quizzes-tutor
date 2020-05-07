@@ -144,4 +144,8 @@ public class ProposedQuestionService {
         }
     }
 
+    public String seeJustification(Integer proposedQuestionId) {
+        ProposedQuestion proposedQuestion = proposedQuestionRepository.findById(proposedQuestionId).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, proposedQuestionId));
+        return proposedQuestion.getJustification();
+    }
 }

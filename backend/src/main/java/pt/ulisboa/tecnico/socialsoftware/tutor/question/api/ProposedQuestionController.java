@@ -28,9 +28,9 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.AU
 
 @RestController
 public class ProposedQuestionController {
-    private static Logger logger = LoggerFactory.getLogger(ProposedQuestionController.class);
+    private static final Logger logger = LoggerFactory.getLogger(ProposedQuestionController.class);
 
-    private ProposedQuestionService proposedQuestionService;
+    private final ProposedQuestionService proposedQuestionService;
 
     @Value("${figures.dir}")
     private String figuresDir;
@@ -39,7 +39,7 @@ public class ProposedQuestionController {
         this.proposedQuestionService = proposedQuestionService;
     }
 
-    @GetMapping("/courses/{courseId}/proposedquestions")
+    @GetMapping("/courses/{courseId}/listproposedquestions")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#courseId, 'COURSE.ACCESS')")
     public List<ProposedQuestionDto> getCourseProposedQuestions(@PathVariable int courseId){
         return this.proposedQuestionService.findProposedQuestions(courseId);
@@ -77,6 +77,19 @@ public class ProposedQuestionController {
 
         return url;
     }
+
+    @PostMapping("/proposedquestions/{proposedQuestionId}/status")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#proposedQuestionId, 'COURSE.ACCESS')")
+    public void changeStatus(@PathVariable Integer proposedQuestionId, @RequestBody String newStatus, @RequestBody String justification) {
+        proposedQuestionService.changeStatus(proposedQuestionId, newStatus, justification);
+    }
+
+    @PostMapping("/proposedquestions/{proposedQuestionId}/status/justification")
+    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#proposedQuestionId, 'PROPOSEDQUESTION.ACCESS')")
+    public void seeJustification(@PathVariable Integer proposedQuestionId) {
+        proposedQuestionService.seeJustification(proposedQuestionId);
+    }
+
 
     private Path getTargetLocation(String url) {
         String fileLocation = figuresDir + url;
