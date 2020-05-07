@@ -23,9 +23,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -79,6 +77,8 @@ public class TournamentService {
 
         return new TournamentDto(tournament);
     }
+
+
 
     private void checkQuestionNumber(TournamentDto tournamentDto) {
         if (tournamentDto.getNumberOfQuestions() <= 0)
