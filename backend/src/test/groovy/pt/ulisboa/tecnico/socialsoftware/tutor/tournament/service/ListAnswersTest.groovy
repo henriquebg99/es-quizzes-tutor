@@ -37,7 +37,7 @@ class ListAnswersTest extends Specification {
     public static final String USER_NAME3 = "name3"
     public static final String USER_USERNAME3 = "username3"
     public static final int USER_KEY3 = 3
-    public static final int NUMBER_OF_QUESTIONS = 1
+    public static final int NUMBER_OF_QUESTIONS = 2
     public static final String COURSE_NAME = "Software Architecture"
     public static final String ACRONYM = "AS1"
     public static final String ACADEMIC_TERM = "1 SEM"
@@ -100,7 +100,7 @@ class ListAnswersTest extends Specification {
         topics = new HashSet<TopicDto>()
         topics.add(topicDto)
         def topicList = new LinkedList<TopicDto> ()
-        topicList.add(topicList)
+        topicList.add(topic)
 
         course = new Course(COURSE_NAME, Course.Type.TECNICO)
         courseRepository.save(course)
@@ -143,6 +143,10 @@ class ListAnswersTest extends Specification {
         questionRepository.save(question2);
         questions.add(question2)
 
+        topic.addQuestion(question)
+        topic.addQuestion(question2)
+        topics.add(topicDto)
+
         tournamentDto = new TournamentDto ()
         tournamentDto.setBeginDate(beginDateString)
         tournamentDto.setEndDate(endDateString)
@@ -158,12 +162,12 @@ class ListAnswersTest extends Specification {
         answerDto2.setSelected(SELECTED2)
 
         tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournamentDto);
-        tournamentRepository.findAll().get(0).setQuestions(questions)
     }
 
     def "list answers of the user that has answered" () {
         given: 'a valid tournament with one question'
         def tournament = tournamentRepository.findAll().get(0)
+        tournament.setTopics(new HashSet<Topic>([topic]))
 
         and: 'students enrolled'
         tournamentService.enrollTournament(USER_USERNAME2, tournament.getId())

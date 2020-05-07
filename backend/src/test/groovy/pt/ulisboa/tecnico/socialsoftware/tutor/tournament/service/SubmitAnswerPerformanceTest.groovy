@@ -132,6 +132,8 @@ class SubmitAnswerPerformanceTest extends Specification {
         questions = new HashSet<Question>();
         questions.add(question)
 
+        topic.addQuestion(question)
+
         question2 = new Question(course, questionDto);
         questionRepository.save(question2);
         questions2 = new HashSet<Question>();

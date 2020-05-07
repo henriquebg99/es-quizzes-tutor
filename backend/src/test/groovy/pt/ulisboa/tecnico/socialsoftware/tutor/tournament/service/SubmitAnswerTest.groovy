@@ -137,6 +137,7 @@ class SubmitAnswerTest extends Specification {
         questionRepository.save(question);
         questions = new HashSet<Question>();
         questions.add(question)
+        topic.addQuestion(question)
 
         question2 = new Question(course, questionDto);
         questionRepository.save(question2);
@@ -158,7 +159,6 @@ class SubmitAnswerTest extends Specification {
         answerDto2.setSelected(SELECTED2)
 
         tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournamentDto);
-        tournamentRepository.findAll().get(0).setQuestions(questions)
     }
 
     def "submit correct answer" () {
@@ -326,6 +326,21 @@ class SubmitAnswerTest extends Specification {
         def error = thrown(TutorException)
         error.errorMessage == ErrorMessage.USERNAME_EMPTY
     }
+
+    def "submit answer but not enough questions" () {
+        given: 'a valid tournament with one question'
+        def tournament = tournamentRepository.findAll().get(0)
+        tournament.setNumberOfQuestions(4)
+        tournamentService.enrollTournament(USER_USERNAME2, tournament.getId())
+
+        when: 'submit an answer for this question'
+        tournamentService.submitAnswer(USER_USERNAME2, tournament.getId(), answerDto);
+
+        then: 'the tournament has two questions'
+        def error = thrown(TutorException)
+        error.errorMessage == ErrorMessage.NOT_ENOUGH_QUESTIONS
+    }
+
 
     @TestConfiguration
     static class TournamentServiceImplTestContextConfiguration {
