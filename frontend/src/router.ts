@@ -30,7 +30,7 @@ import CoursesView from '@/views/admin/Courses/CoursesView.vue';
 import CreateTournamentsView from './views/student/CreateTournamentsView.vue';
 import AvailableTournamentsView from './views/student/AvailableTournamentsView.vue';
 import CancelTournamentsView from './views/student/CancelTournamentsView.vue';
-import DashboardView from './views/student/DashboardView.vue';
+import ClosedTournamentsView from './views/student/ClosedTournamentsView.vue';
 Vue.use(Router);
 
 let router = new Router({
@@ -191,11 +191,11 @@ let router = new Router({
           }
         },
         {
-          path: 'dashboard',
-          name: 'dashboard',
-          component: DashboardView,
+          path: 'closedTournaments',
+          name: 'closed',
+          component: ClosedTournamentsView,
           meta: {
-            title: process.env.VUE_APP_NAME + ' - Dashboard',
+            title: process.env.VUE_APP_NAME + ' - Closed',
             requiredAuth: 'Student'
           }
         },

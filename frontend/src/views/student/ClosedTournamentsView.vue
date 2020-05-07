@@ -1,10 +1,13 @@
 <template>
   <div class="container">
-    <h2>Dashboard</h2>
+    <h2>Closed Tournaments</h2>
     <ul>
       <span class="list-header">
         <div class="col">Number</div>
-        <div class="col">Score</div>
+        <div class="col">Begin date</div>
+        <div class="col">End date</div>
+        <div class="col">Creator</div>
+        <div class="col">Number of enrollments</div>
       </span>
       <li
         class="list-row"
@@ -17,6 +20,16 @@
         <div class="col">
           {{ tournament.beginDate }}
         </div>
+        <div class="col">
+          {{ tournament.endDate }}
+        </div>
+        <div class="col">
+          {{ tournament.creator.username }}
+        </div>
+        <div class="col">
+          {{ tournament.enrollments.length }}
+        </div>
+
       </li>
     </ul>
   </div>
