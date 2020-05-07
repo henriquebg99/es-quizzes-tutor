@@ -131,6 +131,8 @@ class ListQuestionsTest extends Specification {
         questions = new HashSet<Question>();
         questions.add(question)
 
+        topic.addQuestion(question)
+
         tournamentDto = new TournamentDto ()
         tournamentDto.setBeginDate(beginDateString)
         tournamentDto.setEndDate(endDateString)
@@ -148,7 +150,7 @@ class ListQuestionsTest extends Specification {
         and: 'students enrolled'
         tournamentService.enrollTournament(USER_USERNAME2, tournament.getId())
 
-        when: 'list answers'
+        when: 'list question'
         List<QuestionDto> questions =
                 tournamentService.listQuestions(USER_USERNAME2, tournament.getId());
 

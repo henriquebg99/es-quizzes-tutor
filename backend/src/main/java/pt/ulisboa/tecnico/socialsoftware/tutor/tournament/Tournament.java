@@ -11,10 +11,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Entity
@@ -35,6 +32,9 @@ public class Tournament {
 
     @Column(name = "tournament_cancel_status")
     private Boolean isCanceled;
+
+    @Column(name = "tournament_generated")
+    private Boolean isGenerated;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -71,6 +71,7 @@ public class Tournament {
         this.courseExecution = courseExecution;
         this.numberOfQuestions = tournamentDto.getNumberOfQuestions();
         setCanceled(false);
+        this.isGenerated = false;
     }
 
     public Integer getNumberOfQuestions() {
@@ -187,6 +188,10 @@ public class Tournament {
     }
 
     public void addTournamentAnswer (@NotNull Question question, @NotNull User user, int selected) {
+        // check if the tournament is generated. if need, generate
+        if (this.isGenerated == false)
+            generateQuestions();
+        
         // check if the question belongs to the tournament
         if (this.questions.stream().filter(q -> q.getId() == question.getId()).count() != 1)
             throw new TutorException(ErrorMessage.QUESTION_NOT_IN_TOURNAMENT);
@@ -239,5 +244,26 @@ public class Tournament {
         return this.questions.stream()
                 .map(QuestionDto::new)
                 .collect(Collectors.toList());
+    }
+
+    public void generateQuestions () {
+        // check if the available questions are enough
+        int questionsCount = 0;
+        for (Topic topic : this.topics)
+            questionsCount += topic.getQuestions().size();
+
+        if (questionsCount < this.numberOfQuestions)
+            throw new TutorException(ErrorMessage.NOT_ENOUGH_QUESTIONS);
+
+        // randomly select questions
+        Set<Question> availableQuestions = new HashSet<>();
+
+        for (Topic topic : this.topics)
+            availableQuestions.addAll(topic.getQuestions());
+
+        List<Question> list = new LinkedList<Question>(availableQuestions);
+        Collections.shuffle(list);
+        this.questions = new HashSet<Question>(list.subList(0, this.numberOfQuestions));
+        this.isGenerated = true;
     }
 }
