@@ -37,7 +37,9 @@ public class TournamentAnswer {
     public TournamentAnswer(Tournament tournament, Question question, User user, int selectedAnswer) {
         this.tournament = tournament;
         this.question = question;
+        this.question.addTournamentAnswer(this);
         this.user = user;
+        this.user.addTournamentAnswer(this);
         this.selectedAnswer = selectedAnswer;
     }
 
