@@ -21,38 +21,36 @@ class PrivacyStatisticsTest extends Specification{
     }
 
     def 'check if tournament privacy default is public ' () {
-        except:true
+        true
     }
 
     def 'turn stats ' () {
-        except:true
+        true
     }
 
     def 'turn information private and check' () {
-        except:true
+        true
     }
 
     def 'turn information private then public again' () {
-        except:true
+        true
     }
 
     def 'turn information private then public again and private again' () {
-        except:true
+        true
     }
 
     def 'check for user privacy when course execution is empty' () {
-        except:true
+        true
     }
 
     def 'check for user privacy with empty username' () {
-        except:true
+        true
     }
 
     def 'check stats privacy of student with username that does not exists' () {
-        except:true
+        true
     }
-
-
 
     @TestConfiguration
     static class StatisticsServiceImplTestContextConfiguration {
