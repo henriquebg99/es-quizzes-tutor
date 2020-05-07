@@ -113,6 +113,8 @@ public class Tournament {
         this.creator = creator;
     }
 
+    public Boolean isCreator(User user) {return this.creator.equals(user);}
+
     public LocalDateTime getEndDate() {
         return endDate;
     }
@@ -155,6 +157,10 @@ public class Tournament {
 
     public void setCanceled(Boolean canceled) {
         isCanceled = canceled;
+    }
+
+    public Boolean hasEnded() {
+        return this.endDate.isBefore(LocalDateTime.now());
     }
 
     @Override
@@ -214,10 +220,24 @@ public class Tournament {
         this.questions = questions;
     }
 
-    public List<TournamentAnswerDto> listAnswers (User user) {
+    public List<TournamentAnswerDto> listAnswers (@NotNull User user) {
+        // check if the user is enrolled in the quiz
+        if (this.getEnrollments().stream().filter(user1 ->    user1.getId() == user.getId()).count() != 1)
+            throw new TutorException(ErrorMessage.USER_NOT_ENROLLED_IN_TOURNAMENT);
+
         return this.answers.stream()
                 .filter(answer -> answer.getUser().getId() == user.getId())
                 .map(TournamentAnswerDto::new)
+                .collect(Collectors.toList());
+    }
+
+    public List<QuestionDto> listQuestions (@NotNull User user) {
+        // check if the user is enrolled in the quiz
+        if (this.getEnrollments().stream().filter(user1 ->    user1.getId() == user.getId()).count() != 1)
+            throw new TutorException(ErrorMessage.USER_NOT_ENROLLED_IN_TOURNAMENT);
+
+        return this.questions.stream()
+                .map(QuestionDto::new)
                 .collect(Collectors.toList());
     }
 }

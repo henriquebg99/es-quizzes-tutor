@@ -231,22 +231,15 @@ public class TournamentService {
         return new TournamentDto(tournament);
     }
 
-    public List<QuestionDto> listQuestions(int executionId, int tournamentId) {
-        Tournament tournament = tournamentRepository.findById(tournamentId).orElseThrow(
-                ()-> new TutorException(ErrorMessage.TOURNAMENT_ID_NOT_FOUND)
-        );
+    public List<QuestionDto> listQuestions(String username, int tournamentId) {
+        User user = getAndCheckUser(username);
+        Tournament tournament = getAndCheckTournament(tournamentId);
 
-        Set<Question> questions = tournament.getQuestions ();
-        List<QuestionDto> questionDtos = new LinkedList<>();
-
-        for (Question question : questions) {
-            questionDtos.add(new QuestionDto(question));
-        }
-
-        return questionDtos;
+        return tournament.listQuestions(user);
     }
 
-    public List<TournamentAnswerDto> listAnswers(String username, int tournamentId) {
+    private User getAndCheckUser(String username) {
+        // check username
         if (username == null)
             throw new TutorException(ErrorMessage.USERNAME_EMPTY);
 
@@ -254,32 +247,28 @@ public class TournamentService {
         User user = userRepository.findByUsername(username);
         if (user == null)
             throw new TutorException(ErrorMessage.USERNAME_NOT_FOUND);
+        return user;
+    }
 
-        // find tournament
-        Tournament tournament = tournamentRepository.findById(tournamentId).orElseThrow(
-                ()-> new TutorException(ErrorMessage.TOURNAMENT_ID_NOT_FOUND));
-
-        // check if the user is enrolled in the quiz
-        if (tournament.getEnrollments().stream().filter(user1 -> user1.getId() == user.getId()).count() != 1)
-            throw new TutorException(ErrorMessage.USER_NOT_ENROLLED_IN_TOURNAMENT);
+    public List<TournamentAnswerDto> listAnswers(String username, int tournamentId) {
+        User user = getAndCheckUser(username);
+        Tournament tournament = getAndCheckTournament(tournamentId);
 
         return tournament.listAnswers(user);
     }
 
     public void submitAnswer(String username, int tournamentId, TournamentAnswerDto answerDto) {
-        if (username == null)
-            throw new TutorException(ErrorMessage.USERNAME_EMPTY);
-
-        User user = userRepository.findByUsername(username);
-        if (user == null)
-            throw new TutorException(ErrorMessage.USERNAME_NOT_FOUND);
-
-        Tournament tournament = tournamentRepository.findById(tournamentId).orElseThrow(
-                ()-> new TutorException(ErrorMessage.TOURNAMENT_ID_NOT_FOUND));
+        User user = getAndCheckUser(username);
+        Tournament tournament = getAndCheckTournament(tournamentId);
 
         Question question = questionRepository.findById(answerDto.getQuestionId())
                 .orElseThrow(() -> new TutorException(ErrorMessage.QUESTION_NOT_FOUND));
 
         tournament.addTournamentAnswer(question, user, answerDto.getSelected());
+    }
+
+    private Tournament getAndCheckTournament(int tournamentId) {
+        return tournamentRepository.findById(tournamentId).orElseThrow(
+                () -> new TutorException(ErrorMessage.TOURNAMENT_ID_NOT_FOUND));
     }
 }

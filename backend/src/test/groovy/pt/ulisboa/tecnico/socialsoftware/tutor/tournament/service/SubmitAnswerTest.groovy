@@ -156,13 +156,14 @@ class SubmitAnswerTest extends Specification {
         answerDto2 = new TournamentAnswerDto()
         answerDto2.setQuestionId(question.getId())
         answerDto2.setSelected(SELECTED2)
+
+        tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournamentDto);
+        tournamentRepository.findAll().get(0).setQuestions(questions)
     }
 
     def "submit correct answer" () {
         given: 'a valid tournament with one question'
-        tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournamentDto);
         def tournament = tournamentRepository.findAll().get(0)
-        tournament.setQuestions(questions)
         tournamentService.enrollTournament(USER_USERNAME2, tournament.getId())
 
         when: 'submit an answer for this question'
@@ -183,9 +184,7 @@ class SubmitAnswerTest extends Specification {
 
     def "submit an answer that the user had already answered" () {
         given: 'a valid tournament with one question'
-        tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournamentDto);
         def tournament = tournamentRepository.findAll().get(0)
-        tournament.setQuestions(questions)
         tournamentService.enrollTournament(USER_USERNAME2, tournament.getId())
 
         when: 'submit 2 answers for this question'
@@ -207,9 +206,7 @@ class SubmitAnswerTest extends Specification {
 
     def "submit an answer but the user is not enrolled in the tournament" () {
         given: 'a valid tournament with one question'
-        tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournamentDto);
         def tournament = tournamentRepository.findAll().get(0)
-        tournament.setQuestions(questions)
 
         when: 'submit 2 answers for this question'
         tournamentService.submitAnswer(USER_USERNAME2, tournament.getId(), answerDto);
@@ -221,9 +218,7 @@ class SubmitAnswerTest extends Specification {
 
     def "submit an answer but the question does not exists" () {
         given: 'a valid tournament with one question'
-        tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournamentDto);
         def tournament = tournamentRepository.findAll().get(0)
-        tournament.setQuestions(questions)
         tournamentService.enrollTournament(USER_USERNAME2, tournament.getId())
 
         and: 'an answer with a question that does not exists'
@@ -241,9 +236,7 @@ class SubmitAnswerTest extends Specification {
 
     def "submit an answer but the question does not belong to the tournament" () {
         given: 'a valid tournament with one question'
-        tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournamentDto);
         def tournament = tournamentRepository.findAll().get(0)
-        tournament.setQuestions(questions)
         tournamentService.enrollTournament(USER_USERNAME2, tournament.getId())
 
         and: 'an answer with a question that does not belong to the tournament'
@@ -261,9 +254,7 @@ class SubmitAnswerTest extends Specification {
 
     def "submit a answer but the tournament does not exists" () {
         given: 'a valid tournament with one question'
-        tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournamentDto);
         def tournament = tournamentRepository.findAll().get(0)
-        tournament.setQuestions(questions)
         tournamentService.enrollTournament(USER_USERNAME2, tournament.getId())
 
         when: 'submit answer for a tournment that does not exists'
@@ -276,9 +267,7 @@ class SubmitAnswerTest extends Specification {
 
     def "submit a answer but the question but selected is invalid I" () {
         given: 'a valid tournament with one question'
-        tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournamentDto);
         def tournament = tournamentRepository.findAll().get(0)
-        tournament.setQuestions(questions)
         tournamentService.enrollTournament(USER_USERNAME2, tournament.getId())
 
         and: 'a answer with a question that does not belong to the tournament'
@@ -296,9 +285,7 @@ class SubmitAnswerTest extends Specification {
 
     def "submit a answer but the question but selected is invalid II" () {
         given: 'a valid tournament with one question'
-        tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournamentDto);
         def tournament = tournamentRepository.findAll().get(0)
-        tournament.setQuestions(questions)
         tournamentService.enrollTournament(USER_USERNAME2, tournament.getId())
 
         and: 'a answer with a question that does not belong to the tournament'
@@ -316,9 +303,7 @@ class SubmitAnswerTest extends Specification {
 
     def "submit answer but user do not exists" () {
         given: 'a valid tournament with one question'
-        tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournamentDto);
         def tournament = tournamentRepository.findAll().get(0)
-        tournament.setQuestions(questions)
         tournamentService.enrollTournament(USER_USERNAME2, tournament.getId())
 
         when: 'submit an answer for this question'
@@ -331,9 +316,7 @@ class SubmitAnswerTest extends Specification {
 
     def "submit answer but username is null" () {
         given: 'a valid tournament with one question'
-        tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournamentDto);
         def tournament = tournamentRepository.findAll().get(0)
-        tournament.setQuestions(questions)
         tournamentService.enrollTournament(USER_USERNAME2, tournament.getId())
 
         when: 'submit an answer for this question'
