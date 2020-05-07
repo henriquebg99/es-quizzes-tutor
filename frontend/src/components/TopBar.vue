@@ -155,6 +155,7 @@
             </v-btn>
           </template>
           <v-list dense>
+
             <v-list-item to="/student/availableTournaments">
               <v-list-item-action>
                 <v-icon>assignment</v-icon>
@@ -163,6 +164,7 @@
                 <v-list-item-title>Available</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
+
             <v-list-item to="/student/createTournaments">
               <v-list-item-action>
                 <v-icon>create</v-icon>
@@ -171,6 +173,7 @@
                 <v-list-item-title>Create</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
+
             <v-list-item to="/student/cancelTournaments">
               <v-list-item-action>
                 <v-icon>cancel</v-icon>
@@ -179,17 +182,22 @@
                 <v-list-item-title>Cancel</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
+
+            <v-list-item to="/student/closedTournaments">
+              <v-list-item-action>
+                <v-icon>fas fa-calendar-times</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Closed</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+
           </v-list>
         </v-menu>
 
         <v-btn to="/student/stats" v-if="isStudent && currentCourse" text dark>
           Stats
           <v-icon>fas fa-user</v-icon>
-        </v-btn>
-
-        <v-btn to="/student/dashboard" v-if="isStudent && currentCourse" text dark>
-          Dashboard
-          <v-icon>fas fa-columns</v-icon>
         </v-btn>
 
         <v-btn to="/student/submit-question" v-if="isStudent && currentCourse" text dark data-cy="submit">
@@ -355,13 +363,6 @@
               <v-icon>fas fa-user</v-icon>
             </v-list-item-action>
             <v-list-item-content>Stats</v-list-item-content>
-          </v-list-item>
-
-          <v-list-item to="/student/dashboard">
-            <v-list-item-action>
-              <v-icon>fas fa-columns</v-icon>
-            </v-list-item-action>
-            <v-list-item-content>Dashboard</v-list-item-content>
           </v-list-item>
 
           <v-list-item to="/student/submit-question">
