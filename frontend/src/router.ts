@@ -31,6 +31,7 @@ import CreateTournamentsView from './views/student/CreateTournamentsView.vue';
 import AvailableTournamentsView from './views/student/AvailableTournamentsView.vue';
 import CancelTournamentsView from './views/student/CancelTournamentsView.vue';
 import ClosedTournamentsView from './views/student/ClosedTournamentsView.vue';
+import ParticipateView from './views/student/ParticipateView.vue';
 Vue.use(Router);
 
 let router = new Router({
@@ -196,6 +197,15 @@ let router = new Router({
           component: ClosedTournamentsView,
           meta: {
             title: process.env.VUE_APP_NAME + ' - Closed',
+            requiredAuth: 'Student'
+          }
+        },
+        {
+          path: 'participate',
+          name: 'participate',
+          component: ParticipateView,
+          meta: {
+            title: process.env.VUE_APP_NAME + ' - Participate',
             requiredAuth: 'Student'
           }
         },
