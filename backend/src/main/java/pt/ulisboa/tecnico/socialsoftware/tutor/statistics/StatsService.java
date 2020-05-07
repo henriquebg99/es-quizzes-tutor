@@ -11,6 +11,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
@@ -52,9 +53,20 @@ public class StatsService {
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public StatsDto getStats(String username, int executionId, StatsDto statsDto) {
+
+        if (username == null)
+            throw new TutorException(ErrorMessage.USERNAME_EMPTY);
+
         User user = userRepository.findByUsername(username);
 
+        if (user == null)
+            throw new TutorException(ErrorMessage.USERNAME_NOT_FOUND, username);
+
         CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
+
+        if (!courseExecution.getUsers().contains(user)) {
+            throw new TutorException(ErrorMessage.USER_NOT_IN_COURSE_EXECUTION);
+        }
 
         int totalQuizzes = (int) user.getQuizAnswers().stream()
                 .filter(quizAnswer -> quizAnswer.canResultsBePublic(courseExecution))
@@ -95,23 +107,12 @@ public class StatsService {
                 .filter(Option::getCorrect)
                 .count();
 
-        int totalTournaments = (int) user.getQuizAnswers().stream().count();
+        int totalTournaments = (int) user.getEnrolledTournaments().stream().
+                count();
 
         int totalCreatedTournaments = (int) courseExecution.getTournaments().stream()
                 .filter(tournament -> tournament.isCreator(user))
                 .count();
-
-        /*int bestTournamentScore = (int) user.getEnrolledTournaments().stream()
-                .filter(tournament -> tournament.hasEnded())
-                .map(Tournament::getScore)
-                .mapToLong(Collection::size)
-                .max();
-
-        int tournamentScores = (float) user.getEnrolledTournaments().stream()
-                .filter(tournament -> tournament.hasEnded())
-                .map(Tournament::getScore)
-                .mapToLong(Collection::size)
-                .sum();*/
 
         Course course = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId)).getCourse();
 
@@ -128,11 +129,6 @@ public class StatsService {
             statsDto.setCorrectAnswers(((float)correctAnswers)*100/totalQuizzesAnswers);
             statsDto.setImprovedCorrectAnswers(((float)uniqueCorrectAnswers)*100/uniqueQuestions);
         }
-
-        /*if (totalTournaments != 0) {
-            statsDto.setBestTournamentScore(bestTournamentScore);
-            statsDto.setAverageTournamentScore(((float)tournamentScores)*100/uniqueQuestions);
-        }*/
 
         return statsDto;
     }
