@@ -13,8 +13,6 @@ public class StatsDto implements Serializable {
     private Integer totalAvailableQuestions = 0;
     private Integer totalTournaments = 0;
     private Integer totalCreatedTournaments = 0;
-    private Integer bestTournamentScore = 0;
-    private float averageTournamentScore = 0;
 
     public StatsDto() {}
 
@@ -98,23 +96,6 @@ public class StatsDto implements Serializable {
         this.totalCreatedTournaments = totalCreatedTournaments;
     }
 
-    public Integer getBestTournamentScore() {
-        return bestTournamentScore;
-    }
-
-    public void setBestTournamentScore(Integer bestTournamentScore) {
-        this.bestTournamentScore = bestTournamentScore;
-    }
-
-    public float getAverageTournamentScore() {
-        return averageTournamentScore;
-    }
-
-    public void setAverageTournamentScore(float averageTournamentScore) {
-        this.averageTournamentScore = averageTournamentScore;
-    }
-
-
     @Override
     public String toString() {
         return "StatsDto{" +
@@ -127,8 +108,6 @@ public class StatsDto implements Serializable {
                 ", uniqueWrongAnswers=" + uniqueWrongAnswers +
                 ", totalTournaments=" + totalTournaments +
                 ", totalCreatedTournaments=" + totalCreatedTournaments +
-                ", bestTournamentScore=" + bestTournamentScore +
-                ", averageTournamentScore=" + averageTournamentScore +
                 '}';
     }
 }
