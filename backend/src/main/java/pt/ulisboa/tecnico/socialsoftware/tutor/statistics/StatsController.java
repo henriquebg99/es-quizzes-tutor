@@ -3,10 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.statistics;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
@@ -32,4 +29,18 @@ public class StatsController {
 
         return statsService.getStats(user.getUsername(), executionId, statsDto);
     }
+
+    @PostMapping("/executions/{executionId}/stats/{privacy}")
+    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    public StatsDto getStats(Principal principal, @PathVariable int executionId, @Valid @RequestBody StatsDto statsDto, @PathVariable int privacy) {
+        User user = (User) ((Authentication) principal).getPrincipal();
+
+        if(user == null){
+            throw new TutorException(AUTHENTICATION_ERROR);
+        }
+
+        return statsService.setPrivacy(user.getUsername(), executionId, statsDto, privacy > 0 ? true : false);
+    }
+
+
 }

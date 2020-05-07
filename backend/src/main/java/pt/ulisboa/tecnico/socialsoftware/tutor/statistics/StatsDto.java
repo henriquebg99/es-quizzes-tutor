@@ -13,6 +13,7 @@ public class StatsDto implements Serializable {
     private Integer totalAvailableQuestions = 0;
     private Integer totalTournaments = 0;
     private Integer totalCreatedTournaments = 0;
+    private Boolean privacy = false;
 
     public StatsDto() {}
 
@@ -95,6 +96,10 @@ public class StatsDto implements Serializable {
     public void setTotalCreatedTournaments(Integer totalCreatedTournaments) {
         this.totalCreatedTournaments = totalCreatedTournaments;
     }
+
+    public Boolean getPrivacy() { return privacy; }
+
+    public void setPrivacy(Boolean privacy) { this.privacy = privacy; }
 
     @Override
     public String toString() {
