@@ -93,6 +93,19 @@ export default class RemoteServices {
       });
   }
 
+  static async setUserStatsPrivacy(privacy: number): Promise<StudentStats> {
+    return httpClient
+      .get(
+        `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/stats/${privacy}`
+      )
+      .then(response => {
+        return new StudentStats(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static async getQuestions(): Promise<Question[]> {
     return httpClient
       .get(`/courses/${Store.getters.getCurrentCourse.courseId}/questions`)
@@ -184,7 +197,9 @@ export default class RemoteServices {
       });
   }
 
-  static createProposedQuestion(proposedQuestion: ProposedQuestion): Promise<ProposedQuestion> {
+  static createProposedQuestion(
+    proposedQuestion: ProposedQuestion
+  ): Promise<ProposedQuestion> {
     return httpClient
       .post(
         `/courses/${Store.getters.getCurrentCourse.courseId}/proposedquestions/`,
@@ -198,7 +213,10 @@ export default class RemoteServices {
       });
   }
 
-  static uploadImageProposedQuestion(file: File, proposedQuestionId: number): Promise<string> {
+  static uploadImageProposedQuestion(
+    file: File,
+    proposedQuestionId: number
+  ): Promise<string> {
     let formData = new FormData();
     formData.append('file', file);
     return httpClient

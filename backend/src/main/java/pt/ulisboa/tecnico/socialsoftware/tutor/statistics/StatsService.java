@@ -17,8 +17,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
-import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentAnswerRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 
@@ -42,18 +40,11 @@ public class StatsService {
     @Autowired
     private CourseExecutionRepository courseExecutionRepository;
 
-    @Autowired
-    private TournamentRepository tournamentRepository;
-
-    @Autowired
-    private TournamentAnswerRepository tournamentAnswerRepository;
-
     @Retryable(
       value = { SQLException.class },
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public StatsDto getStats(String username, int executionId, StatsDto statsDto) {
-
+    public StatsDto getStats(String username, int executionId) {
         if (username == null)
             throw new TutorException(ErrorMessage.USERNAME_EMPTY);
 
@@ -61,6 +52,8 @@ public class StatsService {
 
         if (user == null)
             throw new TutorException(ErrorMessage.USERNAME_NOT_FOUND, username);
+
+        StatsDto statsDto = new StatsDto();
 
         CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
 
@@ -137,7 +130,7 @@ public class StatsService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public StatsDto setPrivacy(String username, int executionId, StatsDto statsDto, Boolean privacy) {
+    public StatsDto setPrivacy(String username, int executionId, Boolean privacy) {
         if (username == null)
             throw new TutorException(ErrorMessage.USERNAME_EMPTY);
 
@@ -145,6 +138,8 @@ public class StatsService {
 
         if (user == null)
             throw new TutorException(ErrorMessage.USERNAME_NOT_FOUND, username);
+
+        StatsDto statsDto = new StatsDto();
 
         CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
 

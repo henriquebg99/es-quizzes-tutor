@@ -1,6 +1,17 @@
 <template>
   <div class="container">
     <h2>Statistics</h2>
+    <v-layout justify-center>
+      <v-card-title>
+        <v-btn
+          color="primary"
+          data-cy="privateButton"
+          dark
+          @click="setPrivacy(!privacyStatus)"
+          >{{ label }}</v-btn
+        >
+      </v-card-title>
+    </v-layout>
     <div v-if="stats != null" class="stats-container">
       <div class="items">
         <div class="icon-wrapper" ref="totalQuizzes">
@@ -57,6 +68,22 @@
           <p>Percentage of questions seen</p>
         </div>
       </div>
+      <div class="items">
+        <div class="icon-wrapper" ref="totalTournaments">
+          <animated-number :number="stats.totalTournaments" />
+        </div>
+        <div class="project-name">
+          <p>Total Tournaments Participations</p>
+        </div>
+      </div>
+      <div class="items">
+        <div class="icon-wrapper" ref="totalTournaments">
+          <animated-number :number="stats.totalCreatedTournaments" />
+        </div>
+        <div class="project-name">
+          <p>Total Tournaments Created</p>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -73,6 +100,10 @@ import AnimatedNumber from '@/components/AnimatedNumber.vue';
 export default class StatsView extends Vue {
   stats: StudentStats | null = null;
 
+  privacyStatus: Boolean = false;
+
+  label: String = 'Private';
+
   async created() {
     await this.$store.dispatch('loading');
     try {
@@ -81,6 +112,25 @@ export default class StatsView extends Vue {
       await this.$store.dispatch('error', error);
     }
     await this.$store.dispatch('clearLoading');
+  }
+
+  async setPrivacy(newPrivacy: boolean) {
+    if (newPrivacy) {
+      try {
+        await RemoteServices.setUserStatsPrivacy(1);
+      } catch (error) {
+        await this.$store.dispatch('error', error);
+      }
+      this.label = 'Public';
+    } else {
+      try {
+        await RemoteServices.setUserStatsPrivacy(0);
+      } catch (error) {
+        await this.$store.dispatch('error', error);
+      }
+      this.label = 'Private';
+    }
+    this.privacyStatus = newPrivacy;
   }
 }
 </script>

@@ -62,8 +62,7 @@ class StatisticsPerformanceTest extends Specification{
 
         when: "check stats 1000 times"
         1.upto(1000, {
-            StatsDto stats = new StatsDto()
-            statsService.getStats(USER_USERNAME, courseExecution.getId(), stats)
+            statsService.getStats(USER_USERNAME, courseExecution.getId())
         })
 
         then:
