@@ -178,6 +178,20 @@ public class TournamentService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<TournamentDto> listClosedTournaments(int courseExecutionId) {
+        LocalDateTime date = LocalDateTime.now().plusDays(0);
+
+        return tournamentRepository.findTournaments(courseExecutionId).stream()
+                .filter(tournament -> date.isAfter(tournament.getEndDate()))
+                .filter(tournament -> !tournament.getCanceled())
+                .map(tournament -> new TournamentDto(tournament))
+                .collect(Collectors.toList());
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public TournamentDto cancelTournament (String username, Integer tournamentId) {
 
         if (username == null)

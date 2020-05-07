@@ -64,6 +64,12 @@ public class TournamentController {
         return tournamentService.listOpenTournaments(executionId);
     }
 
+    @GetMapping("/student/course/executions/{executionId}/closedTournaments")
+    @PreAuthorize("hasRole('ROLE_STUDENT')")
+    public List<TournamentDto> listClosedTournaments(@PathVariable int executionId) {
+        return tournamentService.listClosedTournaments(executionId);
+    }
+
     @GetMapping("/student/course/executions/{executionId}/tournaments/{tournamentId}/questions")
     @PreAuthorize("hasRole('ROLE_STUDENT')")
     public List<QuestionDto> listQuestions(@PathVariable int executionId, @PathVariable int tournamentId) {
