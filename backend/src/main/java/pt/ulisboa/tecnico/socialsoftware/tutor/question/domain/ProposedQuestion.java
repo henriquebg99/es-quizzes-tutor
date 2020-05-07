@@ -143,10 +143,6 @@ public class ProposedQuestion {
         this.course = course;
     }
 
-    public void addOption(Option option) {
-        options.add(option);
-    }
-
     public Status getStatus() {
         return status;
     }
@@ -179,14 +175,6 @@ public class ProposedQuestion {
                 '}';
     }
 
-    public Integer getCorrectOptionId() {
-        return this.getOptions().stream()
-                .filter(Option::getCorrect)
-                .findAny()
-                .map(Option::getId)
-                .orElse(null);
-    }
-
     private void checkConsistentProposedQuestion(ProposedQuestionDto proposedQuestionDto) {
         if (proposedQuestionDto.getTitle().trim().length() == 0 ||
                 proposedQuestionDto.getContent().trim().length() == 0 ||
@@ -199,7 +187,4 @@ public class ProposedQuestion {
         }
     }
 
-    private Option getOptionById(Integer id) {
-        return getOptions().stream().filter(option -> option.getId().equals(id)).findAny().orElse(null);
-    }
 }

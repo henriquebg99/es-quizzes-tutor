@@ -8,18 +8,15 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.ProposedQuestionService
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ImageDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.ProposedQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ProposedQuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.ProposedQuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import spock.lang.Specification
-
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUESTION_MISSING_DATA
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUESTION_MULTIPLE_CORRECT_OPTIONS
 
 @DataJpaTest
 class SubmitQuestionPerformanceTest extends Specification {
@@ -70,6 +67,7 @@ class SubmitQuestionPerformanceTest extends Specification {
         proposedQuestionDto.setContent(QUESTION_CONTENT)
         proposedQuestionDto.setUsername(user.getUsername())
         proposedQuestionDto.setOptions(options)
+        proposedQuestionDto.setStatus(ProposedQuestion.Status.DEPENDENT.name())
 
         when: 'are submited 3000 questions'
         1.upto(3000, {
@@ -89,6 +87,11 @@ class SubmitQuestionPerformanceTest extends Specification {
         @Bean
         ProposedQuestionService proposedQuestionService1() {
             return new ProposedQuestionService()
+        }
+
+        @Bean
+        QuestionService questionService1() {
+            return new QuestionService()
         }
     }
 
