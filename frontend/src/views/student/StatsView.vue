@@ -57,6 +57,30 @@
           <p>Percentage of questions seen</p>
         </div>
       </div>
+      <div class="items">
+        <div class="icon-wrapper" ref="totalTournaments">
+          <animated-number :number="stats.totalTournaments" />
+        </div>
+        <div class="project-name">
+          <p>Total Tournaments Participations</p>
+        </div>
+      </div>
+      <div class="items">
+        <div class="icon-wrapper" ref="totalTournaments">
+          <animated-number :number="stats.totalCreatedTournaments" />
+        </div>
+        <div class="project-name">
+          <p>Total Tournaments Created</p>
+        </div>
+      </div>
+      <div class="items">
+        <div class="icon-wrapper" ref="totalTournaments">
+          <animated-number :number="stats.totalCreatedTournaments" />
+        </div>
+        <div class="project-name">
+          <p>Total Tournaments Created</p>
+        </div>
+      </div>
     </div>
   </div>
 </template>
