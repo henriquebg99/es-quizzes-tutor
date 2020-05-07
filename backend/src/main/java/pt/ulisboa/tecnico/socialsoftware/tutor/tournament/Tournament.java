@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 @Table(name="tournaments")
 public class Tournament {
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Column(name = "begin_date")
@@ -44,7 +44,7 @@ public class Tournament {
     @JoinColumn(name = "course_execution_id")
     private CourseExecution courseExecution;
 
-    @ManyToMany(mappedBy = "enrolled_tournaments")
+    @ManyToMany(mappedBy = "enrolled_tournaments", fetch = FetchType.EAGER)
     private Set<User> enrollments = new HashSet<>();
 
     public CourseExecution getCourseExecution() {
@@ -58,13 +58,14 @@ public class Tournament {
     @ManyToMany(mappedBy = "tournaments")
     private Set<Topic> topics = new HashSet<Topic>();
 
-    @ManyToMany(mappedBy = "tournaments")
+    @ManyToMany(mappedBy = "tournaments", fetch = FetchType.EAGER)
     private Set<Question> questions = new HashSet<Question>();
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tournament", fetch=FetchType.LAZY, orphanRemoval=true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tournament", fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<TournamentAnswer> answers = new HashSet<>();
 
-    public Tournament() {}
+    public Tournament() {
+    }
 
     public Tournament(User user, TournamentDto tournamentDto, CourseExecution courseExecution) {
         this.creator = user;
@@ -114,7 +115,9 @@ public class Tournament {
         this.creator = creator;
     }
 
-    public Boolean isCreator(User user) {return this.creator.equals(user);}
+    public Boolean isCreator(User user) {
+        return this.creator.equals(user);
+    }
 
     public LocalDateTime getEndDate() {
         return endDate;
@@ -124,17 +127,20 @@ public class Tournament {
         this.endDate = endDate;
     }
 
-    public void addTopic (Topic topic) {
+    public void addTopic(Topic topic) {
         this.topics.add(topic);
     }
 
     public void addEnrollment(User user) {
-        if (!this.userIsEnrolled(user.getId())){
+        if (!this.userIsEnrolled(user.getId())) {
             this.enrollments.add(user);
-        }
-        else {
+        } else {
             throw new TutorException(ErrorMessage.ALREADY_ENROLLED_IN_TOURNAMENT);
         }
+
+        // check if the tournament is generated. if need, generate
+        if (this.isGenerated == false)
+            generateQuestions();
     }
 
     public Set<User> getEnrollments() {
@@ -144,7 +150,7 @@ public class Tournament {
     public Boolean userIsEnrolled(int id) {
         Iterator<User> itr = this.enrollments.iterator();
 
-        while(itr.hasNext()){
+        while (itr.hasNext()) {
             if (itr.next().getId() == id) {
                 return true;
             }
@@ -187,11 +193,7 @@ public class Tournament {
         return answers;
     }
 
-    public void addTournamentAnswer (@NotNull Question question, @NotNull User user, int selected) {
-        // check if the tournament is generated. if need, generate
-        if (this.isGenerated == false)
-            generateQuestions();
-        
+    public void addTournamentAnswer(@NotNull Question question, @NotNull User user, int selected) {
         // check if the question belongs to the tournament
         if (this.questions.stream().filter(q -> q.getId() == question.getId()).count() != 1)
             throw new TutorException(ErrorMessage.QUESTION_NOT_IN_TOURNAMENT);
@@ -207,7 +209,7 @@ public class Tournament {
         // check if there is already any answer
         List<TournamentAnswer> answers = this.answers.stream().filter(
                 answer -> answer.getUser().getId() == user.getId() &&
-                    question.getId() == answer.getQuestion().getId()).collect(Collectors.toList());
+                        question.getId() == answer.getQuestion().getId()).collect(Collectors.toList());
 
         // at most one is expected
         assert answers.size() == 1 || answers.size() == 0;
@@ -220,14 +222,9 @@ public class Tournament {
         }
     }
 
-    public void setQuestions(Set<Question> questions) {
-        //FIXME throw if number of questions mismatch
-        this.questions = questions;
-    }
-
-    public List<TournamentAnswerDto> listAnswers (@NotNull User user) {
+    public List<TournamentAnswerDto> listAnswers(@NotNull User user) {
         // check if the user is enrolled in the quiz
-        if (this.getEnrollments().stream().filter(user1 ->    user1.getId() == user.getId()).count() != 1)
+        if (this.getEnrollments().stream().filter(user1 -> user1.getId() == user.getId()).count() != 1)
             throw new TutorException(ErrorMessage.USER_NOT_ENROLLED_IN_TOURNAMENT);
 
         return this.answers.stream()
@@ -236,9 +233,8 @@ public class Tournament {
                 .collect(Collectors.toList());
     }
 
-    public List<QuestionDto> listQuestions (@NotNull User user) {
-        // check if the user is enrolled in the quiz
-        if (this.getEnrollments().stream().filter(user1 ->    user1.getId() == user.getId()).count() != 1)
+    public List<QuestionDto> listQuestions(@NotNull User user) {
+        if (!userIsEnrolled(user.getId()))
             throw new TutorException(ErrorMessage.USER_NOT_ENROLLED_IN_TOURNAMENT);
 
         return this.questions.stream()
@@ -246,24 +242,22 @@ public class Tournament {
                 .collect(Collectors.toList());
     }
 
-    public void generateQuestions () {
+    public void generateQuestions() {
         // check if the available questions are enough
-        int questionsCount = 0;
-        for (Topic topic : this.topics)
-            questionsCount += topic.getQuestions().size();
-
-        if (questionsCount < this.numberOfQuestions)
-            throw new TutorException(ErrorMessage.NOT_ENOUGH_QUESTIONS);
-
-        // randomly select questions
         Set<Question> availableQuestions = new HashSet<>();
-
         for (Topic topic : this.topics)
             availableQuestions.addAll(topic.getQuestions());
 
+        if (availableQuestions.size() < this.numberOfQuestions)
+            throw new TutorException(ErrorMessage.NOT_ENOUGH_QUESTIONS);
+
+        // randomly select questions
         List<Question> list = new LinkedList<Question>(availableQuestions);
         Collections.shuffle(list);
-        this.questions = new HashSet<Question>(list.subList(0, this.numberOfQuestions));
+        this.questions.addAll((list.subList(0, this.numberOfQuestions)));
         this.isGenerated = true;
+
+        for (Question question : this.questions)
+            question.addTournament(this);
     }
 }

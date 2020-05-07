@@ -140,7 +140,6 @@ class ListQuestionsTest extends Specification {
         tournamentDto.setTopics(topics)
 
         tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournamentDto);
-        tournamentRepository.findAll().get(0).setQuestions(questions)
     }
 
     def "list questions of a tournament" () {

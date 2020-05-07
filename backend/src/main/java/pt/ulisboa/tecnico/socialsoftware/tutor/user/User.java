@@ -95,6 +95,10 @@ public class User implements UserDetails, DomainEntity {
         this.numberOfCorrectStudentAnswers = 0;
     }
 
+    public void addTournamentAnswer (TournamentAnswer answer) {
+        this.answers.add(answer);
+    }
+
     @Override
     public void accept(Visitor visitor) {
         visitor.visitUser(this);

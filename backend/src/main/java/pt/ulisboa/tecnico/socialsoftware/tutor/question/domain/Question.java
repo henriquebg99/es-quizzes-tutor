@@ -75,6 +75,14 @@ public class Question implements DomainEntity {
     @JoinColumn(name = "course_id")
     private Course course;
 
+    public void addTournament(Tournament tournament) {
+        this.tournaments.add(tournament);
+    }
+
+    public void addTournamentAnswer (TournamentAnswer answer) {
+        this.tournamentAnswers.add(answer);
+    }
+
     public Question() {
     }
 
