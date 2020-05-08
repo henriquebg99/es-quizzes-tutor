@@ -106,18 +106,15 @@ export default class CreateTournamentsView extends Vue {
   ];
 
   async created() {
-    await this.init();
+    this.init();
   }
 
   private async init() {
     await this.$store.dispatch('loading');
     try {
+      this.beginDate.setMinutes(this.beginDate.getMinutes() + 1);
+      this.endDate.setMinutes(this.endDate.getMinutes() + 2);
       this.topics = await RemoteServices.getTopics();
-      this.beginDate.setHours(this.beginDate.getHours() + 1);
-      this.beginDate.setMinutes(0);
-      this.endDate.setHours(this.endDate.getHours() + 1);
-      this.endDate.setMinutes(0);
-      this.endDate.setDate(this.endDate.getDate() + 1);
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
@@ -170,11 +167,14 @@ export default class CreateTournamentsView extends Vue {
   }
 
   async createTournament() {
+    console.log('ENTRA AQUI');
+
     if (!(await this.validateInput())) return;
 
     this.tournament.beginDate = CreateTournamentsView.formatDate(
       this.beginDate
     );
+    console.log(this.tournament.beginDate);
     this.tournament.endDate = CreateTournamentsView.formatDate(this.endDate);
 
     try {
