@@ -61,6 +61,10 @@ Cypress.Commands.add('setStatsPrivacy', () => {
 
 Cypress.Commands.add('checkTotalCreatedTournaments', () => {
   cy.contains(126)
+  
+Cypress.Commands.add('goToClosedTournaments', () => {
+  cy.contains('Tournaments').click();
+  cy.contains('Closed').click();
 });
 
 Cypress.Commands.add('createCourseExecution', (name, acronym, academicTerm) => {
@@ -137,6 +141,16 @@ Cypress.Commands.add('createTournament', () => {
   // 10 questions
   cy.get('[data-cy="tenNumber"]').click();
 
+  // select topic
+  cy.get(
+    ':nth-child(2) > .text-start > .v-data-table__checkbox > .v-icon'
+  ).click();
+
+  // create it
+  cy.get('[data-cy="createButton"]').click();
+});
+
+Cypress.Commands.add('createTournamentToClose', () => {
   // select topic
   cy.get(
     ':nth-child(2) > .text-start > .v-data-table__checkbox > .v-icon'

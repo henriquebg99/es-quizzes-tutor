@@ -79,6 +79,13 @@ describe('Tournament walkthrough', () => {
     cy.goToAvailableTournaments();
   });
 
+  it('show closed tournaments', () => {
+    cy.goToCreateTournaments();
+    cy.createTournamentToClose();
+    cy.wait(130000)
+    cy.goToClosedTournaments();
+  });
+
   it('enroll in tournament', () => {
     cy.goToCreateTournaments();
     cy.createTournament();
