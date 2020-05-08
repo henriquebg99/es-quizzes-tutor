@@ -106,7 +106,7 @@ public class TournamentController {
         return tournamentService.listAnswers(user.getUsername(), tournamentId);
     }
 
-    @PostMapping("/student/course/executions/{executionId}/tournaments/{tournamentId}/submit")
+    @PutMapping("/student/course/executions/{executionId}/tournaments/{tournamentId}/submit")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#tournamentId, 'TOURNAMENT.CREATOR')")
     public void submitQuestion (Principal principal, @PathVariable int executionId, @PathVariable int tournamentId,
                                 @Valid @RequestBody TournamentAnswerDto answerDto) {

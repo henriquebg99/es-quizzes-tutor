@@ -32,7 +32,6 @@ import java.time.format.DateTimeFormatter
 
 @DataJpaTest
 class GenerateQuestionsTest extends Specification {
-
     public static final String TOPIC_NAME = "topic"
     public static final String USER_NAME = "name"
     public static final String USER_USERNAME = "username"

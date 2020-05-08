@@ -207,8 +207,10 @@ class SubmitAnswerTest extends Specification {
     def "submit an answer but the user is not enrolled in the tournament" () {
         given: 'a valid tournament with one question'
         def tournament = tournamentRepository.findAll().get(0)
-
+        // at least 1 user has to be enrolled to the quiz being generated
+        tournamentService.enrollTournament(USER_USERNAME, tournament.getId())
         when: 'submit 2 answers for this question'
+
         tournamentService.submitAnswer(USER_USERNAME2, tournament.getId(), answerDto);
 
         then: 'a exception is thrown'
@@ -326,21 +328,6 @@ class SubmitAnswerTest extends Specification {
         def error = thrown(TutorException)
         error.errorMessage == ErrorMessage.USERNAME_EMPTY
     }
-
-    def "submit answer but not enough questions" () {
-        given: 'a valid tournament with one question'
-        def tournament = tournamentRepository.findAll().get(0)
-        tournament.setNumberOfQuestions(4)
-        tournamentService.enrollTournament(USER_USERNAME2, tournament.getId())
-
-        when: 'submit an answer for this question'
-        tournamentService.submitAnswer(USER_USERNAME2, tournament.getId(), answerDto);
-
-        then: 'the tournament has two questions'
-        def error = thrown(TutorException)
-        error.errorMessage == ErrorMessage.NOT_ENOUGH_QUESTIONS
-    }
-
 
     @TestConfiguration
     static class TournamentServiceImplTestContextConfiguration {

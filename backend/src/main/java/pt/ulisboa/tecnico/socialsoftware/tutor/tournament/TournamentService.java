@@ -255,6 +255,10 @@ public class TournamentService {
         return new TournamentDto(tournament);
     }
 
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<QuestionDto> listQuestions(String username, int tournamentId) {
         User user = getAndCheckUser(username);
         Tournament tournament = getAndCheckTournament(tournamentId);
@@ -274,6 +278,10 @@ public class TournamentService {
         return user;
     }
 
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<TournamentAnswerDto> listAnswers(String username, int tournamentId) {
         User user = getAndCheckUser(username);
         Tournament tournament = getAndCheckTournament(tournamentId);
@@ -281,6 +289,10 @@ public class TournamentService {
         return tournament.listAnswers(user);
     }
 
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void submitAnswer(String username, int tournamentId, TournamentAnswerDto answerDto) {
         User user = getAndCheckUser(username);
         Tournament tournament = getAndCheckTournament(tournamentId);

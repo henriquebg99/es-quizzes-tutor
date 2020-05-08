@@ -9,8 +9,12 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentRepository
@@ -34,12 +38,15 @@ class EnrollTournamentTest extends Specification{
     public static final String COURSE_NAME        = "course"
     public static final String ACRONYM            = "AS1"
     public static final String ACADEMIC_TERM      = "1 SEM"
-    public static final int    NUMBER_QUESTIONS   = 5
+    public static final int    NUMBER_QUESTIONS   = 1
     public static final int    NON_EXISTING_ID    = 10
     public static final String USERNAME_INVALID   = "username_invalid"
     public static final int    BEGIN_MINUTES      = 1
     public static final int    END_MINUTES        = 2
     public static final int    SLEEP              = 130000
+    public static final String CONTENT = "Question"
+    public static final String TITLE = "Title"
+
 
     @Autowired
     TournamentRepository tournamentRepository
@@ -59,6 +66,9 @@ class EnrollTournamentTest extends Specification{
     @Autowired
     CourseExecutionRepository courseExecutionRepository
 
+    @Autowired
+    QuestionRepository questionRepository;
+
     def user
     def formatter
     def beginDate
@@ -69,6 +79,7 @@ class EnrollTournamentTest extends Specification{
     def topicDto
     def course
     def courseExecution
+    def beginDateString
 
     def setup() {
         user = new User(USER_NAME, USER_USERNAME, USER_KEY, User.Role.STUDENT)
@@ -77,11 +88,10 @@ class EnrollTournamentTest extends Specification{
         formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
         beginDate = LocalDateTime.now().plusDays(BEGIN_DAYS)
         endDate = LocalDateTime.now().plusDays(END_DAYS)
+        beginDateString = beginDate.format(formatter)
 
         topicDto = new TopicDto()
         topicDto.setName(TOPIC_NAME)
-        topics = new HashSet<TopicDto>()
-        topics.add(topicDto)
 
         course = new Course(COURSE_NAME, Course.Type.TECNICO)
         courseRepository.save(course)
@@ -94,11 +104,35 @@ class EnrollTournamentTest extends Specification{
         topic.setName(TOPIC_NAME)
         topicRepository.save(topic)
 
+        def option1 = new OptionDto ()
+        option1.setContent("Option1");
+        option1.setCorrect(true);
+
+        def option2 = new OptionDto ()
+        option2.setContent("Option2");
+        option2.setCorrect(false);
+
+        def options = new LinkedList()
+        options.add(option1)
+        options.add(option2)
+
+        def questionDto = new QuestionDto();
+        questionDto.setTopics([topicDto]);
+        questionDto.setTitle(TITLE);
+        questionDto.setContent(CONTENT);
+        questionDto.setCreationDate(beginDateString);
+        questionDto.setOptions(options)
+        questionDto.setStatus("AVAILABLE")
+
+        def question = new Question(course, questionDto);
+        questionRepository.save(question);
+        topic.addQuestion(question)
+
         tournament = new TournamentDto()
         tournament.setBeginDate(beginDate.format(formatter))
         tournament.setEndDate(endDate.format(formatter))
         tournament.setNumberOfQuestions(NUMBER_QUESTIONS)
-        tournament.setTopics(topics)
+        tournament.setTopics(new HashSet<TopicDto>([topicDto]))
     }
 
     def 'enroll with empty username'() {
@@ -228,6 +262,20 @@ class EnrollTournamentTest extends Specification{
         and: 'exception is thrown'
             def error = thrown(TutorException)
             error.errorMessage == ErrorMessage.ALREADY_ENROLLED_IN_TOURNAMENT
+    }
+
+    def "enroll but not enough questions" () {
+        given: 'a valid tournament with one question'
+            tournamentService.createTournament(USER_USERNAME, courseExecution.getId(), tournament)
+            def tournament = tournamentRepository.findAll().get(0)
+            tournament.setNumberOfQuestions(4)
+
+        when: 'submit an answer for this question'
+            tournamentService.enrollTournament(USER_USERNAME, tournament.getId())
+
+        then: 'the tournament has two questions'
+            def error = thrown(TutorException)
+            error.errorMessage == ErrorMessage.NOT_ENOUGH_QUESTIONS
     }
 
     @TestConfiguration
