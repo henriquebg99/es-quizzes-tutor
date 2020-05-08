@@ -8,6 +8,7 @@ import CourseSelectionView from '@/views/CourseSelectionView.vue';
 import HomeView from '@/views/HomeView.vue';
 import ManagementView from '@/views/teacher/ManagementView.vue';
 import QuestionsView from '@/views/teacher/questions/QuestionsView.vue';
+import StudentsQuestionsView from '@/views/teacher/studentquestions/StudentsQuestionsView.vue';
 import TopicsView from '@/views/teacher/TopicsView.vue';
 import QuizzesView from '@/views/teacher/quizzes/QuizzesView.vue';
 import StudentsView from '@/views/teacher/students/StudentsView.vue';
@@ -74,6 +75,15 @@ let router = new Router({
           component: QuestionsView,
           meta: {
             title: process.env.VUE_APP_NAME + ' - Questions',
+            requiredAuth: 'Teacher'
+          }
+        },
+        {
+          path: 'student-questions',
+          name: 'student-questions-management',
+          component: StudentsQuestionsView,
+          meta: {
+            title: process.env.VUE_APP_NAME + ' - Students Questions',
             requiredAuth: 'Teacher'
           }
         },

@@ -11,7 +11,9 @@ import org.springframework.web.multipart.MultipartFile;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.ProposedQuestionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.ProposedQuestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ProposedQuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.validation.Valid;
@@ -28,9 +30,9 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.AU
 
 @RestController
 public class ProposedQuestionController {
-    private static Logger logger = LoggerFactory.getLogger(ProposedQuestionController.class);
+    private static final Logger logger = LoggerFactory.getLogger(ProposedQuestionController.class);
 
-    private ProposedQuestionService proposedQuestionService;
+    private final ProposedQuestionService proposedQuestionService;
 
     @Value("${figures.dir}")
     private String figuresDir;
@@ -39,7 +41,7 @@ public class ProposedQuestionController {
         this.proposedQuestionService = proposedQuestionService;
     }
 
-    @GetMapping("/courses/{courseId}/proposedquestions")
+    @GetMapping("/courses/{courseId}/listproposedquestions")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#courseId, 'COURSE.ACCESS')")
     public List<ProposedQuestionDto> getCourseProposedQuestions(@PathVariable int courseId){
         return this.proposedQuestionService.findProposedQuestions(courseId);
@@ -53,11 +55,13 @@ public class ProposedQuestionController {
         if(user == null){
             throw new TutorException(AUTHENTICATION_ERROR);
         }
+        proposedQuestion.setStatus(ProposedQuestion.Status.DEPENDENT.name());
+        proposedQuestion.setJustification("");
         return this.proposedQuestionService.createProposedQuestion(courseId, proposedQuestion, user.getId());
     }
 
     @PutMapping("/proposedquestions/{proposedQuestionId}/image")
-    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#proposedQuestionId, 'PROPOSEDQUESTION.ACCESS')")
+    @PreAuthorize("(hasRole('ROLE_STUDENT') or hasRole('ROLE_TEACHER')) and hasPermission(#proposedQuestionId, 'PROPOSEDQUESTION.ACCESS')")
     public String uploadImage(@PathVariable Integer proposedQuestionId, @RequestParam("file") MultipartFile file) throws IOException {
         logger.debug("uploadImage  proposedQuestionId: {}: , filename: {}", proposedQuestionId, file.getContentType());
 
@@ -77,6 +81,35 @@ public class ProposedQuestionController {
 
         return url;
     }
+
+    @PostMapping("/proposedquestions/{proposedQuestionId}/status")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#proposedQuestionId, 'PROPOSEDQUESTION.ACCESS')")
+    public ResponseEntity changeStatus(@PathVariable Integer proposedQuestionId, @Valid @RequestBody ProposedQuestionDto proposedQuestion) {
+        proposedQuestionService.changeStatus(proposedQuestionId, proposedQuestion.getStatus(), proposedQuestion.getJustification());
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/proposedquestions/{proposedQuestionId}/status/justification")
+    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#proposedQuestionId, 'PROPOSEDQUESTION.ACCESS')")
+    public String seeJustification(@PathVariable Integer proposedQuestionId) {
+        return this.proposedQuestionService.seeJustification(proposedQuestionId);
+    }
+
+    @PostMapping("/proposedquestions/{proposedQuestionId}/delete")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#proposedQuestionId, 'COURSE.ACCESS')")
+    public ResponseEntity removeProposedQuestion(@PathVariable Integer proposedQuestionId) throws IOException {
+        ProposedQuestionDto proposedQuestionDto = proposedQuestionService.findProposedQuestionById(proposedQuestionId);
+        String url = proposedQuestionDto.getImage() != null ? proposedQuestionDto.getImage().getUrl() : null;
+
+        proposedQuestionService.removeProposedQuestion(proposedQuestionId);
+
+        if (url != null && Files.exists(getTargetLocation(url))) {
+            Files.delete(getTargetLocation(url));
+        }
+
+        return ResponseEntity.ok().build();
+    }
+
 
     private Path getTargetLocation(String url) {
         String fileLocation = figuresDir + url;

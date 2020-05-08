@@ -82,7 +82,8 @@ public enum ErrorMessage {
     INVALID_SELECTED_OPTION("The selected option is invalid"),
     USER_NOT_IN_COURSE_EXECUTION("The course execution does not contain the user"),
     USER_PRIVACY_ALREADY_TRUE("The user's information is already private"),
-    USER_PRIVACY_ALREADY_FALSE("The user's information is already public");
+    USER_PRIVACY_ALREADY_FALSE("The user's information is already public"),
+    QUESTION_NEEDS_STATUS("New status missing.");
 
 
     public final String label;
