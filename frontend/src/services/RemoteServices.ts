@@ -198,6 +198,19 @@ export default class RemoteServices {
       });
   }
 
+  static async getAllProposedQuestions(): Promise<ProposedQuestion[]> {
+    return httpClient
+      .get(`/courses/${Store.getters.getCurrentCourse.courseId}/listproposedquestions/`)
+      .then(response => {
+        return response.data.map((proposedQuestion: any) => {
+          return new ProposedQuestion(proposedQuestion);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }  
+
   static uploadImageProposedQuestion(file: File, proposedQuestionId: number): Promise<string> {
     let formData = new FormData();
     formData.append('file', file);
@@ -215,9 +228,12 @@ export default class RemoteServices {
       });
   }
 
-  static async changeStatusProposedQuestion(proposedQuestionId: number, status: String, justification: String): Promise<ProposedQuestion> {
+  static async changeStatusProposedQuestion(proposedQuestionId: number, status: string, justification: string): Promise<ProposedQuestion> {
+    let proposedQuestionData = new ProposedQuestion();
+    proposedQuestionData.status = status;
+    proposedQuestionData.justification = justification;
     return httpClient
-      .post(`/proposedquestions/${proposedQuestionId}/status`, status, {})
+      .post(`/proposedquestions/${proposedQuestionId}/status`, proposedQuestionData)
       .then(response => {
         return new ProposedQuestion(response.data);
       })
@@ -236,19 +252,6 @@ export default class RemoteServices {
         throw Error(await this.errorMessage(error));
       });
   }
-
-  static async getAllProposedQuestions(): Promise<ProposedQuestion[]> {
-    return httpClient
-      .get('/courses/${Store.getters.getCurrentCourse.courseId}/listproposedquestions')
-      .then(response => {
-        return response.data.map((proposedQuestion: any) => {
-          return new ProposedQuestion(proposedQuestion);
-        });
-      })
-      .catch(async error => {
-        throw Error(await this.errorMessage(error));
-      });
-  }  
 
   static async uploadImage(file: File, questionId: number): Promise<string> {
     let formData = new FormData();

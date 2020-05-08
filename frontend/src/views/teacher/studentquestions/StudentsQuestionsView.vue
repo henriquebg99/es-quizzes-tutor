@@ -24,7 +24,7 @@
           v-model="item.status"
           :items="statusList"
           dense
-          @change="setStatus(item.id, item.status, item.justification)"
+          @change="statusChange(item.id, item.status, item.justification)"
         >
           <template v-slot:selection="{ item }">
             <v-chip :color="getStatusColor(item)" small>
@@ -38,8 +38,6 @@
         <v-textarea
           v-model="item.justification"
           dense
-          small-chips
-          @change="setStatus(item.id, item.status, item.justification)"
         />
       </template>
 
@@ -96,24 +94,15 @@ export default class StudentsQuestionsView extends Vue {
   currentQuestion: ProposedQuestion | null = null;
   questionDialog: boolean = false;
   statusList = ['DEPENDENT', 'APPROVED', 'REJECTED'];
+  currentStatus: string = 'DEPENDENT';
+  currentJustification: string = '';
 
   headers: object = [
     { text: 'Title', value: 'title', align: 'center' },
-    { text: 'Question', value: 'content', align: 'left' },
-    { text: 'Status', value: 'status', align: 'center' },
-    { text: 'Justification', value: 'justification', align: 'center' },
-    {
-      text: 'Image',
-      value: 'image',
-      align: 'center',
-      sortable: false
-    },
-    {
-      text: 'Actions',
-      value: 'action',
-      align: 'center',
-      sortable: false
-    }
+    { text: 'Question', value: 'content', align: 'center' },
+    { text: 'Status', value: 'status', align: 'center', sortable: false },
+    { text: 'Justification', value: 'justification', align: 'center', sortable: false },
+    { text: 'Image', value: 'image', align: 'center', sortable: false }
   ];
 
   async created() {
@@ -130,9 +119,27 @@ export default class StudentsQuestionsView extends Vue {
     return convertMarkDownNoFigure(text, image);
   }
 
-  async setStatus(proposedQuestionId: number, status: string, justification: string) {
+  statusChange(proposedQuestionId: number, status: string, justification: string) {
+    if(justification){
+      this.justificationChange(proposedQuestionId, status, justification)
+    }
+    else {
+      this.currentStatus = status;
+      this.setStatus(proposedQuestionId);
+    }
+  }
+
+  justificationChange(proposedQuestionId: number,status: string, justification: string) {
+    if ((status == 'APPROVED') || (status == 'REJECTED')){
+      this.currentStatus = status;
+      this.currentJustification = justification;
+      this.setStatus(proposedQuestionId);
+    }
+  }
+
+  async setStatus(proposedQuestionId: number) {
     try {
-      await RemoteServices.changeStatusProposedQuestion(proposedQuestionId, status, justification);
+      await RemoteServices.changeStatusProposedQuestion(proposedQuestionId, this.currentStatus, this.currentJustification);
       let proposedQuestion = this.proposedQuestions.find(
         proposedQuestion => proposedQuestion.id === proposedQuestionId
       );

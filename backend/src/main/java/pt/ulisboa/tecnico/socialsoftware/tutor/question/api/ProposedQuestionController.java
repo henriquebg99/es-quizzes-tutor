@@ -59,9 +59,9 @@ public class ProposedQuestionController {
         proposedQuestion.setJustification("");
         return this.proposedQuestionService.createProposedQuestion(courseId, proposedQuestion, user.getId());
     }
-2
+
     @PutMapping("/proposedquestions/{proposedQuestionId}/image")
-    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#proposedQuestionId, 'PROPOSEDQUESTION.ACCESS')")
+    @PreAuthorize("(hasRole('ROLE_STUDENT') or hasRole('ROLE_TEACHER')) and hasPermission(#proposedQuestionId, 'PROPOSEDQUESTION.ACCESS')")
     public String uploadImage(@PathVariable Integer proposedQuestionId, @RequestParam("file") MultipartFile file) throws IOException {
         logger.debug("uploadImage  proposedQuestionId: {}: , filename: {}", proposedQuestionId, file.getContentType());
 
@@ -83,9 +83,9 @@ public class ProposedQuestionController {
     }
 
     @PostMapping("/proposedquestions/{proposedQuestionId}/status")
-    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#proposedQuestionId, 'COURSE.ACCESS')")
-    public ResponseEntity changeStatus(@PathVariable Integer proposedQuestionId, @Valid @RequestBody String newStatus, @Valid @RequestBody String justification) {
-        proposedQuestionService.changeStatus(proposedQuestionId, newStatus, justification);
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#proposedQuestionId, 'PROPOSEDQUESTION.ACCESS')")
+    public ResponseEntity changeStatus(@PathVariable Integer proposedQuestionId, @Valid @RequestBody ProposedQuestionDto proposedQuestion) {
+        proposedQuestionService.changeStatus(proposedQuestionId, proposedQuestion.getStatus(), proposedQuestion.getJustification());
         return ResponseEntity.ok().build();
     }
 
