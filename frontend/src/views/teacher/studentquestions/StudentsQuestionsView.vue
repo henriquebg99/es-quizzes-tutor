@@ -24,10 +24,11 @@
           v-model="item.status"
           :items="statusList"
           dense
+          data-cy="questionStatus"
           @change="statusChange(item.id, item.status, item.justification)"
         >
           <template v-slot:selection="{ item }">
-            <v-chip :color="getStatusColor(item)" small>
+            <v-chip :color="getStatusColor(item)" small data-cy="questionStatus1">
               <span>{{ item }}</span>
             </v-chip>
           </template>
@@ -38,6 +39,7 @@
         <v-textarea
           v-model="item.justification"
           dense
+          data-cy="questionJustification"
         />
       </template>
 
@@ -63,9 +65,9 @@
             >
           </template>
           <span>Show Question</span>
-        </v-tooltip>
-       
+        </v-tooltip> 
       </template>
+
     </v-data-table>
     <show-question-dialog
       v-if="currentQuestion"
