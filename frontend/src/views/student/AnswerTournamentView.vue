@@ -2,11 +2,12 @@
   <div style="height: 100%">
     <v-card>
       <v-row>
-        <v-btn-toggle
-          v-model="currentQuestionIndex"
-          mandatory
-          class="button-group"
+        <v-btn color="primary" data-cy="endButton" dark @click="exit()"
+          >End</v-btn
         >
+      </v-row>
+      <v-row>
+        <v-btn-toggle mandatory class="button-group">
           <v-btn
             v-for="index in questions.length"
             :key="index"
@@ -20,6 +21,7 @@
         <v-col>
           <v-data-table
             v-if="questions.length > 0"
+            v-model="selectedOptions[currentQuestionIndex]"
             :items="questions[currentQuestionIndex].options"
             :single-select="true"
             :headers="headers"
@@ -49,7 +51,7 @@ export default class AnswerTournamentView extends Vue {
   questions: Question[] = [];
   answers: TournamentAnswer[] = [];
   currentQuestionIndex: number = 0;
-  options: Option[] = [];
+  selectedOptions: Option[][] = [];
   headers: object = [
     { text: 'Option', value: 'content', align: 'left', width: '70%' }
   ];
@@ -76,20 +78,16 @@ export default class AnswerTournamentView extends Vue {
       await this.$store.dispatch('error', error);
     }
 
+    // populate
+    for (let i = 0; i < this.questions.length; i++) {
+      this.selectedOptions.push([]);
+    }
+
+    // let's fill with old answers
+    this.fillWithOldAnswers();
+
     await this.$store.dispatch('clearLoading');
   }
-
-  increaseOrder(): void {}
-
-  decreaseOrder(): void {}
-
-  changeOrder(newOrder: number): void {}
-
-  confirmAnswer() {}
-
-  async changeAnswer(optionId: number) {}
-
-  async endQuiz() {}
 
   searchAnswer(questionId: number): TournamentAnswer | null {
     for (let answer of this.answers) {
@@ -105,8 +103,74 @@ export default class AnswerTournamentView extends Vue {
     }
     return null;
   }
-  change(index: number) {
+
+  async change(index: number) {
+    await this.submitAnswer();
     this.currentQuestionIndex = index - 1;
+  }
+
+  async submitAnswer() {
+    let selectedToThisQuestion: Option[] = this.selectedOptions[
+      this.currentQuestionIndex
+    ];
+    // check if the user answered
+    if (selectedToThisQuestion.length == 1) {
+      if (selectedToThisQuestion[0].id != null) {
+        let index: number | null = this.searchOption(
+          selectedToThisQuestion[0].id
+        );
+
+        if (index != null) {
+          // build the answer
+          let answer = this.makeAnswer(
+            this.questions[this.currentQuestionIndex].id as number,
+            index
+          );
+
+          // request
+          await this.doSubmit(answer);
+        }
+      }
+    }
+  }
+
+  makeAnswer(questionId: number, selected: number): TournamentAnswer {
+    let answer: TournamentAnswer = new TournamentAnswer();
+    answer.questionId = questionId;
+    answer.selected = selected;
+
+    return answer;
+  }
+
+  async doSubmit(answer: TournamentAnswer) {
+    await this.$store.dispatch('loading');
+    try {
+      await RemoteServices.submitTournamentAnswer(
+        AnswerTournamentView.tournament.id,
+        answer
+      );
+    } catch (error) {
+      await this.$store.dispatch('error', error);
+    }
+
+    await this.$store.dispatch('clearLoading');
+  }
+
+  fillWithOldAnswers() {
+    for (let i = 0; i < this.questions.length; i++) {
+      let answer: TournamentAnswer | null = this.searchAnswer(
+        this.questions[i].id as number
+      );
+      if (answer != null)
+        this.selectedOptions[i].push(
+          this.questions[i].options[answer.selected]
+        );
+    }
+  }
+
+  async exit() {
+    await this.submitAnswer();
+    await this.$router.push('availableTournaments');
   }
 }
 </script>
