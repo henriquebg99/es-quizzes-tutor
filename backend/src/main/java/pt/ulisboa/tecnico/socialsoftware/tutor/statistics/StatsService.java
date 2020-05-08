@@ -147,14 +147,6 @@ public class StatsService {
             throw new TutorException(ErrorMessage.USER_NOT_IN_COURSE_EXECUTION);
         }
 
-        if (statsDto.getPrivacy().equals(privacy) && privacy == true) {
-            throw new TutorException(ErrorMessage.USER_PRIVACY_ALREADY_TRUE);
-        }
-
-        if (statsDto.getPrivacy().equals(privacy) && privacy ==false) {
-            throw new TutorException(ErrorMessage.USER_PRIVACY_ALREADY_FALSE);
-        }
-
         statsDto.setPrivacy(privacy);
 
         return statsDto;

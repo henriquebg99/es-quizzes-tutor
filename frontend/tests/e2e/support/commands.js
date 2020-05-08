@@ -51,6 +51,18 @@ Cypress.Commands.add('goToCancelTournaments', () => {
   cy.contains('Cancel').click();
 });
 
+Cypress.Commands.add('goToStats', () => {
+    cy.contains('Stats').click();
+});
+
+Cypress.Commands.add('setStatsPrivacy', () => {
+  cy.get('[data-cy=privateButton]').click();
+});
+
+Cypress.Commands.add('checkTotalCreatedTournaments', () => {
+  cy.contains(126)
+});
+
 Cypress.Commands.add('createCourseExecution', (name, acronym, academicTerm) => {
   cy.get('[data-cy="createButton"]').click();
   cy.get('[data-cy="Name"]').type(name);
