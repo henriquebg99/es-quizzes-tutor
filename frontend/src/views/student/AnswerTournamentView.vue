@@ -1,36 +1,38 @@
 <template>
   <div style="height: 100%">
-    <v-row>
-      <v-btn-toggle
-        v-model="currentQuestionIndex"
-        mandatory
-        class="button-group"
-      >
-        <v-btn
-          v-for="index in questions.length"
-          :key="index"
-          value="index"
-          @click="change(index)"
-          >{{ index }}</v-btn
+    <v-card>
+      <v-row>
+        <v-btn-toggle
+          v-model="currentQuestionIndex"
+          mandatory
+          class="button-group"
         >
-      </v-btn-toggle>
-    </v-row>
-    <v-row>
-      <v-col>
-        <v-data-table
-          v-if="questions.length > 0"
-          :items="questions[currentQuestionIndex].options"
-          :single-select="true"
-          :headers="headers"
-          show-select
-          class="elevation-1"
-        >
-          <template v-slot:top>
-            <span>{{ questions[currentQuestionIndex].content }}</span>
-          </template>
-        </v-data-table>
-      </v-col>
-    </v-row>
+          <v-btn
+            v-for="index in questions.length"
+            :key="index"
+            value="index"
+            @click="change(index)"
+            >{{ index }}</v-btn
+          >
+        </v-btn-toggle>
+      </v-row>
+      <v-row>
+        <v-col>
+          <v-data-table
+            v-if="questions.length > 0"
+            :items="questions[currentQuestionIndex].options"
+            :single-select="true"
+            :headers="headers"
+            show-select
+            class="elevation-1"
+          >
+            <template v-slot:top>
+              <span>{{ questions[currentQuestionIndex].content }}</span>
+            </template>
+          </v-data-table>
+        </v-col>
+      </v-row>
+    </v-card>
   </div>
 </template>
 
@@ -58,7 +60,6 @@ export default class AnswerTournamentView extends Vue {
   }
 
   async created() {
-    alert(AnswerTournamentView.tournament);
     await this.$store.dispatch('loading');
     try {
       this.answers = await RemoteServices.listAnswers(
@@ -75,12 +76,6 @@ export default class AnswerTournamentView extends Vue {
       await this.$store.dispatch('error', error);
     }
 
-    alert(
-      'Objects received: ' + this.questions.length + ' ' + this.answers.length
-    );
-
-    alert(this.questions[0]);
-    alert(this.questions[0].options);
     await this.$store.dispatch('clearLoading');
   }
 
@@ -112,7 +107,6 @@ export default class AnswerTournamentView extends Vue {
   }
   change(index: number) {
     this.currentQuestionIndex = index - 1;
-    alert(this.questions[this.currentQuestionIndex]);
   }
 }
 </script>
