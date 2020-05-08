@@ -7,6 +7,8 @@ export default class ProposedQuestion {
   content: string = '';
   image: Image | null = null;
   username: string = '';
+  status: string = '';
+  justification: string = '';
 
   options: Option[] = [new Option(), new Option(), new Option(), new Option()];
 
@@ -17,6 +19,8 @@ export default class ProposedQuestion {
       this.content = jsonObj.content;
       this.image = jsonObj.image;
       this.username = jsonObj.username;
+      this.status = jsonObj.status;
+      this.justification = jsonObj.justification;
 
       this.options = jsonObj.options.map(
         (option: Option) => new Option(option)

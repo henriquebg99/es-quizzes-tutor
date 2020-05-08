@@ -77,7 +77,9 @@ public enum ErrorMessage {
     TOURNAMENT_ALREADY_CANCELED("This tournament was already canceled"),
     BEGIN_DATE_HAS_PASSED("The tournament begin date has passed."),
     ALREADY_ENROLLED_IN_TOURNAMENT("The user is already enrolled in the tournament"),
-    USER_NOT_IN_COURSE_EXECUTION("The course execution does not contain the user");
+    USER_NOT_IN_COURSE_EXECUTION("The course execution does not contain the user"),
+    QUESTION_NEEDS_STATUS("New status missing.");
+
     public final String label;
 
     ErrorMessage(String label) {
