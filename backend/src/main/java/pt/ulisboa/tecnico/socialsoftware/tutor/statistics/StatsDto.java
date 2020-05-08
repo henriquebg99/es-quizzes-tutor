@@ -11,6 +11,11 @@ public class StatsDto implements Serializable {
     private Integer uniqueCorrectAnswers = 0;
     private Integer uniqueWrongAnswers = 0;
     private Integer totalAvailableQuestions = 0;
+    private Integer totalTournaments = 0;
+    private Integer totalCreatedTournaments = 0;
+    private Boolean privacy = false;
+
+    public StatsDto() {}
 
     public Integer getTotalQuizzes() {
         return totalQuizzes;
@@ -76,6 +81,26 @@ public class StatsDto implements Serializable {
         this.totalAvailableQuestions = totalAvailableQuestions;
     }
 
+    public Integer getTotalTournaments() {
+        return totalTournaments;
+    }
+
+    public void setTotalTournaments(Integer totalTournaments) {
+        this.totalTournaments = totalTournaments;
+    }
+
+    public Integer getTotalCreatedTournaments() {
+        return totalCreatedTournaments;
+    }
+
+    public void setTotalCreatedTournaments(Integer totalCreatedTournaments) {
+        this.totalCreatedTournaments = totalCreatedTournaments;
+    }
+
+    public Boolean getPrivacy() { return privacy; }
+
+    public void setPrivacy(Boolean privacy) { this.privacy = privacy; }
+
     @Override
     public String toString() {
         return "StatsDto{" +
@@ -86,6 +111,8 @@ public class StatsDto implements Serializable {
                 ", improvedCorrectAnswers=" + improvedCorrectAnswers +
                 ", uniqueCorrectAnswers=" + uniqueCorrectAnswers +
                 ", uniqueWrongAnswers=" + uniqueWrongAnswers +
+                ", totalTournaments=" + totalTournaments +
+                ", totalCreatedTournaments=" + totalCreatedTournaments +
                 '}';
     }
 }

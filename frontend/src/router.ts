@@ -8,6 +8,7 @@ import CourseSelectionView from '@/views/CourseSelectionView.vue';
 import HomeView from '@/views/HomeView.vue';
 import ManagementView from '@/views/teacher/ManagementView.vue';
 import QuestionsView from '@/views/teacher/questions/QuestionsView.vue';
+import StudentsQuestionsView from '@/views/teacher/studentquestions/StudentsQuestionsView.vue';
 import TopicsView from '@/views/teacher/TopicsView.vue';
 import QuizzesView from '@/views/teacher/quizzes/QuizzesView.vue';
 import StudentsView from '@/views/teacher/students/StudentsView.vue';
@@ -30,6 +31,9 @@ import CoursesView from '@/views/admin/Courses/CoursesView.vue';
 import CreateTournamentsView from './views/student/CreateTournamentsView.vue';
 import AvailableTournamentsView from './views/student/AvailableTournamentsView.vue';
 import CancelTournamentsView from './views/student/CancelTournamentsView.vue';
+import ClosedTournamentsView from './views/student/ClosedTournamentsView.vue';
+import ParticipateView from './views/student/ParticipateView.vue';
+import AnswerTournamentView from '@/views/student/AnswerTournamentView.vue';
 Vue.use(Router);
 
 let router = new Router({
@@ -71,6 +75,15 @@ let router = new Router({
           component: QuestionsView,
           meta: {
             title: process.env.VUE_APP_NAME + ' - Questions',
+            requiredAuth: 'Teacher'
+          }
+        },
+        {
+          path: 'student-questions',
+          name: 'student-questions-management',
+          component: StudentsQuestionsView,
+          meta: {
+            title: process.env.VUE_APP_NAME + ' - Students Questions',
             requiredAuth: 'Teacher'
           }
         },
@@ -163,6 +176,15 @@ let router = new Router({
           }
         },
         {
+          path: 'answer',
+          name: 'answer-tournament',
+          component: AnswerTournamentView,
+          meta: {
+            title: process.env.VUE_APP_NAME + ' - Quiz',
+            requiredAuth: 'Student'
+          }
+        },
+        {
           path: 'results',
           name: 'quiz-results',
           component: ResultsView,
@@ -186,6 +208,24 @@ let router = new Router({
           component: ScanView,
           meta: {
             title: process.env.VUE_APP_NAME + ' - Scan',
+            requiredAuth: 'Student'
+          }
+        },
+        {
+          path: 'closedTournaments',
+          name: 'closed',
+          component: ClosedTournamentsView,
+          meta: {
+            title: process.env.VUE_APP_NAME + ' - Closed',
+            requiredAuth: 'Student'
+          }
+        },
+        {
+          path: 'participate',
+          name: 'participate',
+          component: ParticipateView,
+          meta: {
+            title: process.env.VUE_APP_NAME + ' - Participate',
             requiredAuth: 'Student'
           }
         },

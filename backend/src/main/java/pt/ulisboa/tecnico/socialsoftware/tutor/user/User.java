@@ -3,24 +3,17 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.user;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
-
-/*
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.ProposedQuestion;
-*/
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.ProposedQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.Tournament;
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentAnswer;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -79,6 +72,9 @@ public class User implements UserDetails, DomainEntity {
     @ManyToMany
     private Set<Tournament> enrolled_tournaments = new HashSet<>();
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch=FetchType.LAZY, orphanRemoval=true)
+    private Set<TournamentAnswer> answers = new HashSet<>();
+
     public User() {
     }
 
@@ -97,6 +93,10 @@ public class User implements UserDetails, DomainEntity {
         this.numberOfCorrectTeacherAnswers = 0;
         this.numberOfCorrectInClassAnswers = 0;
         this.numberOfCorrectStudentAnswers = 0;
+    }
+
+    public void addTournamentAnswer (TournamentAnswer answer) {
+        this.answers.add(answer);
     }
 
     @Override
@@ -291,6 +291,10 @@ public class User implements UserDetails, DomainEntity {
         }
 
         return numberOfStudentAnswers;
+    }
+
+    public Set<Tournament> getTournaments() {
+        return tournaments;
     }
 
     public void setNumberOfStudentAnswers(Integer numberOfStudentAnswers) {

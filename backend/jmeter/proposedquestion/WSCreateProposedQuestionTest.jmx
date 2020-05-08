@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jmeterTestPlan version="1.2" properties="5.0" jmeter="5.2.1">
   <hashTree>
-    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Load Test Web Service createProposedQuestion" enabled="true">
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Test Web Service createProposedQuestion" enabled="true">
       <stringProp name="TestPlan.comments"></stringProp>
       <boolProp name="TestPlan.functional_mode">false</boolProp>
       <boolProp name="TestPlan.tearDown_on_shutdown">true</boolProp>
@@ -32,11 +32,6 @@
           <elementProp name="courseId" elementType="Argument">
             <stringProp name="Argument.name">courseId</stringProp>
             <stringProp name="Argument.value">2</stringProp>
-            <stringProp name="Argument.metadata">=</stringProp>
-          </elementProp>
-          <elementProp name="userId" elementType="Argument">
-            <stringProp name="Argument.name">userId</stringProp>
-            <stringProp name="Argument.value">676</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
         </collectionProp>
@@ -106,6 +101,8 @@
                   <stringProp name="Argument.value">{&#xd;
   &quot;title&quot;: &quot;titulo&quot;,&#xd;
   &quot;content&quot;: &quot;conteudo&quot;,&#xd;
+  &quot;status&quot;: &quot;DEPENDENT&quot;,&#xd;
+  &quot;justification&quot;: &quot;&quot;,&#xd;
   &quot;options&quot;: [&#xd;
     {&#xd;
       &quot;content&quot;: &quot;opcao&quot;,&#xd;
@@ -124,7 +121,7 @@
             <stringProp name="HTTPSampler.port">${port}</stringProp>
             <stringProp name="HTTPSampler.protocol"></stringProp>
             <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-            <stringProp name="HTTPSampler.path">/student/courses/${courseId}/${userId}/proposedquestions</stringProp>
+            <stringProp name="HTTPSampler.path">/courses/${courseId}/proposedquestions</stringProp>
             <stringProp name="HTTPSampler.method">POST</stringProp>
             <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
             <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
@@ -169,6 +166,24 @@
               <boolProp name="EXPECT_NULL">false</boolProp>
               <boolProp name="INVERT">false</boolProp>
               <boolProp name="ISREGEX">false</boolProp>
+            </JSONPathAssertion>
+            <hashTree/>
+            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert proposed question status" enabled="true">
+              <stringProp name="JSON_PATH">$.status</stringProp>
+              <stringProp name="EXPECTED_VALUE">DEPENDENT</stringProp>
+              <boolProp name="JSONVALIDATION">true</boolProp>
+              <boolProp name="EXPECT_NULL">false</boolProp>
+              <boolProp name="INVERT">false</boolProp>
+              <boolProp name="ISREGEX">false</boolProp>
+            </JSONPathAssertion>
+            <hashTree/>
+            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert proposed question justification" enabled="true">
+              <stringProp name="JSON_PATH">$.justification</stringProp>
+              <stringProp name="EXPECTED_VALUE"></stringProp>
+              <boolProp name="JSONVALIDATION">false</boolProp>
+              <boolProp name="EXPECT_NULL">false</boolProp>
+              <boolProp name="INVERT">false</boolProp>
+              <boolProp name="ISREGEX">true</boolProp>
             </JSONPathAssertion>
             <hashTree/>
           </hashTree>

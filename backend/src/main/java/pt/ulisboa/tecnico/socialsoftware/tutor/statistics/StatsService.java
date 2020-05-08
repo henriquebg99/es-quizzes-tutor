@@ -11,6 +11,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
@@ -44,17 +45,27 @@ public class StatsService {
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public StatsDto getStats(String username, int executionId) {
+        if (username == null)
+            throw new TutorException(ErrorMessage.USERNAME_EMPTY);
+
         User user = userRepository.findByUsername(username);
+
+        if (user == null)
+            throw new TutorException(ErrorMessage.USERNAME_NOT_FOUND, username);
+
+        StatsDto statsDto = new StatsDto();
 
         CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
 
-        StatsDto statsDto = new StatsDto();
+        if (!courseExecution.getUsers().contains(user)) {
+            throw new TutorException(ErrorMessage.USER_NOT_IN_COURSE_EXECUTION);
+        }
 
         int totalQuizzes = (int) user.getQuizAnswers().stream()
                 .filter(quizAnswer -> quizAnswer.canResultsBePublic(courseExecution))
                 .count();
 
-        int totalAnswers = (int) user.getQuizAnswers().stream()
+        int totalQuizzesAnswers = (int) user.getQuizAnswers().stream()
                 .filter(quizAnswer -> quizAnswer.canResultsBePublic(courseExecution))
                 .map(QuizAnswer::getQuestionAnswers)
                 .mapToLong(Collection::size)
@@ -89,18 +100,55 @@ public class StatsService {
                 .filter(Option::getCorrect)
                 .count();
 
+        int totalTournaments = (int) user.getEnrolledTournaments().stream().
+                count();
+
+        int totalCreatedTournaments = (int) courseExecution.getTournaments().stream()
+                .filter(tournament -> tournament.isCreator(user))
+                .count();
+
         Course course = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId)).getCourse();
 
         int totalAvailableQuestions = questionRepository.getAvailableQuestionsSize(course.getId());
 
         statsDto.setTotalQuizzes(totalQuizzes);
-        statsDto.setTotalAnswers(totalAnswers);
+        statsDto.setTotalAnswers(totalQuizzesAnswers);
         statsDto.setTotalUniqueQuestions(uniqueQuestions);
         statsDto.setTotalAvailableQuestions(totalAvailableQuestions);
-        if (totalAnswers != 0) {
-            statsDto.setCorrectAnswers(((float)correctAnswers)*100/totalAnswers);
+        statsDto.setTotalTournaments(totalTournaments);
+        statsDto.setTotalCreatedTournaments(totalCreatedTournaments);
+
+        if (totalQuizzesAnswers != 0) {
+            statsDto.setCorrectAnswers(((float)correctAnswers)*100/totalQuizzesAnswers);
             statsDto.setImprovedCorrectAnswers(((float)uniqueCorrectAnswers)*100/uniqueQuestions);
         }
+
+        return statsDto;
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public StatsDto setPrivacy(String username, int executionId, Boolean privacy) {
+        if (username == null)
+            throw new TutorException(ErrorMessage.USERNAME_EMPTY);
+
+        User user = userRepository.findByUsername(username);
+
+        if (user == null)
+            throw new TutorException(ErrorMessage.USERNAME_NOT_FOUND, username);
+
+        StatsDto statsDto = new StatsDto();
+
+        CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
+
+        if (!courseExecution.getUsers().contains(user)) {
+            throw new TutorException(ErrorMessage.USER_NOT_IN_COURSE_EXECUTION);
+        }
+
+        statsDto.setPrivacy(privacy);
+
         return statsDto;
     }
 }

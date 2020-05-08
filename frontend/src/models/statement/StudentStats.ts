@@ -5,9 +5,11 @@ export default class StudentStats {
   correctAnswers!: number;
   improvedCorrectAnswers!: number;
   totalAvailableQuestions!: number;
-
   uniqueCorrectAnswers!: number;
   uniqueWrongAnswers!: number;
+  totalTournaments!: number;
+  totalCreatedTournaments!: number;
+  privacy!: Boolean;
 
   constructor(jsonObj?: StudentStats) {
     if (jsonObj) {
@@ -19,6 +21,9 @@ export default class StudentStats {
       this.uniqueCorrectAnswers = jsonObj.uniqueCorrectAnswers;
       this.uniqueWrongAnswers = jsonObj.uniqueWrongAnswers;
       this.totalAvailableQuestions = jsonObj.totalAvailableQuestions;
+      this.totalTournaments = jsonObj.totalTournaments;
+      this.totalCreatedTournaments = jsonObj.totalCreatedTournaments;
+      this.privacy = jsonObj.privacy;
     }
   }
 }
