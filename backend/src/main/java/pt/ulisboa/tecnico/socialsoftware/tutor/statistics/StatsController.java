@@ -30,4 +30,18 @@ public class StatsController {
 
         return statsService.getStats(user.getUsername(), executionId);
     }
+
+    @GetMapping("/executions/{executionId}/stats/{privacy}")
+    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    public StatsDto getStats(Principal principal, @PathVariable int executionId, @PathVariable int privacy) {
+        User user = (User) ((Authentication) principal).getPrincipal();
+
+        if(user == null){
+            throw new TutorException(AUTHENTICATION_ERROR);
+        }
+
+        return statsService.setPrivacy(user.getUsername(), executionId, privacy > 0 ? true : false);
+    }
+
+
 }

@@ -163,6 +163,16 @@
             </v-btn>
           </template>
           <v-list dense>
+
+            <v-list-item to="/student/participate">
+              <v-list-item-action>
+                <v-icon>fas fa-play-circle</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Participate</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+
             <v-list-item to="/student/availableTournaments">
               <v-list-item-action>
                 <v-icon>assignment</v-icon>
@@ -171,6 +181,7 @@
                 <v-list-item-title>Available</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
+
             <v-list-item to="/student/createTournaments">
               <v-list-item-action>
                 <v-icon>create</v-icon>
@@ -179,6 +190,7 @@
                 <v-list-item-title>Create</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
+
             <v-list-item to="/student/cancelTournaments">
               <v-list-item-action>
                 <v-icon>cancel</v-icon>
@@ -187,6 +199,16 @@
                 <v-list-item-title>Cancel</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
+
+            <v-list-item to="/student/closedTournaments">
+              <v-list-item-action>
+                <v-icon>fas fa-calendar-times</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Closed</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+
           </v-list>
         </v-menu>
 

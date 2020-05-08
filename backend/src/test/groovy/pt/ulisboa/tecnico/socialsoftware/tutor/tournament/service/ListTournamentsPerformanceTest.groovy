@@ -97,7 +97,7 @@ class ListTournamentsPerformanceTest extends Specification{
 
     }
 
-    def 'performance testing to list 10 tournaments 1000 times'() {
+    def 'performance testing to list 500 tournaments 10000 times'() {
         given: '500 tournaments'
 
         when:
