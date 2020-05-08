@@ -776,4 +776,22 @@ export default class RemoteServices {
         throw Error(await this.errorMessage(error));
       });
   }
+
+  static async submitTournamentAnswer(
+    tournamentId: number,
+    answer: TournamentAnswer
+  ) {
+    return httpClient
+      .put(
+        '/student/course/executions/' +
+          Store.getters.getCurrentCourse.courseExecutionId +
+          '/tournaments/' +
+          tournamentId +
+          '/submit',
+        answer
+      )
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
 }
