@@ -215,7 +215,42 @@ export default class RemoteServices {
       });
   }
 
-  static uploadImage(file: File, questionId: number): Promise<string> {
+  static async changeStatusProposedQuestion(proposedQuestionId: number, status: String, justification: String): Promise<ProposedQuestion> {
+    return httpClient
+      .post(`/proposedquestions/${proposedQuestionId}/status`, status, {})
+      .then(response => {
+        return new ProposedQuestion(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async seeJustificationProposedQuestion(proposedQuestionId: number): Promise<string> {
+    return httpClient
+      .get(`/proposedquestions/${proposedQuestionId}/status/justification`)
+      .then(response => {
+        return response.data as string;
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getAllProposedQuestions(): Promise<ProposedQuestion[]> {
+    return httpClient
+      .get('/courses/${Store.getters.getCurrentCourse.courseId}/listproposedquestions')
+      .then(response => {
+        return response.data.map((proposedQuestion: any) => {
+          return new ProposedQuestion(proposedQuestion);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }  
+
+  static async uploadImage(file: File, questionId: number): Promise<string> {
     let formData = new FormData();
     formData.append('file', file);
     return httpClient
