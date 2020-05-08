@@ -59,10 +59,6 @@ Cypress.Commands.add('setStatsPrivacy', () => {
   cy.get('[data-cy=privateButton]').click();
 });
 
-Cypress.Commands.add('checkTotalCreatedTournaments', () => {
-  cy.contains(126);
-});
-
 Cypress.Commands.add('goToClosedTournaments', () => {
   cy.contains('Tournaments').click();
   cy.contains('Closed').click();

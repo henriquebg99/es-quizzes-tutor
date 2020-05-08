@@ -68,7 +68,7 @@
           <p>Percentage of questions seen</p>
         </div>
       </div>
-      <div class="items">
+      <div class="items2">
         <div class="icon-wrapper" ref="totalTournaments">
           <animated-number :number="stats.totalTournaments" />
         </div>
