@@ -18,7 +18,7 @@
     <v-row>
       <v-col>
         <v-data-table
-          v-if="questions.length > 0 && questions[currentQuestionIndex] != undefined"
+          v-if="questions.length > 0"
           :items="questions[currentQuestionIndex].options"
           :single-select="true"
           :headers="headers"
