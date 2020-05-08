@@ -24,8 +24,7 @@
           {{ tournament.endDate }}
         </div>
         <div class="col last-col">
-          <i class="fas fa-chevron-circle-right"
-          ></i>
+          <i class="fas fa-chevron-circle-right"></i>
         </div>
       </li>
     </ul>
@@ -36,6 +35,7 @@
 import { Component, Vue } from 'vue-property-decorator';
 import { Tournament } from '@/models/management/Tournament';
 import RemoteServices from '@/services/RemoteServices';
+import AnswerTournamentView from '@/views/student/AnswerTournamentView.vue';
 
 @Component
 export default class ParticipateView extends Vue {
@@ -51,16 +51,13 @@ export default class ParticipateView extends Vue {
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
-    /*for (let el in this.temp){
-        if (el.enrolled){
-            this.tournaments.push(el)
-        }
-    }*/
+
     await this.$store.dispatch('clearLoading');
   }
 
   async participate(tournament: Tournament) {
-    // FIXME preencher
+    AnswerTournamentView.setTournament(tournament);
+    await this.$router.push({ name: 'answer-tournament' });
   }
 }
 </script>
@@ -86,7 +83,8 @@ export default class ParticipateView extends Vue {
     overflow: hidden;
     padding: 0 5px;
 
-    li, span {
+    li,
+    span {
       border-radius: 3px;
       padding: 15px 10px;
       display: flex;

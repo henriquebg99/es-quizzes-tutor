@@ -15,6 +15,8 @@ import AuthDto from '@/models/user/AuthDto';
 import StatementAnswer from '@/models/statement/StatementAnswer';
 import { QuizAnswers } from '@/models/management/QuizAnswers';
 import { Tournament } from '@/models/management/Tournament';
+import AnswerTournamentView from '@/views/student/AnswerTournamentView.vue';
+import { TournamentAnswer } from '@/models/management/TournamentAnswer';
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 10000;
@@ -713,6 +715,44 @@ export default class RemoteServices {
       .then(response => {
         return response.data.map((tournament: any) => {
           return new Tournament(tournament, Store.getters.getUser.id);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async listQuestions(tournamentId: number): Promise<Question[]> {
+    return httpClient
+      .get(
+        '/student/course/executions/' +
+          Store.getters.getCurrentCourse.courseExecutionId +
+          '/tournaments/' +
+          tournamentId +
+          '/questions'
+      )
+      .then(response => {
+        return response.data.map((question: any) => {
+          return new Question(question);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async listAnswers(tournamentId: number): Promise<TournamentAnswer[]> {
+    return httpClient
+      .get(
+        '/student/course/executions/' +
+          Store.getters.getCurrentCourse.courseExecutionId +
+          '/tournaments/' +
+          tournamentId +
+          '/answers'
+      )
+      .then(response => {
+        return response.data.map((answer: any) => {
+          return new TournamentAnswer(answer);
         });
       })
       .catch(async error => {

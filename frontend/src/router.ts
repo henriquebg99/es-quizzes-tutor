@@ -32,6 +32,7 @@ import AvailableTournamentsView from './views/student/AvailableTournamentsView.v
 import CancelTournamentsView from './views/student/CancelTournamentsView.vue';
 import ClosedTournamentsView from './views/student/ClosedTournamentsView.vue';
 import ParticipateView from './views/student/ParticipateView.vue';
+import AnswerTournamentView from '@/views/student/AnswerTournamentView.vue';
 Vue.use(Router);
 
 let router = new Router({
@@ -159,6 +160,15 @@ let router = new Router({
           path: 'quiz',
           name: 'solve-quiz',
           component: QuizView,
+          meta: {
+            title: process.env.VUE_APP_NAME + ' - Quiz',
+            requiredAuth: 'Student'
+          }
+        },
+        {
+          path: 'answer',
+          name: 'answer-tournament',
+          component: AnswerTournamentView,
           meta: {
             title: process.env.VUE_APP_NAME + ' - Quiz',
             requiredAuth: 'Student'
