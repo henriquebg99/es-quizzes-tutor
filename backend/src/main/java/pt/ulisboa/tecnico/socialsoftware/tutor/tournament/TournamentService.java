@@ -192,6 +192,30 @@ public class TournamentService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<TournamentDto> listParticipationTournaments(String username, int courseExecutionId) {
+        //lista torneios que estão a decorrer e em que o utilizador está inscrito
+        LocalDateTime date = LocalDateTime.now().plusDays(0);
+
+        if (username == null)
+            throw new TutorException(ErrorMessage.USERNAME_EMPTY);
+
+        User user = userRepository.findByUsername(username);
+        if (user == null)
+            throw new TutorException(ErrorMessage.USERNAME_NOT_FOUND, username);
+
+        return tournamentRepository.findTournaments(courseExecutionId).stream()
+                .filter(tournament -> date.isBefore(tournament.getEndDate()))
+                .filter(tournament -> date.isAfter(tournament.getBeginDate()))
+                .filter(tournament -> !tournament.getCanceled())
+                .filter(tournament -> tournament.userIsEnrolled(user.getId()))
+                .map(tournament -> new TournamentDto(tournament))
+                .collect(Collectors.toList());
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public TournamentDto cancelTournament (String username, Integer tournamentId) {
 
         if (username == null)

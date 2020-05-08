@@ -56,13 +56,13 @@
           <stringProp name="driver">org.postgresql.Driver</stringProp>
           <stringProp name="initQuery"></stringProp>
           <boolProp name="keepAlive">true</boolProp>
-          <stringProp name="password">secret</stringProp>
+          <stringProp name="password">mcnz6543</stringProp>
           <stringProp name="poolMax">0</stringProp>
           <boolProp name="preinit">false</boolProp>
           <stringProp name="timeout">10000</stringProp>
           <stringProp name="transactionIsolation">DEFAULT</stringProp>
           <stringProp name="trimInterval">60000</stringProp>
-          <stringProp name="username">dora</stringProp>
+          <stringProp name="username">mariana</stringProp>
         </JDBCDataSource>
         <hashTree/>
         <LoopController guiclass="LoopControlPanel" testclass="LoopController" testname="Loop 50 times" enabled="true">
@@ -174,13 +174,13 @@
             <stringProp name="driver">org.postgresql.Driver</stringProp>
             <stringProp name="initQuery"></stringProp>
             <boolProp name="keepAlive">true</boolProp>
-            <stringProp name="password">secret</stringProp>
+            <stringProp name="password">mcnz6543</stringProp>
             <stringProp name="poolMax">0</stringProp>
             <boolProp name="preinit">false</boolProp>
             <stringProp name="timeout">10000</stringProp>
             <stringProp name="transactionIsolation">DEFAULT</stringProp>
             <stringProp name="trimInterval">60000</stringProp>
-            <stringProp name="username">dora</stringProp>
+            <stringProp name="username">mariana</stringProp>
           </JDBCDataSource>
           <hashTree/>
           <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Request Tournament id" enabled="true">
@@ -306,19 +306,19 @@
           <stringProp name="driver">org.postgresql.Driver</stringProp>
           <stringProp name="initQuery"></stringProp>
           <boolProp name="keepAlive">true</boolProp>
-          <stringProp name="password">secret</stringProp>
+          <stringProp name="password">mcnz6543</stringProp>
           <stringProp name="poolMax">0</stringProp>
           <boolProp name="preinit">false</boolProp>
           <stringProp name="timeout">10000</stringProp>
           <stringProp name="transactionIsolation">DEFAULT</stringProp>
           <stringProp name="trimInterval">60000</stringProp>
-          <stringProp name="username">dora</stringProp>
+          <stringProp name="username">mariana</stringProp>
         </JDBCDataSource>
         <hashTree/>
         <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Request" enabled="true">
           <stringProp name="dataSource">sampleReq</stringProp>
           <stringProp name="query">DELETE FROM users_enrolled_tournaments WHERE enrollments_id=676;
-DELETE FROM topics_tournaments WHERE tournaments_id=676;
+DELETE FROM topics_tournaments;
 DELETE FROM tournaments WHERE user_id=676;</stringProp>
           <stringProp name="queryArguments"></stringProp>
           <stringProp name="queryArgumentsTypes"></stringProp>

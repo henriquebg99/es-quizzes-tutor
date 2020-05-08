@@ -70,6 +70,18 @@ public class TournamentController {
         return tournamentService.listClosedTournaments(executionId);
     }
 
+    @GetMapping("/student/course/executions/{executionId}/participationTournaments")
+    @PreAuthorize("hasRole('ROLE_STUDENT')")
+    public List<TournamentDto> listParticipationTournaments(Principal principal, @PathVariable int executionId) {
+        User user = (User) ((Authentication) principal).getPrincipal();
+
+        if(user == null){
+            throw new TutorException(AUTHENTICATION_ERROR);
+        }
+
+        return tournamentService.listParticipationTournaments(user.getUsername(),executionId);
+    }
+
     @GetMapping("/student/course/executions/{executionId}/tournaments/{tournamentId}/questions")
     @PreAuthorize("hasRole('ROLE_STUDENT')")
     public List<QuestionDto> listQuestions(Principal principal, @PathVariable int executionId, @PathVariable int tournamentId) {

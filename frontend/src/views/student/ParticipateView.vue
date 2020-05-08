@@ -46,12 +46,11 @@ export default class ParticipateView extends Vue {
     await this.$store.dispatch('loading');
     try {
       this.tournaments = (
-        await RemoteServices.availableTournaments()
+        await RemoteServices.participationTournaments()
       ).reverse();
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
-
     await this.$store.dispatch('clearLoading');
   }
 

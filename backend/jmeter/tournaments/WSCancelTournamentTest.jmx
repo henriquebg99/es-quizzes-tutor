@@ -347,7 +347,7 @@
         <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Request" enabled="true">
           <stringProp name="dataSource">sampleReq</stringProp>
           <stringProp name="query">DELETE FROM users_enrolled_tournaments WHERE enrollments_id=676;
-DELETE FROM topics_tournaments WHERE tournaments_id=676;
+DELETE FROM topics_tournaments;
 DELETE FROM tournaments WHERE user_id=676;</stringProp>
           <stringProp name="queryArguments"></stringProp>
           <stringProp name="queryArgumentsTypes"></stringProp>
