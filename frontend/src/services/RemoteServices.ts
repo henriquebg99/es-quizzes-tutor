@@ -121,6 +121,21 @@ export default class RemoteServices {
       });
   }
 
+  static async getAllProposedQuestions(): Promise<ProposedQuestion[]> {
+    return httpClient
+      .get(
+        `/courses/${Store.getters.getCurrentCourse.courseId}/listproposedquestions/`
+      )
+      .then(response => {
+        return response.data.map((proposedQuestion: any) => {
+          return new ProposedQuestion(proposedQuestion);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static async exportCourseQuestions(): Promise<Blob> {
     return httpClient
       .get(
@@ -215,8 +230,10 @@ export default class RemoteServices {
       });
   }
 
-
-  static uploadImageProposedQuestion(file: File, proposedQuestionId: number): Promise<string> {
+  static uploadImageProposedQuestion(
+    file: File,
+    proposedQuestionId: number
+  ): Promise<string> {
     let formData = new FormData();
     formData.append('file', file);
     return httpClient
@@ -233,12 +250,19 @@ export default class RemoteServices {
       });
   }
 
-  static async changeStatusProposedQuestion(proposedQuestionId: number, status: string, justification: string): Promise<ProposedQuestion> {
+  static async changeStatusProposedQuestion(
+    proposedQuestionId: number,
+    status: string,
+    justification: string
+  ): Promise<ProposedQuestion> {
     let proposedQuestionData = new ProposedQuestion();
     proposedQuestionData.status = status;
     proposedQuestionData.justification = justification;
     return httpClient
-      .post(`/proposedquestions/${proposedQuestionId}/status`, proposedQuestionData)
+      .post(
+        `/proposedquestions/${proposedQuestionId}/status`,
+        proposedQuestionData
+      )
       .then(response => {
         return new ProposedQuestion(response.data);
       })
@@ -247,7 +271,9 @@ export default class RemoteServices {
       });
   }
 
-  static async seeJustificationProposedQuestion(proposedQuestionId: number): Promise<string> {
+  static async seeJustificationProposedQuestion(
+    proposedQuestionId: number
+  ): Promise<string> {
     return httpClient
       .get(`/proposedquestions/${proposedQuestionId}/status/justification`)
       .then(response => {
