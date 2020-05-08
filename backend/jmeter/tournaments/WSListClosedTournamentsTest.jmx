@@ -331,7 +331,10 @@
         <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Request" enabled="true">
           <stringProp name="dataSource">delete_tournaments</stringProp>
           <stringProp name="queryType">Callable Statement</stringProp>
-          <stringProp name="query">DELETE FROM tournaments WHERE user_id=676;</stringProp>
+          <stringProp name="query">DELETE FROM topics_tournaments;
+DELETE FROM questions_tournaments;
+DELETE FROM users_enrolled_tournaments;
+DELETE FROM tournaments WHERE user_id=676;</stringProp>
           <stringProp name="queryArguments"></stringProp>
           <stringProp name="queryArgumentsTypes"></stringProp>
           <stringProp name="variableNames"></stringProp>
