@@ -33,6 +33,9 @@ public class Tournament {
     @Column(name = "tournament_cancel_status")
     private Boolean isCanceled;
 
+    @Column(name = "tournament_recommendation_status")
+    private Boolean isRecommended;
+
     @Column(name = "tournament_generated")
     private Boolean isGenerated;
 
@@ -164,6 +167,14 @@ public class Tournament {
 
     public void setCanceled(Boolean canceled) {
         isCanceled = canceled;
+    }
+
+    public Boolean getRecommended() {
+        return isRecommended;
+    }
+
+    public void setRecommended(Boolean r) {
+        isRecommended = r;
     }
 
     public Boolean hasEnded() {

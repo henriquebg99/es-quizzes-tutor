@@ -164,12 +164,44 @@ public class TournamentService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public void recommendTournament (Integer tournamentId) {
+
+        if(tournamentId == null)
+            throw  new TutorException(ErrorMessage.TOURNAMENT_ID_EMPTY);
+
+        Tournament tournament = tournamentRepository.findById(tournamentId).orElse(null);
+        if (tournament == null) {
+            throw new TutorException(ErrorMessage.TOURNAMENT_ID_NOT_FOUND);
+        }
+
+        if (tournament.getRecommended()){
+            throw new TutorException(ErrorMessage.TOURNAMENT_ALREADY_RECOMMENDED);
+        } else {
+            tournament.setRecommended(true);
+        }
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<TournamentDto> listOpenTournaments(int courseExecutionId) {
         LocalDateTime date = LocalDateTime.now().plusDays(0);
 
         return tournamentRepository.findTournaments(courseExecutionId).stream()
                 .filter(tournament -> date.isBefore(tournament.getEndDate()))
                 .filter(tournament -> !tournament.getCanceled())
+                .map(tournament -> new TournamentDto(tournament))
+                .collect(Collectors.toList());
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<TournamentDto> listRecommendedTournaments(int courseExecutionId) {
+        return tournamentRepository.findTournaments(courseExecutionId).stream()
+                .filter(tournament -> tournament.getRecommended())
                 .map(tournament -> new TournamentDto(tournament))
                 .collect(Collectors.toList());
     }
