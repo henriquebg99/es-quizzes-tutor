@@ -11,6 +11,7 @@ import java.util.*;
 
 public class TournamentDto implements Serializable {
     private Integer id;
+    private boolean isRecommneded;
     private String beginDate = null;
     private String endDate = null;
     private Set<TopicDto> topics = null;
@@ -29,6 +30,7 @@ public class TournamentDto implements Serializable {
         this.endDate = tournament.getEndDate().format(formatter);
         this.numberOfQuestions = tournament.getNumberOfQuestions();
         this.isCanceled = tournament.getCanceled();
+        this.isRecommneded = tournament.getRecommended();
         this.enrollments = new HashSet<UserDto>();
         this.creator = new UserDto(tournament.getCreator());
 

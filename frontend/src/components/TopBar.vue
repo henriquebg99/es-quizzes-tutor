@@ -47,7 +47,7 @@
 
         <v-menu offset-y v-if="isTeacher && currentCourse" open-on-hover>
           <template v-slot:activator="{ on }">
-            <v-btn v-on="on" text dark data-cy="management"> 
+            <v-btn v-on="on" text dark data-cy="management">
               Management
               <v-icon>fas fa-file-alt</v-icon>
             </v-btn>
@@ -61,7 +61,10 @@
                 <v-list-item-title>Questions</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
-            <v-list-item to="/management/student-questions" data-cy="studentQuestions">
+            <v-list-item
+              to="/management/student-questions"
+              data-cy="studentQuestions"
+            >
               <v-list-item-action>
                 <v-icon>question_answer</v-icon>
               </v-list-item-action>
@@ -163,7 +166,6 @@
             </v-btn>
           </template>
           <v-list dense>
-
             <v-list-item to="/student/participate">
               <v-list-item-action>
                 <v-icon>fas fa-play-circle</v-icon>
@@ -208,7 +210,6 @@
                 <v-list-item-title>Closed</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
-
           </v-list>
         </v-menu>
 
@@ -217,7 +218,13 @@
           <v-icon>fas fa-user</v-icon>
         </v-btn>
 
-        <v-btn to="/student/submit-question" v-if="isStudent && currentCourse" text dark data-cy="submit">
+        <v-btn
+          to="/student/submit-question"
+          v-if="isStudent && currentCourse"
+          text
+          dark
+          data-cy="submit"
+        >
           Submit
         </v-btn>
 

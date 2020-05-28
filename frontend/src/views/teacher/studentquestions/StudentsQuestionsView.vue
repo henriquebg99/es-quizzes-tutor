@@ -12,7 +12,6 @@
       :items-per-page="15"
       :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
     >
-
       <template v-slot:item.content="{ item }">
         <p
           v-html="convertMarkDownNoFigure(item.content, null)"
@@ -28,7 +27,11 @@
           @change="statusChange(item.id, item.status, item.justification)"
         >
           <template v-slot:selection="{ item }">
-            <v-chip :color="getStatusColor(item)" small data-cy="questionStatus1">
+            <v-chip
+              :color="getStatusColor(item)"
+              small
+              data-cy="questionStatus1"
+            >
               <span>{{ item }}</span>
             </v-chip>
           </template>
@@ -65,9 +68,8 @@
             >
           </template>
           <span>Show Question</span>
-        </v-tooltip> 
+        </v-tooltip>
       </template>
-
     </v-data-table>
     <show-question-dialog
       v-if="currentQuestion"
@@ -103,14 +105,21 @@ export default class StudentsQuestionsView extends Vue {
     { text: 'Title', value: 'title', align: 'center' },
     { text: 'Question', value: 'content', align: 'center' },
     { text: 'Status', value: 'status', align: 'center', sortable: false },
-    { text: 'Justification', value: 'justification', align: 'center', sortable: false },
+    {
+      text: 'Justification',
+      value: 'justification',
+      align: 'center',
+      sortable: false
+    },
     { text: 'Image', value: 'image', align: 'center', sortable: false }
   ];
 
   async created() {
     await this.$store.dispatch('loading');
     try {
-      [this.proposedQuestions] = await Promise.all([ RemoteServices.getAllProposedQuestions() ]);
+      [this.proposedQuestions] = await Promise.all([
+        RemoteServices.getAllProposedQuestions()
+      ]);
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
@@ -121,18 +130,25 @@ export default class StudentsQuestionsView extends Vue {
     return convertMarkDownNoFigure(text, image);
   }
 
-  statusChange(proposedQuestionId: number, status: string, justification: string) {
-    if(justification){
-      this.justificationChange(proposedQuestionId, status, justification)
-    }
-    else {
+  statusChange(
+    proposedQuestionId: number,
+    status: string,
+    justification: string
+  ) {
+    if (justification) {
+      this.justificationChange(proposedQuestionId, status, justification);
+    } else {
       this.currentStatus = status;
       this.setStatus(proposedQuestionId);
     }
   }
 
-  justificationChange(proposedQuestionId: number,status: string, justification: string) {
-    if ((status == 'APPROVED') || (status == 'REJECTED')){
+  justificationChange(
+    proposedQuestionId: number,
+    status: string,
+    justification: string
+  ) {
+    if (status == 'APPROVED' || status == 'REJECTED') {
       this.currentStatus = status;
       this.currentJustification = justification;
       this.setStatus(proposedQuestionId);
@@ -141,7 +157,11 @@ export default class StudentsQuestionsView extends Vue {
 
   async setStatus(proposedQuestionId: number) {
     try {
-      await RemoteServices.changeStatusProposedQuestion(proposedQuestionId, this.currentStatus, this.currentJustification);
+      await RemoteServices.changeStatusProposedQuestion(
+        proposedQuestionId,
+        this.currentStatus,
+        this.currentJustification
+      );
       let proposedQuestion = this.proposedQuestions.find(
         proposedQuestion => proposedQuestion.id === proposedQuestionId
       );
@@ -162,7 +182,10 @@ export default class StudentsQuestionsView extends Vue {
   async handleFileUpload(event: File, proposedQuestion: ProposedQuestion) {
     if (proposedQuestion.id) {
       try {
-        const imageURL = await RemoteServices.uploadImageProposedQuestion(event, proposedQuestion.id);
+        const imageURL = await RemoteServices.uploadImageProposedQuestion(
+          event,
+          proposedQuestion.id
+        );
         proposedQuestion.image = new Image();
         proposedQuestion.image.url = imageURL;
         confirm('Image ' + imageURL + ' was uploaded!');
@@ -181,7 +204,6 @@ export default class StudentsQuestionsView extends Vue {
     this.questionDialog = false;
   }
 }
-
 </script>
 
 <style lang="scss" scoped>

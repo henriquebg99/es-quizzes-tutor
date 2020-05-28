@@ -29,7 +29,6 @@
         <div class="col">
           {{ tournament.enrollments.length }}
         </div>
-
       </li>
     </ul>
   </div>
@@ -47,15 +46,12 @@ export default class DashboardView extends Vue {
   async created() {
     await this.$store.dispatch('loading');
     try {
-      this.tournaments = (
-        await RemoteServices.closedTournaments()
-      ).reverse();
+      this.tournaments = (await RemoteServices.closedTournaments()).reverse();
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
     await this.$store.dispatch('clearLoading');
   }
-
 }
 </script>
 
@@ -80,7 +76,8 @@ export default class DashboardView extends Vue {
     overflow: hidden;
     padding: 0 5px;
 
-    li, span {
+    li,
+    span {
       border-radius: 3px;
       padding: 15px 10px;
       display: flex;

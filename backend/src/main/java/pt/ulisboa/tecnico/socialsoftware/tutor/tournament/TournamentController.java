@@ -107,7 +107,7 @@ public class TournamentController {
     }
 
     @PutMapping("/student/course/executions/{executionId}/tournaments/{tournamentId}/submit")
-    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#tournamentId, 'TOURNAMENT.CREATOR')")
+    @PreAuthorize("hasRole('ROLE_STUDENT')")
     public void submitQuestion (Principal principal, @PathVariable int executionId, @PathVariable int tournamentId,
                                 @Valid @RequestBody TournamentAnswerDto answerDto) {
         User user = (User) ((Authentication) principal).getPrincipal();
@@ -117,6 +117,25 @@ public class TournamentController {
         }
 
         tournamentService.submitAnswer(user.getUsername(), tournamentId, answerDto);
+    }
+
+    @PutMapping("/teacher/executions/{executionId}/tournaments/{tournamentId}/recommend")
+    @PreAuthorize("hasRole('ROLE_TEACHER')")
+    public void recommendTournament (Principal principal, @PathVariable int executionId, @PathVariable int tournamentId,
+                                @Valid @RequestBody TournamentAnswerDto answerDto) {
+        User user = (User) ((Authentication) principal).getPrincipal();
+
+        if(user == null){
+            throw new TutorException(AUTHENTICATION_ERROR);
+        }
+
+        tournamentService.recommendTournament(user.getUsername(), tournamentId);
+    }
+
+    @GetMapping("/student/course/executions/{executionId}/recommendedTournaments")
+    @PreAuthorize("hasRole('ROLE_STUDENT')")
+    public List<TournamentDto> listRecommended(@PathVariable int executionId) {
+        return tournamentService.listRecommended(executionId);
     }
 }
 

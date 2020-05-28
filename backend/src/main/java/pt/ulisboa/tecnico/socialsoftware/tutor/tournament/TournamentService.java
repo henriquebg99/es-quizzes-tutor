@@ -78,8 +78,6 @@ public class TournamentService {
         return new TournamentDto(tournament);
     }
 
-
-
     private void checkQuestionNumber(TournamentDto tournamentDto) {
         if (tournamentDto.getNumberOfQuestions() <= 0)
             throw new TutorException(ErrorMessage.INVALID_NUMBER_OF_QUESTIONS);
@@ -307,4 +305,28 @@ public class TournamentService {
         return tournamentRepository.findById(tournamentId).orElseThrow(
                 () -> new TutorException(ErrorMessage.TOURNAMENT_ID_NOT_FOUND));
     }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public void recommendTournament (String username, int tournamentId) {
+        User user = getAndCheckUser(username);
+
+        Tournament tournament = getAndCheckTournament(tournamentId);
+
+        tournament.setRecommended(true);
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<TournamentDto> listRecommended(int courseExecutionId) {
+        return tournamentRepository.findTournaments(courseExecutionId).stream()
+                .filter(tournament -> tournament.getRecommended() == true)
+                .map(tournament -> new TournamentDto(tournament))
+                .collect(Collectors.toList());
+    }
+
 }

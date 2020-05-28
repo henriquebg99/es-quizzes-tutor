@@ -12,7 +12,7 @@
     >
       <template v-slot:top>
         <v-card-title>
-          <v-text-field 
+          <v-text-field
             v-model="search"
             append-icon="search"
             label="Search"

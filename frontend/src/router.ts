@@ -236,7 +236,7 @@ let router = new Router({
           meta: {
             title: process.env.VUE_APP_NAME + ' - Submit Question',
             requiredAuth: 'Student'
-            }
+          }
         },
         {
           path: 'createTournaments',

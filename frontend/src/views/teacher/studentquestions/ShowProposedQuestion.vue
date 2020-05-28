@@ -1,6 +1,8 @@
 <template>
   <div>
-    <span v-html="convertMarkDown(proposedQuestion.content, proposedQuestion.image)" />
+    <span
+      v-html="convertMarkDown(proposedQuestion.content, proposedQuestion.image)"
+    />
     <ul>
       <li v-for="option in proposedQuestion.options" :key="option.number">
         <span
@@ -25,7 +27,8 @@ import Image from '@/models/management/Image';
 
 @Component
 export default class ShowProposedQuestion extends Vue {
-  @Prop({ type: ProposedQuestion, required: true }) readonly proposedQuestion!: ProposedQuestion;
+  @Prop({ type: ProposedQuestion, required: true })
+  readonly proposedQuestion!: ProposedQuestion;
 
   convertMarkDown(text: string, image: Image | null = null): string {
     return convertMarkDown(text, image);

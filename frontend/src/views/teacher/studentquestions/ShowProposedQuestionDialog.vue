@@ -34,6 +34,7 @@ import ShowProposedQuestion from '@/views/teacher/studentquestions/ShowProposedQ
 })
 export default class ShowProposedQuestionDialog extends Vue {
   @Model('dialog', Boolean) dialog!: boolean;
-  @Prop({ type: ProposedQuestion, required: true }) readonly proposedQuestion!: ProposedQuestion;
+  @Prop({ type: ProposedQuestion, required: true })
+  readonly proposedQuestion!: ProposedQuestion;
 }
 </script>

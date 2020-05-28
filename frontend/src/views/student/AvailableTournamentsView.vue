@@ -92,7 +92,8 @@ export default class AvailableTournamentsView extends Vue {
     overflow: hidden;
     padding: 0 5px;
 
-    li, span {
+    li,
+    span {
       border-radius: 3px;
       padding: 15px 10px;
       display: flex;
