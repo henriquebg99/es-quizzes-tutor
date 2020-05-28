@@ -36,6 +36,9 @@ public class Tournament {
     @Column(name = "tournament_generated")
     private Boolean isGenerated;
 
+    @Column(name = "tournament_recomended")
+    private Boolean isRecomended;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User creator;
@@ -73,6 +76,7 @@ public class Tournament {
         this.numberOfQuestions = tournamentDto.getNumberOfQuestions();
         setCanceled(false);
         this.isGenerated = false;
+        this.isRecomended = false;
     }
 
     public Integer getNumberOfQuestions() {
@@ -168,6 +172,14 @@ public class Tournament {
 
     public Boolean hasEnded() {
         return this.endDate.isBefore(LocalDateTime.now());
+    }
+
+    public Boolean getRecomended() {
+        return isRecomended;
+    }
+
+    public void setRecomended(Boolean recomended) {
+        isRecomended = recomended;
     }
 
     @Override

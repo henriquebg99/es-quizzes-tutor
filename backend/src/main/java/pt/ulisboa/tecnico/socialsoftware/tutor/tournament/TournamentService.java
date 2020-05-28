@@ -6,7 +6,6 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
@@ -23,7 +22,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -306,5 +305,49 @@ public class TournamentService {
     private Tournament getAndCheckTournament(int tournamentId) {
         return tournamentRepository.findById(tournamentId).orElseThrow(
                 () -> new TutorException(ErrorMessage.TOURNAMENT_ID_NOT_FOUND));
+    }
+
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public TournamentDto recommendTournament (String username, Integer tournamentId) {
+
+        if (username == null)
+            throw new TutorException(ErrorMessage.USERNAME_EMPTY);
+        if (tournamentId == null)
+            throw new TutorException(ErrorMessage.TOURNAMENT_ID_EMPTY);
+
+        User user = userRepository.findByUsername(username);
+        if (user == null)
+            throw new TutorException(ErrorMessage.USERNAME_NOT_FOUND, username);
+
+        Tournament tournament = tournamentRepository.findById(tournamentId).orElse(null);
+        if (tournament == null)
+            throw new TutorException(ErrorMessage.TOURNAMENT_ID_NOT_FOUND);
+
+        if(tournament.getRecomended()) {
+            throw new TutorException(ErrorMessage.TOURNAMENT_ALREADY_RECOMENDED);
+        }
+
+        tournament.setRecomended(true);
+
+        return new TournamentDto(tournament);
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<TournamentDto> listRecommendedTournaments(int courseExecutionId) {
+        LocalDateTime date = LocalDateTime.now().plusDays(0);
+
+        return tournamentRepository.findTournaments(courseExecutionId).stream()
+                .filter(tournament -> date.isBefore(tournament.getEndDate()))
+                .filter(tournament -> !tournament.getCanceled())
+                .filter(tournament -> tournament.getRecomended())
+                .map(tournament -> new TournamentDto(tournament))
+                .collect(Collectors.toList());
     }
 }

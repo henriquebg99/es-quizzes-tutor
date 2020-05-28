@@ -18,6 +18,7 @@ public class TournamentDto implements Serializable {
     private Boolean isCanceled;
     private Set<UserDto> enrollments = null;
     private UserDto creator = null;
+    private Boolean isRecomeded;
 
     public TournamentDto () {}
 
@@ -97,6 +98,15 @@ public class TournamentDto implements Serializable {
 
     public int getId() {
         return id;
+    }
+
+
+    public Boolean getRecomeded() {
+        return isRecomeded;
+    }
+
+    public void setRecomeded(Boolean recomeded) {
+        isRecomeded = recomeded;
     }
 
     public void setId(Integer id) {

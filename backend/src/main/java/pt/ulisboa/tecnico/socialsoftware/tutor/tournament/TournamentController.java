@@ -7,12 +7,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
+
 import javax.validation.Valid;
 import java.security.Principal;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.AUTHENTICATION_ERROR;
@@ -118,5 +116,33 @@ public class TournamentController {
 
         tournamentService.submitAnswer(user.getUsername(), tournamentId, answerDto);
     }
+
+    @PostMapping("/student/course/executions/{executionId}/tournaments/{tournamentId}/recommend")
+    @PreAuthorize("hasRole('ROLE_TEACHER') ")
+    public TournamentDto recommendTournament (Principal principal, @PathVariable int executionId, @PathVariable int tournamentId) {
+        User user = (User) ((Authentication) principal).getPrincipal();
+
+        if(user == null){
+            throw new TutorException(AUTHENTICATION_ERROR);
+        }
+
+        return tournamentService.recommendTournament(user.getUsername(), tournamentId);
+
+    }
+
+    @GetMapping("/student/course/executions/{executionId}/tournaments/{tournamentId}/recommended")
+    @PreAuthorize("hasRole('ROLE_STUDENT') ")
+    public List<TournamentDto> recommendedTournaments (Principal principal, @PathVariable int executionId, @PathVariable int tournamentId) {
+        User user = (User) ((Authentication) principal).getPrincipal();
+
+        if(user == null){
+            throw new TutorException(AUTHENTICATION_ERROR);
+        }
+
+        return tournamentService.listRecommendedTournaments(executionId);
+
+    }
+
+
 }
 

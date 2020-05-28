@@ -83,7 +83,8 @@ public enum ErrorMessage {
     USER_NOT_IN_COURSE_EXECUTION("The course execution does not contain the user"),
     USER_PRIVACY_ALREADY_TRUE("The user's information is already private"),
     USER_PRIVACY_ALREADY_FALSE("The user's information is already public"),
-    QUESTION_NEEDS_STATUS("New status missing.");
+    QUESTION_NEEDS_STATUS("New status missing."),
+    TOURNAMENT_ALREADY_RECOMENDED("This tournament was already recommended");
 
 
     public final String label;
